@@ -164,6 +164,7 @@ export default function Dashboard() {
 
           <div className="flex gap-1.5 shrink-0">
             {([
+              { label: 'POS 0', scene: 'blackout' as const },
               { label: 'POS 1', scene: 'warmup' as const },
               { label: 'POS 2', scene: 'experience_low' as const },
               { label: 'POS 3', scene: 'experience_mid' as const },
