@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "Painfader DMX Controller"
+version = "1.0.0"
+id = "artifacts/painfader"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 24526
+
+[services.development]
+run = "pnpm --filter @workspace/painfader run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/painfader", "run", "build" ]
+publicDir = "artifacts/painfader/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "24526"
+BASE_PATH = "/"

@@ -3,13 +3,15 @@ info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: Painfader DMX Controller API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: dmx
+    description: DMX controller operations
 paths:
   /healthz:
     get:
@@ -24,6 +26,200 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /dmx/state:
+    get:
+      operationId: getDmxState
+      tags: [dmx]
+      summary: Get full DMX state
+      description: Returns the current DMX channel values and mode
+      responses:
+        "200":
+          description: Current DMX state
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DmxState"
+
+  /dmx/config:
+    get:
+      operationId: getDmxConfig
+      tags: [dmx]
+      summary: Get Art-Net config
+      description: Returns the current Art-Net/DMX output configuration
+      responses:
+        "200":
+          description: DMX configuration
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DmxConfig"
+    put:
+      operationId: updateDmxConfig
+      tags: [dmx]
+      summary: Update Art-Net config
+      description: Update Art-Net host/universe/port settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DmxConfigInput"
+      responses:
+        "200":
+          description: Updated config
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DmxConfig"
+
+  /dmx/mode:
+    put:
+      operationId: setMode
+      tags: [dmx]
+      summary: Set operating mode
+      description: Switch between Idle and Experience mode
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ModeInput"
+      responses:
+        "200":
+          description: Mode updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DmxState"
+
+  /dmx/fan:
+    put:
+      operationId: setFan
+      tags: [dmx]
+      summary: Control the fan (Entour Cyclone)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FanInput"
+      responses:
+        "200":
+          description: Fan updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DmxState"
+
+  /dmx/led-matrix:
+    put:
+      operationId: setLedMatrix
+      tags: [dmx]
+      summary: Control the LED matrix
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LedMatrixInput"
+      responses:
+        "200":
+          description: LED matrix updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DmxState"
+
+  /dmx/led-strips:
+    put:
+      operationId: setLedStrips
+      tags: [dmx]
+      summary: Control the LED strips
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LedStripsInput"
+      responses:
+        "200":
+          description: LED strips updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DmxState"
+
+  /dmx/disc:
+    put:
+      operationId: setDisc
+      tags: [dmx]
+      summary: Control the plexiglass disc drive
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DiscInput"
+      responses:
+        "200":
+          description: Disc updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DmxState"
+
+  /dmx/pain-fader:
+    put:
+      operationId: setPainFader
+      tags: [dmx]
+      summary: Set pain fader position (0-4)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PainFaderInput"
+      responses:
+        "200":
+          description: Pain fader updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DmxState"
+
+  /dmx/scene:
+    put:
+      operationId: loadScene
+      tags: [dmx]
+      summary: Load a preset scene
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SceneInput"
+      responses:
+        "200":
+          description: Scene loaded
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DmxState"
+
+  /dmx/blackout:
+    post:
+      operationId: blackout
+      tags: [dmx]
+      summary: Blackout all channels
+      responses:
+        "200":
+          description: All channels zeroed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DmxState"
+
 components:
   schemas:
     HealthStatus:
@@ -34,3 +230,320 @@ components:
       required:
         - status
 
+    DmxState:
+      type: object
+      required:
+        - mode
+        - fan
+        - ledMatrix
+        - ledStrips
+        - disc
+        - painFader
+        - channels
+        - artnetConnected
+      properties:
+        mode:
+          type: string
+          enum: [idle, experience]
+        fan:
+          $ref: "#/components/schemas/FanState"
+        ledMatrix:
+          $ref: "#/components/schemas/LedMatrixState"
+        ledStrips:
+          $ref: "#/components/schemas/LedStripsState"
+        disc:
+          $ref: "#/components/schemas/DiscState"
+        painFader:
+          $ref: "#/components/schemas/PainFaderState"
+        channels:
+          type: array
+          items:
+            type: integer
+          description: Raw DMX channel values (512 channels, 0-255)
+        artnetConnected:
+          type: boolean
+
+    DmxConfig:
+      type: object
+      required:
+        - host
+        - universe
+        - port
+        - refreshRate
+      properties:
+        host:
+          type: string
+        universe:
+          type: integer
+        port:
+          type: integer
+        refreshRate:
+          type: integer
+
+    DmxConfigInput:
+      type: object
+      properties:
+        host:
+          type: string
+        universe:
+          type: integer
+        port:
+          type: integer
+        refreshRate:
+          type: integer
+
+    ModeInput:
+      type: object
+      required:
+        - mode
+      properties:
+        mode:
+          type: string
+          enum: [idle, experience]
+
+    FanState:
+      type: object
+      required:
+        - speed
+        - enabled
+        - channel
+      properties:
+        speed:
+          type: integer
+          minimum: 0
+          maximum: 255
+        enabled:
+          type: boolean
+        channel:
+          type: integer
+
+    FanInput:
+      type: object
+      properties:
+        speed:
+          type: integer
+          minimum: 0
+          maximum: 255
+        enabled:
+          type: boolean
+
+    LedMatrixState:
+      type: object
+      required:
+        - r
+        - g
+        - b
+        - brightness
+        - pattern
+        - enabled
+        - channels
+      properties:
+        r:
+          type: integer
+          minimum: 0
+          maximum: 255
+        g:
+          type: integer
+          minimum: 0
+          maximum: 255
+        b:
+          type: integer
+          minimum: 0
+          maximum: 255
+        brightness:
+          type: integer
+          minimum: 0
+          maximum: 255
+        pattern:
+          type: integer
+          minimum: 0
+          maximum: 255
+        enabled:
+          type: boolean
+        channels:
+          type: object
+          required: [r, g, b, brightness, pattern]
+          properties:
+            r: { type: integer }
+            g: { type: integer }
+            b: { type: integer }
+            brightness: { type: integer }
+            pattern: { type: integer }
+
+    LedMatrixInput:
+      type: object
+      properties:
+        r:
+          type: integer
+          minimum: 0
+          maximum: 255
+        g:
+          type: integer
+          minimum: 0
+          maximum: 255
+        b:
+          type: integer
+          minimum: 0
+          maximum: 255
+        brightness:
+          type: integer
+          minimum: 0
+          maximum: 255
+        pattern:
+          type: integer
+          minimum: 0
+          maximum: 255
+        enabled:
+          type: boolean
+
+    LedStripsState:
+      type: object
+      required:
+        - strip1
+        - strip2
+      properties:
+        strip1:
+          $ref: "#/components/schemas/LedStripState"
+        strip2:
+          $ref: "#/components/schemas/LedStripState"
+
+    LedStripState:
+      type: object
+      required:
+        - r
+        - g
+        - b
+        - brightness
+        - enabled
+        - channels
+      properties:
+        r:
+          type: integer
+          minimum: 0
+          maximum: 255
+        g:
+          type: integer
+          minimum: 0
+          maximum: 255
+        b:
+          type: integer
+          minimum: 0
+          maximum: 255
+        brightness:
+          type: integer
+          minimum: 0
+          maximum: 255
+        enabled:
+          type: boolean
+        channels:
+          type: object
+          required: [r, g, b, brightness]
+          properties:
+            r: { type: integer }
+            g: { type: integer }
+            b: { type: integer }
+            brightness: { type: integer }
+
+    LedStripsInput:
+      type: object
+      properties:
+        strip1:
+          $ref: "#/components/schemas/LedStripInput"
+        strip2:
+          $ref: "#/components/schemas/LedStripInput"
+        sync:
+          type: boolean
+          description: Apply same values to both strips
+
+    LedStripInput:
+      type: object
+      properties:
+        r:
+          type: integer
+          minimum: 0
+          maximum: 255
+        g:
+          type: integer
+          minimum: 0
+          maximum: 255
+        b:
+          type: integer
+          minimum: 0
+          maximum: 255
+        brightness:
+          type: integer
+          minimum: 0
+          maximum: 255
+        enabled:
+          type: boolean
+
+    DiscState:
+      type: object
+      required:
+        - speed
+        - direction
+        - enabled
+        - channel
+      properties:
+        speed:
+          type: integer
+          minimum: 0
+          maximum: 255
+        direction:
+          type: string
+          enum: [cw, ccw, stop]
+        enabled:
+          type: boolean
+        channel:
+          type: integer
+
+    DiscInput:
+      type: object
+      properties:
+        speed:
+          type: integer
+          minimum: 0
+          maximum: 255
+        direction:
+          type: string
+          enum: [cw, ccw, stop]
+        enabled:
+          type: boolean
+
+    PainFaderState:
+      type: object
+      required:
+        - position
+        - dmxValue
+        - channel
+      properties:
+        position:
+          type: integer
+          minimum: 0
+          maximum: 4
+          description: Physical fader position (0=min, 4=max pain)
+        dmxValue:
+          type: integer
+          minimum: 0
+          maximum: 255
+        channel:
+          type: integer
+
+    PainFaderInput:
+      type: object
+      required:
+        - position
+      properties:
+        position:
+          type: integer
+          minimum: 0
+          maximum: 4
+
+    SceneInput:
+      type: object
+      required:
+        - scene
+      properties:
+        scene:
+          type: string
+          enum: [idle, warmup, experience_low, experience_mid, experience_high, blackout]
