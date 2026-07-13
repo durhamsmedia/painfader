@@ -17,6 +17,14 @@ export const DmxStateMode = {
   experience: 'experience',
 } as const;
 
+export type DmxStateIdleTimer = {
+  enabled: boolean;
+  timerSeconds: number;
+  /** @nullable */
+  remaining: number | null;
+  triggered: boolean;
+};
+
 export interface FanState {
   /**
      * @minimum 0
@@ -124,7 +132,6 @@ export interface DiscState {
 
 export interface PainFaderState {
   /**
-     * Physical fader position (0=min, 4=max pain)
      * @minimum 0
      * @maximum 4
      */
@@ -144,9 +151,11 @@ export interface DmxState {
   ledStrips: LedStripsState;
   disc: DiscState;
   painFader: PainFaderState;
-  /** Raw DMX channel values (512 channels, 0-255) */
   channels: number[];
   artnetConnected: boolean;
+  idleTimer: DmxStateIdleTimer;
+  /** @nullable */
+  hardwareLastSeen: number | null;
 }
 
 export interface DmxConfig {
@@ -240,7 +249,6 @@ export interface LedStripInput {
 export interface LedStripsInput {
   strip1?: LedStripInput;
   strip2?: LedStripInput;
-  /** Apply same values to both strips */
   sync?: boolean;
 }
 
@@ -285,5 +293,259 @@ export const SceneInputScene = {
 
 export interface SceneInput {
   scene: SceneInputScene;
+}
+
+export interface HardwareFaderInput {
+  /**
+     * Physical fader position sent by the hardware controller
+     * @minimum 0
+     * @maximum 4
+     */
+  position: number;
+}
+
+export type FaderPresetFan = {
+  /**
+     * @minimum 0
+     * @maximum 255
+     */
+  speed: number;
+  enabled: boolean;
+};
+
+export type FaderPresetLedMatrix = {
+  /**
+     * @minimum 0
+     * @maximum 255
+     */
+  r: number;
+  /**
+     * @minimum 0
+     * @maximum 255
+     */
+  g: number;
+  /**
+     * @minimum 0
+     * @maximum 255
+     */
+  b: number;
+  /**
+     * @minimum 0
+     * @maximum 255
+     */
+  brightness: number;
+  /**
+     * @minimum 0
+     * @maximum 255
+     */
+  pattern: number;
+  enabled: boolean;
+};
+
+export type FaderPresetLedStrip1 = {
+  /**
+     * @minimum 0
+     * @maximum 255
+     */
+  r: number;
+  /**
+     * @minimum 0
+     * @maximum 255
+     */
+  g: number;
+  /**
+     * @minimum 0
+     * @maximum 255
+     */
+  b: number;
+  /**
+     * @minimum 0
+     * @maximum 255
+     */
+  brightness: number;
+  enabled: boolean;
+};
+
+export type FaderPresetLedStrip2 = {
+  /**
+     * @minimum 0
+     * @maximum 255
+     */
+  r: number;
+  /**
+     * @minimum 0
+     * @maximum 255
+     */
+  g: number;
+  /**
+     * @minimum 0
+     * @maximum 255
+     */
+  b: number;
+  /**
+     * @minimum 0
+     * @maximum 255
+     */
+  brightness: number;
+  enabled: boolean;
+};
+
+export type FaderPresetDiscDirection = typeof FaderPresetDiscDirection[keyof typeof FaderPresetDiscDirection];
+
+
+export const FaderPresetDiscDirection = {
+  cw: 'cw',
+  ccw: 'ccw',
+  stop: 'stop',
+} as const;
+
+export type FaderPresetDisc = {
+  /**
+     * @minimum 0
+     * @maximum 255
+     */
+  speed: number;
+  direction: FaderPresetDiscDirection;
+  enabled: boolean;
+};
+
+export interface FaderPreset {
+  name: string;
+  fan: FaderPresetFan;
+  ledMatrix: FaderPresetLedMatrix;
+  ledStrip1: FaderPresetLedStrip1;
+  ledStrip2: FaderPresetLedStrip2;
+  disc: FaderPresetDisc;
+}
+
+export type FaderPresetInputFan = {
+  /**
+     * @minimum 0
+     * @maximum 255
+     */
+  speed?: number;
+  enabled?: boolean;
+};
+
+export type FaderPresetInputLedMatrix = {
+  /**
+     * @minimum 0
+     * @maximum 255
+     */
+  r?: number;
+  /**
+     * @minimum 0
+     * @maximum 255
+     */
+  g?: number;
+  /**
+     * @minimum 0
+     * @maximum 255
+     */
+  b?: number;
+  /**
+     * @minimum 0
+     * @maximum 255
+     */
+  brightness?: number;
+  /**
+     * @minimum 0
+     * @maximum 255
+     */
+  pattern?: number;
+  enabled?: boolean;
+};
+
+export type FaderPresetInputLedStrip1 = {
+  /**
+     * @minimum 0
+     * @maximum 255
+     */
+  r?: number;
+  /**
+     * @minimum 0
+     * @maximum 255
+     */
+  g?: number;
+  /**
+     * @minimum 0
+     * @maximum 255
+     */
+  b?: number;
+  /**
+     * @minimum 0
+     * @maximum 255
+     */
+  brightness?: number;
+  enabled?: boolean;
+};
+
+export type FaderPresetInputLedStrip2 = {
+  /**
+     * @minimum 0
+     * @maximum 255
+     */
+  r?: number;
+  /**
+     * @minimum 0
+     * @maximum 255
+     */
+  g?: number;
+  /**
+     * @minimum 0
+     * @maximum 255
+     */
+  b?: number;
+  /**
+     * @minimum 0
+     * @maximum 255
+     */
+  brightness?: number;
+  enabled?: boolean;
+};
+
+export type FaderPresetInputDiscDirection = typeof FaderPresetInputDiscDirection[keyof typeof FaderPresetInputDiscDirection];
+
+
+export const FaderPresetInputDiscDirection = {
+  cw: 'cw',
+  ccw: 'ccw',
+  stop: 'stop',
+} as const;
+
+export type FaderPresetInputDisc = {
+  /**
+     * @minimum 0
+     * @maximum 255
+     */
+  speed?: number;
+  direction?: FaderPresetInputDiscDirection;
+  enabled?: boolean;
+};
+
+export interface FaderPresetInput {
+  name?: string;
+  fan?: FaderPresetInputFan;
+  ledMatrix?: FaderPresetInputLedMatrix;
+  ledStrip1?: FaderPresetInputLedStrip1;
+  ledStrip2?: FaderPresetInputLedStrip2;
+  disc?: FaderPresetInputDisc;
+}
+
+export interface PresetsState {
+  /** Presets for fader positions 0-4 (array index = position) */
+  positions: FaderPreset[];
+  idlePreset: FaderPreset;
+  idleTimerSeconds: number;
+  idleTimerEnabled: boolean;
+}
+
+export interface PresetTimerInput {
+  /**
+     * @minimum 1
+     * @maximum 3600
+     */
+  timerSeconds?: number;
+  enabled?: boolean;
 }
 

@@ -9,7 +9,6 @@ import * as zod from 'zod';
 
 
 /**
- * Returns server health status
  * @summary Health check
  */
 export const HealthCheckResponse = zod.object({
@@ -18,7 +17,6 @@ export const HealthCheckResponse = zod.object({
 
 
 /**
- * Returns the current DMX channel values and mode
  * @summary Get full DMX state
  */
 export const getDmxStateResponseFanSpeedMin = 0;
@@ -131,17 +129,23 @@ export const GetDmxStateResponse = zod.object({
   "channel": zod.number()
 }),
   "painFader": zod.object({
-  "position": zod.number().min(getDmxStateResponsePainFaderPositionMin).max(getDmxStateResponsePainFaderPositionMax).describe('Physical fader position (0=min, 4=max pain)'),
+  "position": zod.number().min(getDmxStateResponsePainFaderPositionMin).max(getDmxStateResponsePainFaderPositionMax),
   "dmxValue": zod.number().min(getDmxStateResponsePainFaderDmxValueMin).max(getDmxStateResponsePainFaderDmxValueMax),
   "channel": zod.number()
 }),
-  "channels": zod.array(zod.number()).describe('Raw DMX channel values (512 channels, 0-255)'),
-  "artnetConnected": zod.boolean()
+  "channels": zod.array(zod.number()),
+  "artnetConnected": zod.boolean(),
+  "idleTimer": zod.object({
+  "enabled": zod.boolean(),
+  "timerSeconds": zod.number(),
+  "remaining": zod.number().nullable(),
+  "triggered": zod.boolean()
+}),
+  "hardwareLastSeen": zod.number().nullable()
 })
 
 
 /**
- * Returns the current Art-Net/DMX output configuration
  * @summary Get Art-Net config
  */
 export const GetDmxConfigResponse = zod.object({
@@ -153,7 +157,6 @@ export const GetDmxConfigResponse = zod.object({
 
 
 /**
- * Update Art-Net host/universe/port settings
  * @summary Update Art-Net config
  */
 export const UpdateDmxConfigBody = zod.object({
@@ -172,7 +175,6 @@ export const UpdateDmxConfigResponse = zod.object({
 
 
 /**
- * Switch between Idle and Experience mode
  * @summary Set operating mode
  */
 export const SetModeBody = zod.object({
@@ -289,12 +291,19 @@ export const SetModeResponse = zod.object({
   "channel": zod.number()
 }),
   "painFader": zod.object({
-  "position": zod.number().min(setModeResponsePainFaderPositionMin).max(setModeResponsePainFaderPositionMax).describe('Physical fader position (0=min, 4=max pain)'),
+  "position": zod.number().min(setModeResponsePainFaderPositionMin).max(setModeResponsePainFaderPositionMax),
   "dmxValue": zod.number().min(setModeResponsePainFaderDmxValueMin).max(setModeResponsePainFaderDmxValueMax),
   "channel": zod.number()
 }),
-  "channels": zod.array(zod.number()).describe('Raw DMX channel values (512 channels, 0-255)'),
-  "artnetConnected": zod.boolean()
+  "channels": zod.array(zod.number()),
+  "artnetConnected": zod.boolean(),
+  "idleTimer": zod.object({
+  "enabled": zod.boolean(),
+  "timerSeconds": zod.number(),
+  "remaining": zod.number().nullable(),
+  "triggered": zod.boolean()
+}),
+  "hardwareLastSeen": zod.number().nullable()
 })
 
 
@@ -421,12 +430,19 @@ export const SetFanResponse = zod.object({
   "channel": zod.number()
 }),
   "painFader": zod.object({
-  "position": zod.number().min(setFanResponsePainFaderPositionMin).max(setFanResponsePainFaderPositionMax).describe('Physical fader position (0=min, 4=max pain)'),
+  "position": zod.number().min(setFanResponsePainFaderPositionMin).max(setFanResponsePainFaderPositionMax),
   "dmxValue": zod.number().min(setFanResponsePainFaderDmxValueMin).max(setFanResponsePainFaderDmxValueMax),
   "channel": zod.number()
 }),
-  "channels": zod.array(zod.number()).describe('Raw DMX channel values (512 channels, 0-255)'),
-  "artnetConnected": zod.boolean()
+  "channels": zod.array(zod.number()),
+  "artnetConnected": zod.boolean(),
+  "idleTimer": zod.object({
+  "enabled": zod.boolean(),
+  "timerSeconds": zod.number(),
+  "remaining": zod.number().nullable(),
+  "triggered": zod.boolean()
+}),
+  "hardwareLastSeen": zod.number().nullable()
 })
 
 
@@ -569,12 +585,19 @@ export const SetLedMatrixResponse = zod.object({
   "channel": zod.number()
 }),
   "painFader": zod.object({
-  "position": zod.number().min(setLedMatrixResponsePainFaderPositionMin).max(setLedMatrixResponsePainFaderPositionMax).describe('Physical fader position (0=min, 4=max pain)'),
+  "position": zod.number().min(setLedMatrixResponsePainFaderPositionMin).max(setLedMatrixResponsePainFaderPositionMax),
   "dmxValue": zod.number().min(setLedMatrixResponsePainFaderDmxValueMin).max(setLedMatrixResponsePainFaderDmxValueMax),
   "channel": zod.number()
 }),
-  "channels": zod.array(zod.number()).describe('Raw DMX channel values (512 channels, 0-255)'),
-  "artnetConnected": zod.boolean()
+  "channels": zod.array(zod.number()),
+  "artnetConnected": zod.boolean(),
+  "idleTimer": zod.object({
+  "enabled": zod.boolean(),
+  "timerSeconds": zod.number(),
+  "remaining": zod.number().nullable(),
+  "triggered": zod.boolean()
+}),
+  "hardwareLastSeen": zod.number().nullable()
 })
 
 
@@ -622,7 +645,7 @@ export const SetLedStripsBody = zod.object({
   "brightness": zod.number().min(setLedStripsBodyStrip2BrightnessMin).max(setLedStripsBodyStrip2BrightnessMax).optional(),
   "enabled": zod.boolean().optional()
 }).optional(),
-  "sync": zod.boolean().optional().describe('Apply same values to both strips')
+  "sync": zod.boolean().optional()
 })
 
 export const setLedStripsResponseFanSpeedMin = 0;
@@ -735,12 +758,19 @@ export const SetLedStripsResponse = zod.object({
   "channel": zod.number()
 }),
   "painFader": zod.object({
-  "position": zod.number().min(setLedStripsResponsePainFaderPositionMin).max(setLedStripsResponsePainFaderPositionMax).describe('Physical fader position (0=min, 4=max pain)'),
+  "position": zod.number().min(setLedStripsResponsePainFaderPositionMin).max(setLedStripsResponsePainFaderPositionMax),
   "dmxValue": zod.number().min(setLedStripsResponsePainFaderDmxValueMin).max(setLedStripsResponsePainFaderDmxValueMax),
   "channel": zod.number()
 }),
-  "channels": zod.array(zod.number()).describe('Raw DMX channel values (512 channels, 0-255)'),
-  "artnetConnected": zod.boolean()
+  "channels": zod.array(zod.number()),
+  "artnetConnected": zod.boolean(),
+  "idleTimer": zod.object({
+  "enabled": zod.boolean(),
+  "timerSeconds": zod.number(),
+  "remaining": zod.number().nullable(),
+  "triggered": zod.boolean()
+}),
+  "hardwareLastSeen": zod.number().nullable()
 })
 
 
@@ -868,12 +898,19 @@ export const SetDiscResponse = zod.object({
   "channel": zod.number()
 }),
   "painFader": zod.object({
-  "position": zod.number().min(setDiscResponsePainFaderPositionMin).max(setDiscResponsePainFaderPositionMax).describe('Physical fader position (0=min, 4=max pain)'),
+  "position": zod.number().min(setDiscResponsePainFaderPositionMin).max(setDiscResponsePainFaderPositionMax),
   "dmxValue": zod.number().min(setDiscResponsePainFaderDmxValueMin).max(setDiscResponsePainFaderDmxValueMax),
   "channel": zod.number()
 }),
-  "channels": zod.array(zod.number()).describe('Raw DMX channel values (512 channels, 0-255)'),
-  "artnetConnected": zod.boolean()
+  "channels": zod.array(zod.number()),
+  "artnetConnected": zod.boolean(),
+  "idleTimer": zod.object({
+  "enabled": zod.boolean(),
+  "timerSeconds": zod.number(),
+  "remaining": zod.number().nullable(),
+  "triggered": zod.boolean()
+}),
+  "hardwareLastSeen": zod.number().nullable()
 })
 
 
@@ -999,12 +1036,19 @@ export const SetPainFaderResponse = zod.object({
   "channel": zod.number()
 }),
   "painFader": zod.object({
-  "position": zod.number().min(setPainFaderResponsePainFaderPositionMin).max(setPainFaderResponsePainFaderPositionMax).describe('Physical fader position (0=min, 4=max pain)'),
+  "position": zod.number().min(setPainFaderResponsePainFaderPositionMin).max(setPainFaderResponsePainFaderPositionMax),
   "dmxValue": zod.number().min(setPainFaderResponsePainFaderDmxValueMin).max(setPainFaderResponsePainFaderDmxValueMax),
   "channel": zod.number()
 }),
-  "channels": zod.array(zod.number()).describe('Raw DMX channel values (512 channels, 0-255)'),
-  "artnetConnected": zod.boolean()
+  "channels": zod.array(zod.number()),
+  "artnetConnected": zod.boolean(),
+  "idleTimer": zod.object({
+  "enabled": zod.boolean(),
+  "timerSeconds": zod.number(),
+  "remaining": zod.number().nullable(),
+  "triggered": zod.boolean()
+}),
+  "hardwareLastSeen": zod.number().nullable()
 })
 
 
@@ -1125,12 +1169,19 @@ export const LoadSceneResponse = zod.object({
   "channel": zod.number()
 }),
   "painFader": zod.object({
-  "position": zod.number().min(loadSceneResponsePainFaderPositionMin).max(loadSceneResponsePainFaderPositionMax).describe('Physical fader position (0=min, 4=max pain)'),
+  "position": zod.number().min(loadSceneResponsePainFaderPositionMin).max(loadSceneResponsePainFaderPositionMax),
   "dmxValue": zod.number().min(loadSceneResponsePainFaderDmxValueMin).max(loadSceneResponsePainFaderDmxValueMax),
   "channel": zod.number()
 }),
-  "channels": zod.array(zod.number()).describe('Raw DMX channel values (512 channels, 0-255)'),
-  "artnetConnected": zod.boolean()
+  "channels": zod.array(zod.number()),
+  "artnetConnected": zod.boolean(),
+  "idleTimer": zod.object({
+  "enabled": zod.boolean(),
+  "timerSeconds": zod.number(),
+  "remaining": zod.number().nullable(),
+  "triggered": zod.boolean()
+}),
+  "hardwareLastSeen": zod.number().nullable()
 })
 
 
@@ -1247,12 +1298,936 @@ export const BlackoutResponse = zod.object({
   "channel": zod.number()
 }),
   "painFader": zod.object({
-  "position": zod.number().min(blackoutResponsePainFaderPositionMin).max(blackoutResponsePainFaderPositionMax).describe('Physical fader position (0=min, 4=max pain)'),
+  "position": zod.number().min(blackoutResponsePainFaderPositionMin).max(blackoutResponsePainFaderPositionMax),
   "dmxValue": zod.number().min(blackoutResponsePainFaderDmxValueMin).max(blackoutResponsePainFaderDmxValueMax),
   "channel": zod.number()
 }),
-  "channels": zod.array(zod.number()).describe('Raw DMX channel values (512 channels, 0-255)'),
-  "artnetConnected": zod.boolean()
+  "channels": zod.array(zod.number()),
+  "artnetConnected": zod.boolean(),
+  "idleTimer": zod.object({
+  "enabled": zod.boolean(),
+  "timerSeconds": zod.number(),
+  "remaining": zod.number().nullable(),
+  "triggered": zod.boolean()
+}),
+  "hardwareLastSeen": zod.number().nullable()
+})
+
+
+/**
+ * POST this from a microcontroller (Arduino, Raspberry Pi, etc.) when the physical fader moves.
+ * Automatically applies the configured preset for that position and starts the idle timer when position returns to 0.
+ * Example: POST /api/dmx/hardware-fader  { "position": 2 }
+ * @summary Receive position from physical hardware fader
+ */
+export const hardwareFaderInputBodyPositionMin = 0;
+export const hardwareFaderInputBodyPositionMax = 4;
+
+
+
+export const HardwareFaderInputBody = zod.object({
+  "position": zod.number().min(hardwareFaderInputBodyPositionMin).max(hardwareFaderInputBodyPositionMax).describe('Physical fader position sent by the hardware controller')
+})
+
+export const hardwareFaderInputResponseFanSpeedMin = 0;
+export const hardwareFaderInputResponseFanSpeedMax = 255;
+
+export const hardwareFaderInputResponseLedMatrixRMin = 0;
+export const hardwareFaderInputResponseLedMatrixRMax = 255;
+
+export const hardwareFaderInputResponseLedMatrixGMin = 0;
+export const hardwareFaderInputResponseLedMatrixGMax = 255;
+
+export const hardwareFaderInputResponseLedMatrixBMin = 0;
+export const hardwareFaderInputResponseLedMatrixBMax = 255;
+
+export const hardwareFaderInputResponseLedMatrixBrightnessMin = 0;
+export const hardwareFaderInputResponseLedMatrixBrightnessMax = 255;
+
+export const hardwareFaderInputResponseLedMatrixPatternMin = 0;
+export const hardwareFaderInputResponseLedMatrixPatternMax = 255;
+
+export const hardwareFaderInputResponseLedStripsStrip1RMin = 0;
+export const hardwareFaderInputResponseLedStripsStrip1RMax = 255;
+
+export const hardwareFaderInputResponseLedStripsStrip1GMin = 0;
+export const hardwareFaderInputResponseLedStripsStrip1GMax = 255;
+
+export const hardwareFaderInputResponseLedStripsStrip1BMin = 0;
+export const hardwareFaderInputResponseLedStripsStrip1BMax = 255;
+
+export const hardwareFaderInputResponseLedStripsStrip1BrightnessMin = 0;
+export const hardwareFaderInputResponseLedStripsStrip1BrightnessMax = 255;
+
+export const hardwareFaderInputResponseLedStripsStrip2RMin = 0;
+export const hardwareFaderInputResponseLedStripsStrip2RMax = 255;
+
+export const hardwareFaderInputResponseLedStripsStrip2GMin = 0;
+export const hardwareFaderInputResponseLedStripsStrip2GMax = 255;
+
+export const hardwareFaderInputResponseLedStripsStrip2BMin = 0;
+export const hardwareFaderInputResponseLedStripsStrip2BMax = 255;
+
+export const hardwareFaderInputResponseLedStripsStrip2BrightnessMin = 0;
+export const hardwareFaderInputResponseLedStripsStrip2BrightnessMax = 255;
+
+export const hardwareFaderInputResponseDiscSpeedMin = 0;
+export const hardwareFaderInputResponseDiscSpeedMax = 255;
+
+export const hardwareFaderInputResponsePainFaderPositionMin = 0;
+export const hardwareFaderInputResponsePainFaderPositionMax = 4;
+
+export const hardwareFaderInputResponsePainFaderDmxValueMin = 0;
+export const hardwareFaderInputResponsePainFaderDmxValueMax = 255;
+
+
+
+export const HardwareFaderInputResponse = zod.object({
+  "mode": zod.enum(['idle', 'experience']),
+  "fan": zod.object({
+  "speed": zod.number().min(hardwareFaderInputResponseFanSpeedMin).max(hardwareFaderInputResponseFanSpeedMax),
+  "enabled": zod.boolean(),
+  "channel": zod.number()
+}),
+  "ledMatrix": zod.object({
+  "r": zod.number().min(hardwareFaderInputResponseLedMatrixRMin).max(hardwareFaderInputResponseLedMatrixRMax),
+  "g": zod.number().min(hardwareFaderInputResponseLedMatrixGMin).max(hardwareFaderInputResponseLedMatrixGMax),
+  "b": zod.number().min(hardwareFaderInputResponseLedMatrixBMin).max(hardwareFaderInputResponseLedMatrixBMax),
+  "brightness": zod.number().min(hardwareFaderInputResponseLedMatrixBrightnessMin).max(hardwareFaderInputResponseLedMatrixBrightnessMax),
+  "pattern": zod.number().min(hardwareFaderInputResponseLedMatrixPatternMin).max(hardwareFaderInputResponseLedMatrixPatternMax),
+  "enabled": zod.boolean(),
+  "channels": zod.object({
+  "r": zod.number(),
+  "g": zod.number(),
+  "b": zod.number(),
+  "brightness": zod.number(),
+  "pattern": zod.number()
+})
+}),
+  "ledStrips": zod.object({
+  "strip1": zod.object({
+  "r": zod.number().min(hardwareFaderInputResponseLedStripsStrip1RMin).max(hardwareFaderInputResponseLedStripsStrip1RMax),
+  "g": zod.number().min(hardwareFaderInputResponseLedStripsStrip1GMin).max(hardwareFaderInputResponseLedStripsStrip1GMax),
+  "b": zod.number().min(hardwareFaderInputResponseLedStripsStrip1BMin).max(hardwareFaderInputResponseLedStripsStrip1BMax),
+  "brightness": zod.number().min(hardwareFaderInputResponseLedStripsStrip1BrightnessMin).max(hardwareFaderInputResponseLedStripsStrip1BrightnessMax),
+  "enabled": zod.boolean(),
+  "channels": zod.object({
+  "r": zod.number(),
+  "g": zod.number(),
+  "b": zod.number(),
+  "brightness": zod.number()
+})
+}),
+  "strip2": zod.object({
+  "r": zod.number().min(hardwareFaderInputResponseLedStripsStrip2RMin).max(hardwareFaderInputResponseLedStripsStrip2RMax),
+  "g": zod.number().min(hardwareFaderInputResponseLedStripsStrip2GMin).max(hardwareFaderInputResponseLedStripsStrip2GMax),
+  "b": zod.number().min(hardwareFaderInputResponseLedStripsStrip2BMin).max(hardwareFaderInputResponseLedStripsStrip2BMax),
+  "brightness": zod.number().min(hardwareFaderInputResponseLedStripsStrip2BrightnessMin).max(hardwareFaderInputResponseLedStripsStrip2BrightnessMax),
+  "enabled": zod.boolean(),
+  "channels": zod.object({
+  "r": zod.number(),
+  "g": zod.number(),
+  "b": zod.number(),
+  "brightness": zod.number()
+})
+})
+}),
+  "disc": zod.object({
+  "speed": zod.number().min(hardwareFaderInputResponseDiscSpeedMin).max(hardwareFaderInputResponseDiscSpeedMax),
+  "direction": zod.enum(['cw', 'ccw', 'stop']),
+  "enabled": zod.boolean(),
+  "channel": zod.number()
+}),
+  "painFader": zod.object({
+  "position": zod.number().min(hardwareFaderInputResponsePainFaderPositionMin).max(hardwareFaderInputResponsePainFaderPositionMax),
+  "dmxValue": zod.number().min(hardwareFaderInputResponsePainFaderDmxValueMin).max(hardwareFaderInputResponsePainFaderDmxValueMax),
+  "channel": zod.number()
+}),
+  "channels": zod.array(zod.number()),
+  "artnetConnected": zod.boolean(),
+  "idleTimer": zod.object({
+  "enabled": zod.boolean(),
+  "timerSeconds": zod.number(),
+  "remaining": zod.number().nullable(),
+  "triggered": zod.boolean()
+}),
+  "hardwareLastSeen": zod.number().nullable()
+})
+
+
+/**
+ * @summary Get all fader position presets
+ */
+export const getPresetsResponsePositionsItemFanSpeedMin = 0;
+export const getPresetsResponsePositionsItemFanSpeedMax = 255;
+
+export const getPresetsResponsePositionsItemLedMatrixRMin = 0;
+export const getPresetsResponsePositionsItemLedMatrixRMax = 255;
+
+export const getPresetsResponsePositionsItemLedMatrixGMin = 0;
+export const getPresetsResponsePositionsItemLedMatrixGMax = 255;
+
+export const getPresetsResponsePositionsItemLedMatrixBMin = 0;
+export const getPresetsResponsePositionsItemLedMatrixBMax = 255;
+
+export const getPresetsResponsePositionsItemLedMatrixBrightnessMin = 0;
+export const getPresetsResponsePositionsItemLedMatrixBrightnessMax = 255;
+
+export const getPresetsResponsePositionsItemLedMatrixPatternMin = 0;
+export const getPresetsResponsePositionsItemLedMatrixPatternMax = 255;
+
+export const getPresetsResponsePositionsItemLedStrip1RMin = 0;
+export const getPresetsResponsePositionsItemLedStrip1RMax = 255;
+
+export const getPresetsResponsePositionsItemLedStrip1GMin = 0;
+export const getPresetsResponsePositionsItemLedStrip1GMax = 255;
+
+export const getPresetsResponsePositionsItemLedStrip1BMin = 0;
+export const getPresetsResponsePositionsItemLedStrip1BMax = 255;
+
+export const getPresetsResponsePositionsItemLedStrip1BrightnessMin = 0;
+export const getPresetsResponsePositionsItemLedStrip1BrightnessMax = 255;
+
+export const getPresetsResponsePositionsItemLedStrip2RMin = 0;
+export const getPresetsResponsePositionsItemLedStrip2RMax = 255;
+
+export const getPresetsResponsePositionsItemLedStrip2GMin = 0;
+export const getPresetsResponsePositionsItemLedStrip2GMax = 255;
+
+export const getPresetsResponsePositionsItemLedStrip2BMin = 0;
+export const getPresetsResponsePositionsItemLedStrip2BMax = 255;
+
+export const getPresetsResponsePositionsItemLedStrip2BrightnessMin = 0;
+export const getPresetsResponsePositionsItemLedStrip2BrightnessMax = 255;
+
+export const getPresetsResponsePositionsItemDiscSpeedMin = 0;
+export const getPresetsResponsePositionsItemDiscSpeedMax = 255;
+
+export const getPresetsResponseIdlePresetFanSpeedMin = 0;
+export const getPresetsResponseIdlePresetFanSpeedMax = 255;
+
+export const getPresetsResponseIdlePresetLedMatrixRMin = 0;
+export const getPresetsResponseIdlePresetLedMatrixRMax = 255;
+
+export const getPresetsResponseIdlePresetLedMatrixGMin = 0;
+export const getPresetsResponseIdlePresetLedMatrixGMax = 255;
+
+export const getPresetsResponseIdlePresetLedMatrixBMin = 0;
+export const getPresetsResponseIdlePresetLedMatrixBMax = 255;
+
+export const getPresetsResponseIdlePresetLedMatrixBrightnessMin = 0;
+export const getPresetsResponseIdlePresetLedMatrixBrightnessMax = 255;
+
+export const getPresetsResponseIdlePresetLedMatrixPatternMin = 0;
+export const getPresetsResponseIdlePresetLedMatrixPatternMax = 255;
+
+export const getPresetsResponseIdlePresetLedStrip1RMin = 0;
+export const getPresetsResponseIdlePresetLedStrip1RMax = 255;
+
+export const getPresetsResponseIdlePresetLedStrip1GMin = 0;
+export const getPresetsResponseIdlePresetLedStrip1GMax = 255;
+
+export const getPresetsResponseIdlePresetLedStrip1BMin = 0;
+export const getPresetsResponseIdlePresetLedStrip1BMax = 255;
+
+export const getPresetsResponseIdlePresetLedStrip1BrightnessMin = 0;
+export const getPresetsResponseIdlePresetLedStrip1BrightnessMax = 255;
+
+export const getPresetsResponseIdlePresetLedStrip2RMin = 0;
+export const getPresetsResponseIdlePresetLedStrip2RMax = 255;
+
+export const getPresetsResponseIdlePresetLedStrip2GMin = 0;
+export const getPresetsResponseIdlePresetLedStrip2GMax = 255;
+
+export const getPresetsResponseIdlePresetLedStrip2BMin = 0;
+export const getPresetsResponseIdlePresetLedStrip2BMax = 255;
+
+export const getPresetsResponseIdlePresetLedStrip2BrightnessMin = 0;
+export const getPresetsResponseIdlePresetLedStrip2BrightnessMax = 255;
+
+export const getPresetsResponseIdlePresetDiscSpeedMin = 0;
+export const getPresetsResponseIdlePresetDiscSpeedMax = 255;
+
+
+
+export const GetPresetsResponse = zod.object({
+  "positions": zod.array(zod.object({
+  "name": zod.string(),
+  "fan": zod.object({
+  "speed": zod.number().min(getPresetsResponsePositionsItemFanSpeedMin).max(getPresetsResponsePositionsItemFanSpeedMax),
+  "enabled": zod.boolean()
+}),
+  "ledMatrix": zod.object({
+  "r": zod.number().min(getPresetsResponsePositionsItemLedMatrixRMin).max(getPresetsResponsePositionsItemLedMatrixRMax),
+  "g": zod.number().min(getPresetsResponsePositionsItemLedMatrixGMin).max(getPresetsResponsePositionsItemLedMatrixGMax),
+  "b": zod.number().min(getPresetsResponsePositionsItemLedMatrixBMin).max(getPresetsResponsePositionsItemLedMatrixBMax),
+  "brightness": zod.number().min(getPresetsResponsePositionsItemLedMatrixBrightnessMin).max(getPresetsResponsePositionsItemLedMatrixBrightnessMax),
+  "pattern": zod.number().min(getPresetsResponsePositionsItemLedMatrixPatternMin).max(getPresetsResponsePositionsItemLedMatrixPatternMax),
+  "enabled": zod.boolean()
+}),
+  "ledStrip1": zod.object({
+  "r": zod.number().min(getPresetsResponsePositionsItemLedStrip1RMin).max(getPresetsResponsePositionsItemLedStrip1RMax),
+  "g": zod.number().min(getPresetsResponsePositionsItemLedStrip1GMin).max(getPresetsResponsePositionsItemLedStrip1GMax),
+  "b": zod.number().min(getPresetsResponsePositionsItemLedStrip1BMin).max(getPresetsResponsePositionsItemLedStrip1BMax),
+  "brightness": zod.number().min(getPresetsResponsePositionsItemLedStrip1BrightnessMin).max(getPresetsResponsePositionsItemLedStrip1BrightnessMax),
+  "enabled": zod.boolean()
+}),
+  "ledStrip2": zod.object({
+  "r": zod.number().min(getPresetsResponsePositionsItemLedStrip2RMin).max(getPresetsResponsePositionsItemLedStrip2RMax),
+  "g": zod.number().min(getPresetsResponsePositionsItemLedStrip2GMin).max(getPresetsResponsePositionsItemLedStrip2GMax),
+  "b": zod.number().min(getPresetsResponsePositionsItemLedStrip2BMin).max(getPresetsResponsePositionsItemLedStrip2BMax),
+  "brightness": zod.number().min(getPresetsResponsePositionsItemLedStrip2BrightnessMin).max(getPresetsResponsePositionsItemLedStrip2BrightnessMax),
+  "enabled": zod.boolean()
+}),
+  "disc": zod.object({
+  "speed": zod.number().min(getPresetsResponsePositionsItemDiscSpeedMin).max(getPresetsResponsePositionsItemDiscSpeedMax),
+  "direction": zod.enum(['cw', 'ccw', 'stop']),
+  "enabled": zod.boolean()
+})
+})).describe('Presets for fader positions 0-4 (array index = position)'),
+  "idlePreset": zod.object({
+  "name": zod.string(),
+  "fan": zod.object({
+  "speed": zod.number().min(getPresetsResponseIdlePresetFanSpeedMin).max(getPresetsResponseIdlePresetFanSpeedMax),
+  "enabled": zod.boolean()
+}),
+  "ledMatrix": zod.object({
+  "r": zod.number().min(getPresetsResponseIdlePresetLedMatrixRMin).max(getPresetsResponseIdlePresetLedMatrixRMax),
+  "g": zod.number().min(getPresetsResponseIdlePresetLedMatrixGMin).max(getPresetsResponseIdlePresetLedMatrixGMax),
+  "b": zod.number().min(getPresetsResponseIdlePresetLedMatrixBMin).max(getPresetsResponseIdlePresetLedMatrixBMax),
+  "brightness": zod.number().min(getPresetsResponseIdlePresetLedMatrixBrightnessMin).max(getPresetsResponseIdlePresetLedMatrixBrightnessMax),
+  "pattern": zod.number().min(getPresetsResponseIdlePresetLedMatrixPatternMin).max(getPresetsResponseIdlePresetLedMatrixPatternMax),
+  "enabled": zod.boolean()
+}),
+  "ledStrip1": zod.object({
+  "r": zod.number().min(getPresetsResponseIdlePresetLedStrip1RMin).max(getPresetsResponseIdlePresetLedStrip1RMax),
+  "g": zod.number().min(getPresetsResponseIdlePresetLedStrip1GMin).max(getPresetsResponseIdlePresetLedStrip1GMax),
+  "b": zod.number().min(getPresetsResponseIdlePresetLedStrip1BMin).max(getPresetsResponseIdlePresetLedStrip1BMax),
+  "brightness": zod.number().min(getPresetsResponseIdlePresetLedStrip1BrightnessMin).max(getPresetsResponseIdlePresetLedStrip1BrightnessMax),
+  "enabled": zod.boolean()
+}),
+  "ledStrip2": zod.object({
+  "r": zod.number().min(getPresetsResponseIdlePresetLedStrip2RMin).max(getPresetsResponseIdlePresetLedStrip2RMax),
+  "g": zod.number().min(getPresetsResponseIdlePresetLedStrip2GMin).max(getPresetsResponseIdlePresetLedStrip2GMax),
+  "b": zod.number().min(getPresetsResponseIdlePresetLedStrip2BMin).max(getPresetsResponseIdlePresetLedStrip2BMax),
+  "brightness": zod.number().min(getPresetsResponseIdlePresetLedStrip2BrightnessMin).max(getPresetsResponseIdlePresetLedStrip2BrightnessMax),
+  "enabled": zod.boolean()
+}),
+  "disc": zod.object({
+  "speed": zod.number().min(getPresetsResponseIdlePresetDiscSpeedMin).max(getPresetsResponseIdlePresetDiscSpeedMax),
+  "direction": zod.enum(['cw', 'ccw', 'stop']),
+  "enabled": zod.boolean()
+})
+}),
+  "idleTimerSeconds": zod.number(),
+  "idleTimerEnabled": zod.boolean()
+})
+
+
+/**
+ * @summary Save a preset for a fader position (0-4) or idle
+ */
+export const UpdatePresetParams = zod.object({
+  "position": zod.coerce.string().describe('Fader position: 0, 1, 2, 3, 4, or idle')
+})
+
+export const updatePresetBodyFanSpeedMin = 0;
+export const updatePresetBodyFanSpeedMax = 255;
+
+export const updatePresetBodyLedMatrixRMin = 0;
+export const updatePresetBodyLedMatrixRMax = 255;
+
+export const updatePresetBodyLedMatrixGMin = 0;
+export const updatePresetBodyLedMatrixGMax = 255;
+
+export const updatePresetBodyLedMatrixBMin = 0;
+export const updatePresetBodyLedMatrixBMax = 255;
+
+export const updatePresetBodyLedMatrixBrightnessMin = 0;
+export const updatePresetBodyLedMatrixBrightnessMax = 255;
+
+export const updatePresetBodyLedMatrixPatternMin = 0;
+export const updatePresetBodyLedMatrixPatternMax = 255;
+
+export const updatePresetBodyLedStrip1RMin = 0;
+export const updatePresetBodyLedStrip1RMax = 255;
+
+export const updatePresetBodyLedStrip1GMin = 0;
+export const updatePresetBodyLedStrip1GMax = 255;
+
+export const updatePresetBodyLedStrip1BMin = 0;
+export const updatePresetBodyLedStrip1BMax = 255;
+
+export const updatePresetBodyLedStrip1BrightnessMin = 0;
+export const updatePresetBodyLedStrip1BrightnessMax = 255;
+
+export const updatePresetBodyLedStrip2RMin = 0;
+export const updatePresetBodyLedStrip2RMax = 255;
+
+export const updatePresetBodyLedStrip2GMin = 0;
+export const updatePresetBodyLedStrip2GMax = 255;
+
+export const updatePresetBodyLedStrip2BMin = 0;
+export const updatePresetBodyLedStrip2BMax = 255;
+
+export const updatePresetBodyLedStrip2BrightnessMin = 0;
+export const updatePresetBodyLedStrip2BrightnessMax = 255;
+
+export const updatePresetBodyDiscSpeedMin = 0;
+export const updatePresetBodyDiscSpeedMax = 255;
+
+
+
+export const UpdatePresetBody = zod.object({
+  "name": zod.string().optional(),
+  "fan": zod.object({
+  "speed": zod.number().min(updatePresetBodyFanSpeedMin).max(updatePresetBodyFanSpeedMax).optional(),
+  "enabled": zod.boolean().optional()
+}).optional(),
+  "ledMatrix": zod.object({
+  "r": zod.number().min(updatePresetBodyLedMatrixRMin).max(updatePresetBodyLedMatrixRMax).optional(),
+  "g": zod.number().min(updatePresetBodyLedMatrixGMin).max(updatePresetBodyLedMatrixGMax).optional(),
+  "b": zod.number().min(updatePresetBodyLedMatrixBMin).max(updatePresetBodyLedMatrixBMax).optional(),
+  "brightness": zod.number().min(updatePresetBodyLedMatrixBrightnessMin).max(updatePresetBodyLedMatrixBrightnessMax).optional(),
+  "pattern": zod.number().min(updatePresetBodyLedMatrixPatternMin).max(updatePresetBodyLedMatrixPatternMax).optional(),
+  "enabled": zod.boolean().optional()
+}).optional(),
+  "ledStrip1": zod.object({
+  "r": zod.number().min(updatePresetBodyLedStrip1RMin).max(updatePresetBodyLedStrip1RMax).optional(),
+  "g": zod.number().min(updatePresetBodyLedStrip1GMin).max(updatePresetBodyLedStrip1GMax).optional(),
+  "b": zod.number().min(updatePresetBodyLedStrip1BMin).max(updatePresetBodyLedStrip1BMax).optional(),
+  "brightness": zod.number().min(updatePresetBodyLedStrip1BrightnessMin).max(updatePresetBodyLedStrip1BrightnessMax).optional(),
+  "enabled": zod.boolean().optional()
+}).optional(),
+  "ledStrip2": zod.object({
+  "r": zod.number().min(updatePresetBodyLedStrip2RMin).max(updatePresetBodyLedStrip2RMax).optional(),
+  "g": zod.number().min(updatePresetBodyLedStrip2GMin).max(updatePresetBodyLedStrip2GMax).optional(),
+  "b": zod.number().min(updatePresetBodyLedStrip2BMin).max(updatePresetBodyLedStrip2BMax).optional(),
+  "brightness": zod.number().min(updatePresetBodyLedStrip2BrightnessMin).max(updatePresetBodyLedStrip2BrightnessMax).optional(),
+  "enabled": zod.boolean().optional()
+}).optional(),
+  "disc": zod.object({
+  "speed": zod.number().min(updatePresetBodyDiscSpeedMin).max(updatePresetBodyDiscSpeedMax).optional(),
+  "direction": zod.enum(['cw', 'ccw', 'stop']).optional(),
+  "enabled": zod.boolean().optional()
+}).optional()
+})
+
+export const updatePresetResponsePositionsItemFanSpeedMin = 0;
+export const updatePresetResponsePositionsItemFanSpeedMax = 255;
+
+export const updatePresetResponsePositionsItemLedMatrixRMin = 0;
+export const updatePresetResponsePositionsItemLedMatrixRMax = 255;
+
+export const updatePresetResponsePositionsItemLedMatrixGMin = 0;
+export const updatePresetResponsePositionsItemLedMatrixGMax = 255;
+
+export const updatePresetResponsePositionsItemLedMatrixBMin = 0;
+export const updatePresetResponsePositionsItemLedMatrixBMax = 255;
+
+export const updatePresetResponsePositionsItemLedMatrixBrightnessMin = 0;
+export const updatePresetResponsePositionsItemLedMatrixBrightnessMax = 255;
+
+export const updatePresetResponsePositionsItemLedMatrixPatternMin = 0;
+export const updatePresetResponsePositionsItemLedMatrixPatternMax = 255;
+
+export const updatePresetResponsePositionsItemLedStrip1RMin = 0;
+export const updatePresetResponsePositionsItemLedStrip1RMax = 255;
+
+export const updatePresetResponsePositionsItemLedStrip1GMin = 0;
+export const updatePresetResponsePositionsItemLedStrip1GMax = 255;
+
+export const updatePresetResponsePositionsItemLedStrip1BMin = 0;
+export const updatePresetResponsePositionsItemLedStrip1BMax = 255;
+
+export const updatePresetResponsePositionsItemLedStrip1BrightnessMin = 0;
+export const updatePresetResponsePositionsItemLedStrip1BrightnessMax = 255;
+
+export const updatePresetResponsePositionsItemLedStrip2RMin = 0;
+export const updatePresetResponsePositionsItemLedStrip2RMax = 255;
+
+export const updatePresetResponsePositionsItemLedStrip2GMin = 0;
+export const updatePresetResponsePositionsItemLedStrip2GMax = 255;
+
+export const updatePresetResponsePositionsItemLedStrip2BMin = 0;
+export const updatePresetResponsePositionsItemLedStrip2BMax = 255;
+
+export const updatePresetResponsePositionsItemLedStrip2BrightnessMin = 0;
+export const updatePresetResponsePositionsItemLedStrip2BrightnessMax = 255;
+
+export const updatePresetResponsePositionsItemDiscSpeedMin = 0;
+export const updatePresetResponsePositionsItemDiscSpeedMax = 255;
+
+export const updatePresetResponseIdlePresetFanSpeedMin = 0;
+export const updatePresetResponseIdlePresetFanSpeedMax = 255;
+
+export const updatePresetResponseIdlePresetLedMatrixRMin = 0;
+export const updatePresetResponseIdlePresetLedMatrixRMax = 255;
+
+export const updatePresetResponseIdlePresetLedMatrixGMin = 0;
+export const updatePresetResponseIdlePresetLedMatrixGMax = 255;
+
+export const updatePresetResponseIdlePresetLedMatrixBMin = 0;
+export const updatePresetResponseIdlePresetLedMatrixBMax = 255;
+
+export const updatePresetResponseIdlePresetLedMatrixBrightnessMin = 0;
+export const updatePresetResponseIdlePresetLedMatrixBrightnessMax = 255;
+
+export const updatePresetResponseIdlePresetLedMatrixPatternMin = 0;
+export const updatePresetResponseIdlePresetLedMatrixPatternMax = 255;
+
+export const updatePresetResponseIdlePresetLedStrip1RMin = 0;
+export const updatePresetResponseIdlePresetLedStrip1RMax = 255;
+
+export const updatePresetResponseIdlePresetLedStrip1GMin = 0;
+export const updatePresetResponseIdlePresetLedStrip1GMax = 255;
+
+export const updatePresetResponseIdlePresetLedStrip1BMin = 0;
+export const updatePresetResponseIdlePresetLedStrip1BMax = 255;
+
+export const updatePresetResponseIdlePresetLedStrip1BrightnessMin = 0;
+export const updatePresetResponseIdlePresetLedStrip1BrightnessMax = 255;
+
+export const updatePresetResponseIdlePresetLedStrip2RMin = 0;
+export const updatePresetResponseIdlePresetLedStrip2RMax = 255;
+
+export const updatePresetResponseIdlePresetLedStrip2GMin = 0;
+export const updatePresetResponseIdlePresetLedStrip2GMax = 255;
+
+export const updatePresetResponseIdlePresetLedStrip2BMin = 0;
+export const updatePresetResponseIdlePresetLedStrip2BMax = 255;
+
+export const updatePresetResponseIdlePresetLedStrip2BrightnessMin = 0;
+export const updatePresetResponseIdlePresetLedStrip2BrightnessMax = 255;
+
+export const updatePresetResponseIdlePresetDiscSpeedMin = 0;
+export const updatePresetResponseIdlePresetDiscSpeedMax = 255;
+
+
+
+export const UpdatePresetResponse = zod.object({
+  "positions": zod.array(zod.object({
+  "name": zod.string(),
+  "fan": zod.object({
+  "speed": zod.number().min(updatePresetResponsePositionsItemFanSpeedMin).max(updatePresetResponsePositionsItemFanSpeedMax),
+  "enabled": zod.boolean()
+}),
+  "ledMatrix": zod.object({
+  "r": zod.number().min(updatePresetResponsePositionsItemLedMatrixRMin).max(updatePresetResponsePositionsItemLedMatrixRMax),
+  "g": zod.number().min(updatePresetResponsePositionsItemLedMatrixGMin).max(updatePresetResponsePositionsItemLedMatrixGMax),
+  "b": zod.number().min(updatePresetResponsePositionsItemLedMatrixBMin).max(updatePresetResponsePositionsItemLedMatrixBMax),
+  "brightness": zod.number().min(updatePresetResponsePositionsItemLedMatrixBrightnessMin).max(updatePresetResponsePositionsItemLedMatrixBrightnessMax),
+  "pattern": zod.number().min(updatePresetResponsePositionsItemLedMatrixPatternMin).max(updatePresetResponsePositionsItemLedMatrixPatternMax),
+  "enabled": zod.boolean()
+}),
+  "ledStrip1": zod.object({
+  "r": zod.number().min(updatePresetResponsePositionsItemLedStrip1RMin).max(updatePresetResponsePositionsItemLedStrip1RMax),
+  "g": zod.number().min(updatePresetResponsePositionsItemLedStrip1GMin).max(updatePresetResponsePositionsItemLedStrip1GMax),
+  "b": zod.number().min(updatePresetResponsePositionsItemLedStrip1BMin).max(updatePresetResponsePositionsItemLedStrip1BMax),
+  "brightness": zod.number().min(updatePresetResponsePositionsItemLedStrip1BrightnessMin).max(updatePresetResponsePositionsItemLedStrip1BrightnessMax),
+  "enabled": zod.boolean()
+}),
+  "ledStrip2": zod.object({
+  "r": zod.number().min(updatePresetResponsePositionsItemLedStrip2RMin).max(updatePresetResponsePositionsItemLedStrip2RMax),
+  "g": zod.number().min(updatePresetResponsePositionsItemLedStrip2GMin).max(updatePresetResponsePositionsItemLedStrip2GMax),
+  "b": zod.number().min(updatePresetResponsePositionsItemLedStrip2BMin).max(updatePresetResponsePositionsItemLedStrip2BMax),
+  "brightness": zod.number().min(updatePresetResponsePositionsItemLedStrip2BrightnessMin).max(updatePresetResponsePositionsItemLedStrip2BrightnessMax),
+  "enabled": zod.boolean()
+}),
+  "disc": zod.object({
+  "speed": zod.number().min(updatePresetResponsePositionsItemDiscSpeedMin).max(updatePresetResponsePositionsItemDiscSpeedMax),
+  "direction": zod.enum(['cw', 'ccw', 'stop']),
+  "enabled": zod.boolean()
+})
+})).describe('Presets for fader positions 0-4 (array index = position)'),
+  "idlePreset": zod.object({
+  "name": zod.string(),
+  "fan": zod.object({
+  "speed": zod.number().min(updatePresetResponseIdlePresetFanSpeedMin).max(updatePresetResponseIdlePresetFanSpeedMax),
+  "enabled": zod.boolean()
+}),
+  "ledMatrix": zod.object({
+  "r": zod.number().min(updatePresetResponseIdlePresetLedMatrixRMin).max(updatePresetResponseIdlePresetLedMatrixRMax),
+  "g": zod.number().min(updatePresetResponseIdlePresetLedMatrixGMin).max(updatePresetResponseIdlePresetLedMatrixGMax),
+  "b": zod.number().min(updatePresetResponseIdlePresetLedMatrixBMin).max(updatePresetResponseIdlePresetLedMatrixBMax),
+  "brightness": zod.number().min(updatePresetResponseIdlePresetLedMatrixBrightnessMin).max(updatePresetResponseIdlePresetLedMatrixBrightnessMax),
+  "pattern": zod.number().min(updatePresetResponseIdlePresetLedMatrixPatternMin).max(updatePresetResponseIdlePresetLedMatrixPatternMax),
+  "enabled": zod.boolean()
+}),
+  "ledStrip1": zod.object({
+  "r": zod.number().min(updatePresetResponseIdlePresetLedStrip1RMin).max(updatePresetResponseIdlePresetLedStrip1RMax),
+  "g": zod.number().min(updatePresetResponseIdlePresetLedStrip1GMin).max(updatePresetResponseIdlePresetLedStrip1GMax),
+  "b": zod.number().min(updatePresetResponseIdlePresetLedStrip1BMin).max(updatePresetResponseIdlePresetLedStrip1BMax),
+  "brightness": zod.number().min(updatePresetResponseIdlePresetLedStrip1BrightnessMin).max(updatePresetResponseIdlePresetLedStrip1BrightnessMax),
+  "enabled": zod.boolean()
+}),
+  "ledStrip2": zod.object({
+  "r": zod.number().min(updatePresetResponseIdlePresetLedStrip2RMin).max(updatePresetResponseIdlePresetLedStrip2RMax),
+  "g": zod.number().min(updatePresetResponseIdlePresetLedStrip2GMin).max(updatePresetResponseIdlePresetLedStrip2GMax),
+  "b": zod.number().min(updatePresetResponseIdlePresetLedStrip2BMin).max(updatePresetResponseIdlePresetLedStrip2BMax),
+  "brightness": zod.number().min(updatePresetResponseIdlePresetLedStrip2BrightnessMin).max(updatePresetResponseIdlePresetLedStrip2BrightnessMax),
+  "enabled": zod.boolean()
+}),
+  "disc": zod.object({
+  "speed": zod.number().min(updatePresetResponseIdlePresetDiscSpeedMin).max(updatePresetResponseIdlePresetDiscSpeedMax),
+  "direction": zod.enum(['cw', 'ccw', 'stop']),
+  "enabled": zod.boolean()
+})
+}),
+  "idleTimerSeconds": zod.number(),
+  "idleTimerEnabled": zod.boolean()
+})
+
+
+/**
+ * @summary Capture current live state as a preset
+ */
+export const CapturePresetParams = zod.object({
+  "position": zod.coerce.string().describe('Fader position: 0, 1, 2, 3, 4, or idle')
+})
+
+export const capturePresetResponsePositionsItemFanSpeedMin = 0;
+export const capturePresetResponsePositionsItemFanSpeedMax = 255;
+
+export const capturePresetResponsePositionsItemLedMatrixRMin = 0;
+export const capturePresetResponsePositionsItemLedMatrixRMax = 255;
+
+export const capturePresetResponsePositionsItemLedMatrixGMin = 0;
+export const capturePresetResponsePositionsItemLedMatrixGMax = 255;
+
+export const capturePresetResponsePositionsItemLedMatrixBMin = 0;
+export const capturePresetResponsePositionsItemLedMatrixBMax = 255;
+
+export const capturePresetResponsePositionsItemLedMatrixBrightnessMin = 0;
+export const capturePresetResponsePositionsItemLedMatrixBrightnessMax = 255;
+
+export const capturePresetResponsePositionsItemLedMatrixPatternMin = 0;
+export const capturePresetResponsePositionsItemLedMatrixPatternMax = 255;
+
+export const capturePresetResponsePositionsItemLedStrip1RMin = 0;
+export const capturePresetResponsePositionsItemLedStrip1RMax = 255;
+
+export const capturePresetResponsePositionsItemLedStrip1GMin = 0;
+export const capturePresetResponsePositionsItemLedStrip1GMax = 255;
+
+export const capturePresetResponsePositionsItemLedStrip1BMin = 0;
+export const capturePresetResponsePositionsItemLedStrip1BMax = 255;
+
+export const capturePresetResponsePositionsItemLedStrip1BrightnessMin = 0;
+export const capturePresetResponsePositionsItemLedStrip1BrightnessMax = 255;
+
+export const capturePresetResponsePositionsItemLedStrip2RMin = 0;
+export const capturePresetResponsePositionsItemLedStrip2RMax = 255;
+
+export const capturePresetResponsePositionsItemLedStrip2GMin = 0;
+export const capturePresetResponsePositionsItemLedStrip2GMax = 255;
+
+export const capturePresetResponsePositionsItemLedStrip2BMin = 0;
+export const capturePresetResponsePositionsItemLedStrip2BMax = 255;
+
+export const capturePresetResponsePositionsItemLedStrip2BrightnessMin = 0;
+export const capturePresetResponsePositionsItemLedStrip2BrightnessMax = 255;
+
+export const capturePresetResponsePositionsItemDiscSpeedMin = 0;
+export const capturePresetResponsePositionsItemDiscSpeedMax = 255;
+
+export const capturePresetResponseIdlePresetFanSpeedMin = 0;
+export const capturePresetResponseIdlePresetFanSpeedMax = 255;
+
+export const capturePresetResponseIdlePresetLedMatrixRMin = 0;
+export const capturePresetResponseIdlePresetLedMatrixRMax = 255;
+
+export const capturePresetResponseIdlePresetLedMatrixGMin = 0;
+export const capturePresetResponseIdlePresetLedMatrixGMax = 255;
+
+export const capturePresetResponseIdlePresetLedMatrixBMin = 0;
+export const capturePresetResponseIdlePresetLedMatrixBMax = 255;
+
+export const capturePresetResponseIdlePresetLedMatrixBrightnessMin = 0;
+export const capturePresetResponseIdlePresetLedMatrixBrightnessMax = 255;
+
+export const capturePresetResponseIdlePresetLedMatrixPatternMin = 0;
+export const capturePresetResponseIdlePresetLedMatrixPatternMax = 255;
+
+export const capturePresetResponseIdlePresetLedStrip1RMin = 0;
+export const capturePresetResponseIdlePresetLedStrip1RMax = 255;
+
+export const capturePresetResponseIdlePresetLedStrip1GMin = 0;
+export const capturePresetResponseIdlePresetLedStrip1GMax = 255;
+
+export const capturePresetResponseIdlePresetLedStrip1BMin = 0;
+export const capturePresetResponseIdlePresetLedStrip1BMax = 255;
+
+export const capturePresetResponseIdlePresetLedStrip1BrightnessMin = 0;
+export const capturePresetResponseIdlePresetLedStrip1BrightnessMax = 255;
+
+export const capturePresetResponseIdlePresetLedStrip2RMin = 0;
+export const capturePresetResponseIdlePresetLedStrip2RMax = 255;
+
+export const capturePresetResponseIdlePresetLedStrip2GMin = 0;
+export const capturePresetResponseIdlePresetLedStrip2GMax = 255;
+
+export const capturePresetResponseIdlePresetLedStrip2BMin = 0;
+export const capturePresetResponseIdlePresetLedStrip2BMax = 255;
+
+export const capturePresetResponseIdlePresetLedStrip2BrightnessMin = 0;
+export const capturePresetResponseIdlePresetLedStrip2BrightnessMax = 255;
+
+export const capturePresetResponseIdlePresetDiscSpeedMin = 0;
+export const capturePresetResponseIdlePresetDiscSpeedMax = 255;
+
+
+
+export const CapturePresetResponse = zod.object({
+  "positions": zod.array(zod.object({
+  "name": zod.string(),
+  "fan": zod.object({
+  "speed": zod.number().min(capturePresetResponsePositionsItemFanSpeedMin).max(capturePresetResponsePositionsItemFanSpeedMax),
+  "enabled": zod.boolean()
+}),
+  "ledMatrix": zod.object({
+  "r": zod.number().min(capturePresetResponsePositionsItemLedMatrixRMin).max(capturePresetResponsePositionsItemLedMatrixRMax),
+  "g": zod.number().min(capturePresetResponsePositionsItemLedMatrixGMin).max(capturePresetResponsePositionsItemLedMatrixGMax),
+  "b": zod.number().min(capturePresetResponsePositionsItemLedMatrixBMin).max(capturePresetResponsePositionsItemLedMatrixBMax),
+  "brightness": zod.number().min(capturePresetResponsePositionsItemLedMatrixBrightnessMin).max(capturePresetResponsePositionsItemLedMatrixBrightnessMax),
+  "pattern": zod.number().min(capturePresetResponsePositionsItemLedMatrixPatternMin).max(capturePresetResponsePositionsItemLedMatrixPatternMax),
+  "enabled": zod.boolean()
+}),
+  "ledStrip1": zod.object({
+  "r": zod.number().min(capturePresetResponsePositionsItemLedStrip1RMin).max(capturePresetResponsePositionsItemLedStrip1RMax),
+  "g": zod.number().min(capturePresetResponsePositionsItemLedStrip1GMin).max(capturePresetResponsePositionsItemLedStrip1GMax),
+  "b": zod.number().min(capturePresetResponsePositionsItemLedStrip1BMin).max(capturePresetResponsePositionsItemLedStrip1BMax),
+  "brightness": zod.number().min(capturePresetResponsePositionsItemLedStrip1BrightnessMin).max(capturePresetResponsePositionsItemLedStrip1BrightnessMax),
+  "enabled": zod.boolean()
+}),
+  "ledStrip2": zod.object({
+  "r": zod.number().min(capturePresetResponsePositionsItemLedStrip2RMin).max(capturePresetResponsePositionsItemLedStrip2RMax),
+  "g": zod.number().min(capturePresetResponsePositionsItemLedStrip2GMin).max(capturePresetResponsePositionsItemLedStrip2GMax),
+  "b": zod.number().min(capturePresetResponsePositionsItemLedStrip2BMin).max(capturePresetResponsePositionsItemLedStrip2BMax),
+  "brightness": zod.number().min(capturePresetResponsePositionsItemLedStrip2BrightnessMin).max(capturePresetResponsePositionsItemLedStrip2BrightnessMax),
+  "enabled": zod.boolean()
+}),
+  "disc": zod.object({
+  "speed": zod.number().min(capturePresetResponsePositionsItemDiscSpeedMin).max(capturePresetResponsePositionsItemDiscSpeedMax),
+  "direction": zod.enum(['cw', 'ccw', 'stop']),
+  "enabled": zod.boolean()
+})
+})).describe('Presets for fader positions 0-4 (array index = position)'),
+  "idlePreset": zod.object({
+  "name": zod.string(),
+  "fan": zod.object({
+  "speed": zod.number().min(capturePresetResponseIdlePresetFanSpeedMin).max(capturePresetResponseIdlePresetFanSpeedMax),
+  "enabled": zod.boolean()
+}),
+  "ledMatrix": zod.object({
+  "r": zod.number().min(capturePresetResponseIdlePresetLedMatrixRMin).max(capturePresetResponseIdlePresetLedMatrixRMax),
+  "g": zod.number().min(capturePresetResponseIdlePresetLedMatrixGMin).max(capturePresetResponseIdlePresetLedMatrixGMax),
+  "b": zod.number().min(capturePresetResponseIdlePresetLedMatrixBMin).max(capturePresetResponseIdlePresetLedMatrixBMax),
+  "brightness": zod.number().min(capturePresetResponseIdlePresetLedMatrixBrightnessMin).max(capturePresetResponseIdlePresetLedMatrixBrightnessMax),
+  "pattern": zod.number().min(capturePresetResponseIdlePresetLedMatrixPatternMin).max(capturePresetResponseIdlePresetLedMatrixPatternMax),
+  "enabled": zod.boolean()
+}),
+  "ledStrip1": zod.object({
+  "r": zod.number().min(capturePresetResponseIdlePresetLedStrip1RMin).max(capturePresetResponseIdlePresetLedStrip1RMax),
+  "g": zod.number().min(capturePresetResponseIdlePresetLedStrip1GMin).max(capturePresetResponseIdlePresetLedStrip1GMax),
+  "b": zod.number().min(capturePresetResponseIdlePresetLedStrip1BMin).max(capturePresetResponseIdlePresetLedStrip1BMax),
+  "brightness": zod.number().min(capturePresetResponseIdlePresetLedStrip1BrightnessMin).max(capturePresetResponseIdlePresetLedStrip1BrightnessMax),
+  "enabled": zod.boolean()
+}),
+  "ledStrip2": zod.object({
+  "r": zod.number().min(capturePresetResponseIdlePresetLedStrip2RMin).max(capturePresetResponseIdlePresetLedStrip2RMax),
+  "g": zod.number().min(capturePresetResponseIdlePresetLedStrip2GMin).max(capturePresetResponseIdlePresetLedStrip2GMax),
+  "b": zod.number().min(capturePresetResponseIdlePresetLedStrip2BMin).max(capturePresetResponseIdlePresetLedStrip2BMax),
+  "brightness": zod.number().min(capturePresetResponseIdlePresetLedStrip2BrightnessMin).max(capturePresetResponseIdlePresetLedStrip2BrightnessMax),
+  "enabled": zod.boolean()
+}),
+  "disc": zod.object({
+  "speed": zod.number().min(capturePresetResponseIdlePresetDiscSpeedMin).max(capturePresetResponseIdlePresetDiscSpeedMax),
+  "direction": zod.enum(['cw', 'ccw', 'stop']),
+  "enabled": zod.boolean()
+})
+}),
+  "idleTimerSeconds": zod.number(),
+  "idleTimerEnabled": zod.boolean()
+})
+
+
+/**
+ * When the spring returns the fader to 0, the idle timer counts down and fires the idle preset.
+ * @summary Configure the idle timer
+ */
+export const updatePresetTimerBodyTimerSecondsMax = 3600;
+
+
+
+export const UpdatePresetTimerBody = zod.object({
+  "timerSeconds": zod.number().min(1).max(updatePresetTimerBodyTimerSecondsMax).optional(),
+  "enabled": zod.boolean().optional()
+})
+
+export const updatePresetTimerResponsePositionsItemFanSpeedMin = 0;
+export const updatePresetTimerResponsePositionsItemFanSpeedMax = 255;
+
+export const updatePresetTimerResponsePositionsItemLedMatrixRMin = 0;
+export const updatePresetTimerResponsePositionsItemLedMatrixRMax = 255;
+
+export const updatePresetTimerResponsePositionsItemLedMatrixGMin = 0;
+export const updatePresetTimerResponsePositionsItemLedMatrixGMax = 255;
+
+export const updatePresetTimerResponsePositionsItemLedMatrixBMin = 0;
+export const updatePresetTimerResponsePositionsItemLedMatrixBMax = 255;
+
+export const updatePresetTimerResponsePositionsItemLedMatrixBrightnessMin = 0;
+export const updatePresetTimerResponsePositionsItemLedMatrixBrightnessMax = 255;
+
+export const updatePresetTimerResponsePositionsItemLedMatrixPatternMin = 0;
+export const updatePresetTimerResponsePositionsItemLedMatrixPatternMax = 255;
+
+export const updatePresetTimerResponsePositionsItemLedStrip1RMin = 0;
+export const updatePresetTimerResponsePositionsItemLedStrip1RMax = 255;
+
+export const updatePresetTimerResponsePositionsItemLedStrip1GMin = 0;
+export const updatePresetTimerResponsePositionsItemLedStrip1GMax = 255;
+
+export const updatePresetTimerResponsePositionsItemLedStrip1BMin = 0;
+export const updatePresetTimerResponsePositionsItemLedStrip1BMax = 255;
+
+export const updatePresetTimerResponsePositionsItemLedStrip1BrightnessMin = 0;
+export const updatePresetTimerResponsePositionsItemLedStrip1BrightnessMax = 255;
+
+export const updatePresetTimerResponsePositionsItemLedStrip2RMin = 0;
+export const updatePresetTimerResponsePositionsItemLedStrip2RMax = 255;
+
+export const updatePresetTimerResponsePositionsItemLedStrip2GMin = 0;
+export const updatePresetTimerResponsePositionsItemLedStrip2GMax = 255;
+
+export const updatePresetTimerResponsePositionsItemLedStrip2BMin = 0;
+export const updatePresetTimerResponsePositionsItemLedStrip2BMax = 255;
+
+export const updatePresetTimerResponsePositionsItemLedStrip2BrightnessMin = 0;
+export const updatePresetTimerResponsePositionsItemLedStrip2BrightnessMax = 255;
+
+export const updatePresetTimerResponsePositionsItemDiscSpeedMin = 0;
+export const updatePresetTimerResponsePositionsItemDiscSpeedMax = 255;
+
+export const updatePresetTimerResponseIdlePresetFanSpeedMin = 0;
+export const updatePresetTimerResponseIdlePresetFanSpeedMax = 255;
+
+export const updatePresetTimerResponseIdlePresetLedMatrixRMin = 0;
+export const updatePresetTimerResponseIdlePresetLedMatrixRMax = 255;
+
+export const updatePresetTimerResponseIdlePresetLedMatrixGMin = 0;
+export const updatePresetTimerResponseIdlePresetLedMatrixGMax = 255;
+
+export const updatePresetTimerResponseIdlePresetLedMatrixBMin = 0;
+export const updatePresetTimerResponseIdlePresetLedMatrixBMax = 255;
+
+export const updatePresetTimerResponseIdlePresetLedMatrixBrightnessMin = 0;
+export const updatePresetTimerResponseIdlePresetLedMatrixBrightnessMax = 255;
+
+export const updatePresetTimerResponseIdlePresetLedMatrixPatternMin = 0;
+export const updatePresetTimerResponseIdlePresetLedMatrixPatternMax = 255;
+
+export const updatePresetTimerResponseIdlePresetLedStrip1RMin = 0;
+export const updatePresetTimerResponseIdlePresetLedStrip1RMax = 255;
+
+export const updatePresetTimerResponseIdlePresetLedStrip1GMin = 0;
+export const updatePresetTimerResponseIdlePresetLedStrip1GMax = 255;
+
+export const updatePresetTimerResponseIdlePresetLedStrip1BMin = 0;
+export const updatePresetTimerResponseIdlePresetLedStrip1BMax = 255;
+
+export const updatePresetTimerResponseIdlePresetLedStrip1BrightnessMin = 0;
+export const updatePresetTimerResponseIdlePresetLedStrip1BrightnessMax = 255;
+
+export const updatePresetTimerResponseIdlePresetLedStrip2RMin = 0;
+export const updatePresetTimerResponseIdlePresetLedStrip2RMax = 255;
+
+export const updatePresetTimerResponseIdlePresetLedStrip2GMin = 0;
+export const updatePresetTimerResponseIdlePresetLedStrip2GMax = 255;
+
+export const updatePresetTimerResponseIdlePresetLedStrip2BMin = 0;
+export const updatePresetTimerResponseIdlePresetLedStrip2BMax = 255;
+
+export const updatePresetTimerResponseIdlePresetLedStrip2BrightnessMin = 0;
+export const updatePresetTimerResponseIdlePresetLedStrip2BrightnessMax = 255;
+
+export const updatePresetTimerResponseIdlePresetDiscSpeedMin = 0;
+export const updatePresetTimerResponseIdlePresetDiscSpeedMax = 255;
+
+
+
+export const UpdatePresetTimerResponse = zod.object({
+  "positions": zod.array(zod.object({
+  "name": zod.string(),
+  "fan": zod.object({
+  "speed": zod.number().min(updatePresetTimerResponsePositionsItemFanSpeedMin).max(updatePresetTimerResponsePositionsItemFanSpeedMax),
+  "enabled": zod.boolean()
+}),
+  "ledMatrix": zod.object({
+  "r": zod.number().min(updatePresetTimerResponsePositionsItemLedMatrixRMin).max(updatePresetTimerResponsePositionsItemLedMatrixRMax),
+  "g": zod.number().min(updatePresetTimerResponsePositionsItemLedMatrixGMin).max(updatePresetTimerResponsePositionsItemLedMatrixGMax),
+  "b": zod.number().min(updatePresetTimerResponsePositionsItemLedMatrixBMin).max(updatePresetTimerResponsePositionsItemLedMatrixBMax),
+  "brightness": zod.number().min(updatePresetTimerResponsePositionsItemLedMatrixBrightnessMin).max(updatePresetTimerResponsePositionsItemLedMatrixBrightnessMax),
+  "pattern": zod.number().min(updatePresetTimerResponsePositionsItemLedMatrixPatternMin).max(updatePresetTimerResponsePositionsItemLedMatrixPatternMax),
+  "enabled": zod.boolean()
+}),
+  "ledStrip1": zod.object({
+  "r": zod.number().min(updatePresetTimerResponsePositionsItemLedStrip1RMin).max(updatePresetTimerResponsePositionsItemLedStrip1RMax),
+  "g": zod.number().min(updatePresetTimerResponsePositionsItemLedStrip1GMin).max(updatePresetTimerResponsePositionsItemLedStrip1GMax),
+  "b": zod.number().min(updatePresetTimerResponsePositionsItemLedStrip1BMin).max(updatePresetTimerResponsePositionsItemLedStrip1BMax),
+  "brightness": zod.number().min(updatePresetTimerResponsePositionsItemLedStrip1BrightnessMin).max(updatePresetTimerResponsePositionsItemLedStrip1BrightnessMax),
+  "enabled": zod.boolean()
+}),
+  "ledStrip2": zod.object({
+  "r": zod.number().min(updatePresetTimerResponsePositionsItemLedStrip2RMin).max(updatePresetTimerResponsePositionsItemLedStrip2RMax),
+  "g": zod.number().min(updatePresetTimerResponsePositionsItemLedStrip2GMin).max(updatePresetTimerResponsePositionsItemLedStrip2GMax),
+  "b": zod.number().min(updatePresetTimerResponsePositionsItemLedStrip2BMin).max(updatePresetTimerResponsePositionsItemLedStrip2BMax),
+  "brightness": zod.number().min(updatePresetTimerResponsePositionsItemLedStrip2BrightnessMin).max(updatePresetTimerResponsePositionsItemLedStrip2BrightnessMax),
+  "enabled": zod.boolean()
+}),
+  "disc": zod.object({
+  "speed": zod.number().min(updatePresetTimerResponsePositionsItemDiscSpeedMin).max(updatePresetTimerResponsePositionsItemDiscSpeedMax),
+  "direction": zod.enum(['cw', 'ccw', 'stop']),
+  "enabled": zod.boolean()
+})
+})).describe('Presets for fader positions 0-4 (array index = position)'),
+  "idlePreset": zod.object({
+  "name": zod.string(),
+  "fan": zod.object({
+  "speed": zod.number().min(updatePresetTimerResponseIdlePresetFanSpeedMin).max(updatePresetTimerResponseIdlePresetFanSpeedMax),
+  "enabled": zod.boolean()
+}),
+  "ledMatrix": zod.object({
+  "r": zod.number().min(updatePresetTimerResponseIdlePresetLedMatrixRMin).max(updatePresetTimerResponseIdlePresetLedMatrixRMax),
+  "g": zod.number().min(updatePresetTimerResponseIdlePresetLedMatrixGMin).max(updatePresetTimerResponseIdlePresetLedMatrixGMax),
+  "b": zod.number().min(updatePresetTimerResponseIdlePresetLedMatrixBMin).max(updatePresetTimerResponseIdlePresetLedMatrixBMax),
+  "brightness": zod.number().min(updatePresetTimerResponseIdlePresetLedMatrixBrightnessMin).max(updatePresetTimerResponseIdlePresetLedMatrixBrightnessMax),
+  "pattern": zod.number().min(updatePresetTimerResponseIdlePresetLedMatrixPatternMin).max(updatePresetTimerResponseIdlePresetLedMatrixPatternMax),
+  "enabled": zod.boolean()
+}),
+  "ledStrip1": zod.object({
+  "r": zod.number().min(updatePresetTimerResponseIdlePresetLedStrip1RMin).max(updatePresetTimerResponseIdlePresetLedStrip1RMax),
+  "g": zod.number().min(updatePresetTimerResponseIdlePresetLedStrip1GMin).max(updatePresetTimerResponseIdlePresetLedStrip1GMax),
+  "b": zod.number().min(updatePresetTimerResponseIdlePresetLedStrip1BMin).max(updatePresetTimerResponseIdlePresetLedStrip1BMax),
+  "brightness": zod.number().min(updatePresetTimerResponseIdlePresetLedStrip1BrightnessMin).max(updatePresetTimerResponseIdlePresetLedStrip1BrightnessMax),
+  "enabled": zod.boolean()
+}),
+  "ledStrip2": zod.object({
+  "r": zod.number().min(updatePresetTimerResponseIdlePresetLedStrip2RMin).max(updatePresetTimerResponseIdlePresetLedStrip2RMax),
+  "g": zod.number().min(updatePresetTimerResponseIdlePresetLedStrip2GMin).max(updatePresetTimerResponseIdlePresetLedStrip2GMax),
+  "b": zod.number().min(updatePresetTimerResponseIdlePresetLedStrip2BMin).max(updatePresetTimerResponseIdlePresetLedStrip2BMax),
+  "brightness": zod.number().min(updatePresetTimerResponseIdlePresetLedStrip2BrightnessMin).max(updatePresetTimerResponseIdlePresetLedStrip2BrightnessMax),
+  "enabled": zod.boolean()
+}),
+  "disc": zod.object({
+  "speed": zod.number().min(updatePresetTimerResponseIdlePresetDiscSpeedMin).max(updatePresetTimerResponseIdlePresetDiscSpeedMax),
+  "direction": zod.enum(['cw', 'ccw', 'stop']),
+  "enabled": zod.boolean()
+})
+}),
+  "idleTimerSeconds": zod.number(),
+  "idleTimerEnabled": zod.boolean()
 })
 
 

@@ -10,6 +10,5 @@ import type { LedStripInput } from './ledStripInput';
 export interface LedStripsInput {
   strip1?: LedStripInput;
   strip2?: LedStripInput;
-  /** Apply same values to both strips */
   sync?: boolean;
 }

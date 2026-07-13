@@ -6,16 +6,11 @@
  * OpenAPI spec version: 0.1.0
  */
 
-export interface PainFaderState {
-  /**
-     * @minimum 0
-     * @maximum 4
-     */
-  position: number;
+export type FaderPresetFan = {
   /**
      * @minimum 0
      * @maximum 255
      */
-  dmxValue: number;
-  channel: number;
-}
+  speed: number;
+  enabled: boolean;
+};

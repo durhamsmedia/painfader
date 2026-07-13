@@ -24,12 +24,16 @@ import type {
   DmxConfig,
   DmxConfigInput,
   DmxState,
+  FaderPresetInput,
   FanInput,
+  HardwareFaderInput,
   HealthStatus,
   LedMatrixInput,
   LedStripsInput,
   ModeInput,
   PainFaderInput,
+  PresetTimerInput,
+  PresetsState,
   SceneInput
 } from './api.schemas';
 
@@ -69,7 +73,6 @@ export const getHealthCheckUrl = () => {
 }
 
 /**
- * Returns server health status
  * @summary Health check
  */
 export const healthCheck = async ( options?: RequestInit): Promise<HealthStatus> => {
@@ -147,7 +150,6 @@ export const getGetDmxStateUrl = () => {
 }
 
 /**
- * Returns the current DMX channel values and mode
  * @summary Get full DMX state
  */
 export const getDmxState = async ( options?: RequestInit): Promise<DmxState> => {
@@ -225,7 +227,6 @@ export const getGetDmxConfigUrl = () => {
 }
 
 /**
- * Returns the current Art-Net/DMX output configuration
  * @summary Get Art-Net config
  */
 export const getDmxConfig = async ( options?: RequestInit): Promise<DmxConfig> => {
@@ -303,7 +304,6 @@ export const getUpdateDmxConfigUrl = () => {
 }
 
 /**
- * Update Art-Net host/universe/port settings
  * @summary Update Art-Net config
  */
 export const updateDmxConfig = async (dmxConfigInput: DmxConfigInput, options?: RequestInit): Promise<DmxConfig> => {
@@ -375,7 +375,6 @@ export const getSetModeUrl = () => {
 }
 
 /**
- * Switch between Idle and Experience mode
  * @summary Set operating mode
  */
 export const setMode = async (modeInput: ModeInput, options?: RequestInit): Promise<DmxState> => {
@@ -933,5 +932,371 @@ export const useBlackout = <TError = ErrorType<unknown>,
         TContext
       > => {
       return useMutation(getBlackoutMutationOptions(options));
+    }
+
+export const getHardwareFaderInputUrl = () => {
+
+
+
+
+  return `/api/dmx/hardware-fader`
+}
+
+/**
+ * POST this from a microcontroller (Arduino, Raspberry Pi, etc.) when the physical fader moves.
+ * Automatically applies the configured preset for that position and starts the idle timer when position returns to 0.
+ * Example: POST /api/dmx/hardware-fader  { "position": 2 }
+ * @summary Receive position from physical hardware fader
+ */
+export const hardwareFaderInput = async (hardwareFaderInput: HardwareFaderInput, options?: RequestInit): Promise<DmxState> => {
+
+  return customFetch<DmxState>(getHardwareFaderInputUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(hardwareFaderInput)
+  }
+);}
+
+
+
+
+
+export const getHardwareFaderInputMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof hardwareFaderInput>>, TError,{data: BodyType<HardwareFaderInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof hardwareFaderInput>>, TError,{data: BodyType<HardwareFaderInput>}, TContext> => {
+
+const mutationKey = ['hardwareFaderInput'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof hardwareFaderInput>>, {data: BodyType<HardwareFaderInput>}> = (props) => {
+          const {data} = props ?? {};
+
+          return  hardwareFaderInput(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type HardwareFaderInputMutationResult = NonNullable<Awaited<ReturnType<typeof hardwareFaderInput>>>
+    export type HardwareFaderInputMutationBody = BodyType<HardwareFaderInput>
+    export type HardwareFaderInputMutationError = ErrorType<unknown>
+
+    /**
+ * @summary Receive position from physical hardware fader
+ */
+export const useHardwareFaderInput = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof hardwareFaderInput>>, TError,{data: BodyType<HardwareFaderInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof hardwareFaderInput>>,
+        TError,
+        {data: BodyType<HardwareFaderInput>},
+        TContext
+      > => {
+      return useMutation(getHardwareFaderInputMutationOptions(options));
+    }
+
+export const getGetPresetsUrl = () => {
+
+
+
+
+  return `/api/dmx/presets`
+}
+
+/**
+ * @summary Get all fader position presets
+ */
+export const getPresets = async ( options?: RequestInit): Promise<PresetsState> => {
+
+  return customFetch<PresetsState>(getGetPresetsUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetPresetsQueryKey = () => {
+    return [
+    `/api/dmx/presets`
+    ] as const;
+    }
+
+
+export const getGetPresetsQueryOptions = <TData = Awaited<ReturnType<typeof getPresets>>, TError = ErrorType<unknown>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getPresets>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetPresetsQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getPresets>>> = ({ signal }) => getPresets({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getPresets>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetPresetsQueryResult = NonNullable<Awaited<ReturnType<typeof getPresets>>>
+export type GetPresetsQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary Get all fader position presets
+ */
+
+export function useGetPresets<TData = Awaited<ReturnType<typeof getPresets>>, TError = ErrorType<unknown>>(
+  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getPresets>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetPresetsQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getUpdatePresetUrl = (position: string,) => {
+
+
+
+
+  return `/api/dmx/presets/${position}`
+}
+
+/**
+ * @summary Save a preset for a fader position (0-4) or idle
+ */
+export const updatePreset = async (position: string,
+    faderPresetInput: FaderPresetInput, options?: RequestInit): Promise<PresetsState> => {
+
+  return customFetch<PresetsState>(getUpdatePresetUrl(position),
+  {
+    ...options,
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(faderPresetInput)
+  }
+);}
+
+
+
+
+
+export const getUpdatePresetMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updatePreset>>, TError,{position: string;data: BodyType<FaderPresetInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof updatePreset>>, TError,{position: string;data: BodyType<FaderPresetInput>}, TContext> => {
+
+const mutationKey = ['updatePreset'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updatePreset>>, {position: string;data: BodyType<FaderPresetInput>}> = (props) => {
+          const {position,data} = props ?? {};
+
+          return  updatePreset(position,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type UpdatePresetMutationResult = NonNullable<Awaited<ReturnType<typeof updatePreset>>>
+    export type UpdatePresetMutationBody = BodyType<FaderPresetInput>
+    export type UpdatePresetMutationError = ErrorType<unknown>
+
+    /**
+ * @summary Save a preset for a fader position (0-4) or idle
+ */
+export const useUpdatePreset = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updatePreset>>, TError,{position: string;data: BodyType<FaderPresetInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof updatePreset>>,
+        TError,
+        {position: string;data: BodyType<FaderPresetInput>},
+        TContext
+      > => {
+      return useMutation(getUpdatePresetMutationOptions(options));
+    }
+
+export const getCapturePresetUrl = (position: string,) => {
+
+
+
+
+  return `/api/dmx/presets/${position}/capture`
+}
+
+/**
+ * @summary Capture current live state as a preset
+ */
+export const capturePreset = async (position: string, options?: RequestInit): Promise<PresetsState> => {
+
+  return customFetch<PresetsState>(getCapturePresetUrl(position),
+  {
+    ...options,
+    method: 'POST'
+
+
+  }
+);}
+
+
+
+
+
+export const getCapturePresetMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof capturePreset>>, TError,{position: string}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof capturePreset>>, TError,{position: string}, TContext> => {
+
+const mutationKey = ['capturePreset'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof capturePreset>>, {position: string}> = (props) => {
+          const {position} = props ?? {};
+
+          return  capturePreset(position,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CapturePresetMutationResult = NonNullable<Awaited<ReturnType<typeof capturePreset>>>
+
+    export type CapturePresetMutationError = ErrorType<unknown>
+
+    /**
+ * @summary Capture current live state as a preset
+ */
+export const useCapturePreset = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof capturePreset>>, TError,{position: string}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof capturePreset>>,
+        TError,
+        {position: string},
+        TContext
+      > => {
+      return useMutation(getCapturePresetMutationOptions(options));
+    }
+
+export const getUpdatePresetTimerUrl = () => {
+
+
+
+
+  return `/api/dmx/preset-timer`
+}
+
+/**
+ * When the spring returns the fader to 0, the idle timer counts down and fires the idle preset.
+ * @summary Configure the idle timer
+ */
+export const updatePresetTimer = async (presetTimerInput: PresetTimerInput, options?: RequestInit): Promise<PresetsState> => {
+
+  return customFetch<PresetsState>(getUpdatePresetTimerUrl(),
+  {
+    ...options,
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(presetTimerInput)
+  }
+);}
+
+
+
+
+
+export const getUpdatePresetTimerMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updatePresetTimer>>, TError,{data: BodyType<PresetTimerInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof updatePresetTimer>>, TError,{data: BodyType<PresetTimerInput>}, TContext> => {
+
+const mutationKey = ['updatePresetTimer'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updatePresetTimer>>, {data: BodyType<PresetTimerInput>}> = (props) => {
+          const {data} = props ?? {};
+
+          return  updatePresetTimer(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type UpdatePresetTimerMutationResult = NonNullable<Awaited<ReturnType<typeof updatePresetTimer>>>
+    export type UpdatePresetTimerMutationBody = BodyType<PresetTimerInput>
+    export type UpdatePresetTimerMutationError = ErrorType<unknown>
+
+    /**
+ * @summary Configure the idle timer
+ */
+export const useUpdatePresetTimer = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updatePresetTimer>>, TError,{data: BodyType<PresetTimerInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof updatePresetTimer>>,
+        TError,
+        {data: BodyType<PresetTimerInput>},
+        TContext
+      > => {
+      return useMutation(getUpdatePresetTimerMutationOptions(options));
     }
 

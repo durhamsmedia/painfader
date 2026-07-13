@@ -1,0 +1,1 @@
+- [TanStack Query v5 queryKey required](tq5-querykey.md) — when passing `{ query: { refetchInterval: N } }` to Orval hooks, must also include `queryKey: getGet*QueryKey()` or typecheck fails TS2741.

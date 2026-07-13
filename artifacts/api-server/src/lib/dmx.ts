@@ -8,6 +8,22 @@ export interface DmxConfig {
   refreshRate: number;
 }
 
+export interface FaderPreset {
+  name: string;
+  fan: { speed: number; enabled: boolean };
+  ledMatrix: { r: number; g: number; b: number; brightness: number; pattern: number; enabled: boolean };
+  ledStrip1: { r: number; g: number; b: number; brightness: number; enabled: boolean };
+  ledStrip2: { r: number; g: number; b: number; brightness: number; enabled: boolean };
+  disc: { speed: number; direction: "cw" | "ccw" | "stop"; enabled: boolean };
+}
+
+export interface PresetsState {
+  positions: FaderPreset[];
+  idlePreset: FaderPreset;
+  idleTimerSeconds: number;
+  idleTimerEnabled: boolean;
+}
+
 export interface FanState {
   speed: number;
   enabled: boolean;
@@ -55,6 +71,13 @@ export interface DmxState {
   painFader: PainFaderState;
   channels: number[];
   artnetConnected: boolean;
+  idleTimer: {
+    enabled: boolean;
+    timerSeconds: number;
+    remaining: number | null;
+    triggered: boolean;
+  };
+  hardwareLastSeen: number | null;
 }
 
 const CHANNEL_MAP = {
@@ -91,6 +114,64 @@ const DIRECTION_DMX: Record<string, number> = {
   ccw: 255,
 };
 
+function makeDefaultPreset(name: string, overrides: Partial<FaderPreset> = {}): FaderPreset {
+  return {
+    name,
+    fan: { speed: 0, enabled: false },
+    ledMatrix: { r: 255, g: 255, b: 255, brightness: 100, pattern: 0, enabled: true },
+    ledStrip1: { r: 255, g: 255, b: 255, brightness: 100, enabled: true },
+    ledStrip2: { r: 255, g: 255, b: 255, brightness: 100, enabled: true },
+    disc: { speed: 0, direction: "stop", enabled: false },
+    ...overrides,
+  };
+}
+
+const DEFAULT_PRESETS: FaderPreset[] = [
+  makeDefaultPreset("SCHMERZ MAX", {
+    fan: { speed: 255, enabled: true },
+    ledMatrix: { r: 255, g: 0, b: 0, brightness: 255, pattern: 0, enabled: true },
+    ledStrip1: { r: 255, g: 0, b: 0, brightness: 255, enabled: true },
+    ledStrip2: { r: 255, g: 0, b: 0, brightness: 255, enabled: true },
+    disc: { speed: 200, direction: "ccw", enabled: true },
+  }),
+  makeDefaultPreset("OPIOID LOW", {
+    fan: { speed: 180, enabled: true },
+    ledMatrix: { r: 200, g: 60, b: 255, brightness: 200, pattern: 0, enabled: true },
+    ledStrip1: { r: 180, g: 40, b: 255, brightness: 180, enabled: true },
+    ledStrip2: { r: 180, g: 40, b: 255, brightness: 180, enabled: true },
+    disc: { speed: 150, direction: "cw", enabled: true },
+  }),
+  makeDefaultPreset("OPIOID HIGH", {
+    fan: { speed: 120, enabled: true },
+    ledMatrix: { r: 80, g: 120, b: 255, brightness: 160, pattern: 0, enabled: true },
+    ledStrip1: { r: 60, g: 100, b: 255, brightness: 140, enabled: true },
+    ledStrip2: { r: 60, g: 100, b: 255, brightness: 140, enabled: true },
+    disc: { speed: 100, direction: "cw", enabled: true },
+  }),
+  makeDefaultPreset("NSAR LOW", {
+    fan: { speed: 80, enabled: true },
+    ledMatrix: { r: 0, g: 200, b: 120, brightness: 130, pattern: 0, enabled: true },
+    ledStrip1: { r: 0, g: 180, b: 100, brightness: 120, enabled: true },
+    ledStrip2: { r: 0, g: 180, b: 100, brightness: 120, enabled: true },
+    disc: { speed: 70, direction: "cw", enabled: true },
+  }),
+  makeDefaultPreset("NSAR HIGH", {
+    fan: { speed: 40, enabled: true },
+    ledMatrix: { r: 0, g: 255, b: 60, brightness: 100, pattern: 0, enabled: true },
+    ledStrip1: { r: 0, g: 220, b: 40, brightness: 90, enabled: true },
+    ledStrip2: { r: 0, g: 220, b: 40, brightness: 90, enabled: true },
+    disc: { speed: 40, direction: "cw", enabled: true },
+  }),
+];
+
+const DEFAULT_IDLE_PRESET: FaderPreset = makeDefaultPreset("IDLE", {
+  fan: { speed: 0, enabled: false },
+  ledMatrix: { r: 255, g: 200, b: 100, brightness: 60, pattern: 0, enabled: true },
+  ledStrip1: { r: 255, g: 180, b: 80, brightness: 50, enabled: true },
+  ledStrip2: { r: 255, g: 180, b: 80, brightness: 50, enabled: true },
+  disc: { speed: 30, direction: "cw", enabled: true },
+});
+
 class DmxController {
   private channels: number[] = new Array(512).fill(0);
   private config: DmxConfig = {
@@ -100,7 +181,7 @@ class DmxController {
     refreshRate: 44,
   };
 
-  private state: Omit<DmxState, "channels" | "artnetConnected"> = {
+  private state: Omit<DmxState, "channels" | "artnetConnected" | "idleTimer" | "hardwareLastSeen"> = {
     mode: "idle",
     fan: { speed: 0, enabled: false, channel: CHANNEL_MAP.FAN_SPEED + 1 },
     ledMatrix: {
@@ -150,10 +231,19 @@ class DmxController {
     painFader: { position: 0, dmxValue: 0, channel: CHANNEL_MAP.PAIN_FADER + 1 },
   };
 
+  private presets: FaderPreset[] = DEFAULT_PRESETS.map((p) => ({ ...p }));
+  private idlePreset: FaderPreset = { ...DEFAULT_IDLE_PRESET };
+  private idleTimerSeconds = 30;
+  private idleTimerEnabled = true;
+
+  private idleTimerHandle: NodeJS.Timeout | null = null;
+  private idleTimerStart: number | null = null;
+  private idleTimerTriggered = false;
+
   private socket: dgram.Socket | null = null;
   private artnetConnected = false;
   private refreshTimer: NodeJS.Timeout | null = null;
-  private lastSendTime = 0;
+  private hardwareLastSeen: number | null = null;
 
   constructor() {
     this.initSocket();
@@ -185,7 +275,6 @@ class DmxController {
     const numChannels = Math.max(18, 2);
     const length = numChannels % 2 === 0 ? numChannels : numChannels + 1;
     const buf = Buffer.alloc(18 + length, 0);
-
     buf.write("Art-Net\0", 0, "ascii");
     buf.writeUInt16LE(0x5000, 8);
     buf.writeUInt16BE(14, 10);
@@ -193,11 +282,9 @@ class DmxController {
     buf[13] = 0;
     buf.writeUInt16LE(this.config.universe & 0x7fff, 14);
     buf.writeUInt16BE(length, 16);
-
     for (let i = 0; i < length; i++) {
       buf[18 + i] = this.channels[i] ?? 0;
     }
-
     return buf;
   }
 
@@ -210,7 +297,6 @@ class DmxController {
         this.artnetConnected = false;
       } else {
         this.artnetConnected = true;
-        this.lastSendTime = Date.now();
       }
     });
   }
@@ -252,11 +338,119 @@ class DmxController {
     this.channels[CHANNEL_MAP.PAIN_FADER] = painFader.dmxValue;
   }
 
+  private applyPreset(preset: FaderPreset) {
+    const s = this.state;
+    s.fan = { ...s.fan, speed: preset.fan.speed, enabled: preset.fan.enabled };
+    s.ledMatrix = {
+      ...s.ledMatrix,
+      r: preset.ledMatrix.r,
+      g: preset.ledMatrix.g,
+      b: preset.ledMatrix.b,
+      brightness: preset.ledMatrix.brightness,
+      pattern: preset.ledMatrix.pattern,
+      enabled: preset.ledMatrix.enabled,
+    };
+    s.ledStrips.strip1 = {
+      ...s.ledStrips.strip1,
+      r: preset.ledStrip1.r,
+      g: preset.ledStrip1.g,
+      b: preset.ledStrip1.b,
+      brightness: preset.ledStrip1.brightness,
+      enabled: preset.ledStrip1.enabled,
+    };
+    s.ledStrips.strip2 = {
+      ...s.ledStrips.strip2,
+      r: preset.ledStrip2.r,
+      g: preset.ledStrip2.g,
+      b: preset.ledStrip2.b,
+      brightness: preset.ledStrip2.brightness,
+      enabled: preset.ledStrip2.enabled,
+    };
+    s.disc = {
+      ...s.disc,
+      speed: preset.disc.speed,
+      direction: preset.disc.direction,
+      enabled: preset.disc.enabled,
+    };
+    this.syncChannels();
+  }
+
+  private captureCurrentAsPreset(name: string): FaderPreset {
+    const s = this.state;
+    return {
+      name,
+      fan: { speed: s.fan.speed, enabled: s.fan.enabled },
+      ledMatrix: {
+        r: s.ledMatrix.r,
+        g: s.ledMatrix.g,
+        b: s.ledMatrix.b,
+        brightness: s.ledMatrix.brightness,
+        pattern: s.ledMatrix.pattern,
+        enabled: s.ledMatrix.enabled,
+      },
+      ledStrip1: {
+        r: s.ledStrips.strip1.r,
+        g: s.ledStrips.strip1.g,
+        b: s.ledStrips.strip1.b,
+        brightness: s.ledStrips.strip1.brightness,
+        enabled: s.ledStrips.strip1.enabled,
+      },
+      ledStrip2: {
+        r: s.ledStrips.strip2.r,
+        g: s.ledStrips.strip2.g,
+        b: s.ledStrips.strip2.b,
+        brightness: s.ledStrips.strip2.brightness,
+        enabled: s.ledStrips.strip2.enabled,
+      },
+      disc: {
+        speed: s.disc.speed,
+        direction: s.disc.direction,
+        enabled: s.disc.enabled,
+      },
+    };
+  }
+
+  private stopIdleTimer() {
+    if (this.idleTimerHandle) {
+      clearTimeout(this.idleTimerHandle);
+      this.idleTimerHandle = null;
+    }
+    this.idleTimerStart = null;
+    this.idleTimerTriggered = false;
+  }
+
+  private startIdleTimer() {
+    this.stopIdleTimer();
+    if (!this.idleTimerEnabled) return;
+    this.idleTimerStart = Date.now();
+    this.idleTimerTriggered = false;
+    this.idleTimerHandle = setTimeout(() => {
+      logger.info({ timerSeconds: this.idleTimerSeconds }, "Idle timer fired — applying idle preset");
+      this.idleTimerTriggered = true;
+      this.state.mode = "idle";
+      this.applyPreset(this.idlePreset);
+      this.idleTimerHandle = null;
+    }, this.idleTimerSeconds * 1000);
+  }
+
+  getIdleTimerRemaining(): number | null {
+    if (!this.idleTimerHandle || this.idleTimerStart === null) return null;
+    const elapsed = (Date.now() - this.idleTimerStart) / 1000;
+    return Math.max(0, this.idleTimerSeconds - elapsed);
+  }
+
   getState(): DmxState {
     return {
       ...this.state,
       channels: [...this.channels],
       artnetConnected: this.artnetConnected,
+      idleTimer: {
+        enabled: this.idleTimerEnabled,
+        timerSeconds: this.idleTimerSeconds,
+        remaining: this.getIdleTimerRemaining(),
+        triggered: this.idleTimerTriggered,
+      },
+      hardwareLastSeen: this.hardwareLastSeen,
     };
   }
 
@@ -264,11 +458,86 @@ class DmxController {
     return { ...this.config };
   }
 
+  getPresets(): PresetsState {
+    return {
+      positions: this.presets.map((p) => ({ ...p })),
+      idlePreset: { ...this.idlePreset },
+      idleTimerSeconds: this.idleTimerSeconds,
+      idleTimerEnabled: this.idleTimerEnabled,
+    };
+  }
+
   updateConfig(updates: Partial<DmxConfig>): DmxConfig {
     this.config = { ...this.config, ...updates };
     this.initSocket();
     this.startRefresh();
     return { ...this.config };
+  }
+
+  updatePreset(position: string, updates: Partial<FaderPreset>): PresetsState {
+    if (position === "idle") {
+      this.idlePreset = { ...this.idlePreset, ...updates };
+      if (updates.fan) this.idlePreset.fan = { ...this.idlePreset.fan, ...updates.fan };
+      if (updates.ledMatrix) this.idlePreset.ledMatrix = { ...this.idlePreset.ledMatrix, ...updates.ledMatrix };
+      if (updates.ledStrip1) this.idlePreset.ledStrip1 = { ...this.idlePreset.ledStrip1, ...updates.ledStrip1 };
+      if (updates.ledStrip2) this.idlePreset.ledStrip2 = { ...this.idlePreset.ledStrip2, ...updates.ledStrip2 };
+      if (updates.disc) this.idlePreset.disc = { ...this.idlePreset.disc, ...updates.disc };
+    } else {
+      const pos = parseInt(position, 10);
+      if (isNaN(pos) || pos < 0 || pos > 4) return this.getPresets();
+      const existing = this.presets[pos];
+      this.presets[pos] = {
+        ...existing,
+        ...updates,
+        fan: updates.fan ? { ...existing.fan, ...updates.fan } : existing.fan,
+        ledMatrix: updates.ledMatrix ? { ...existing.ledMatrix, ...updates.ledMatrix } : existing.ledMatrix,
+        ledStrip1: updates.ledStrip1 ? { ...existing.ledStrip1, ...updates.ledStrip1 } : existing.ledStrip1,
+        ledStrip2: updates.ledStrip2 ? { ...existing.ledStrip2, ...updates.ledStrip2 } : existing.ledStrip2,
+        disc: updates.disc ? { ...existing.disc, ...updates.disc } : existing.disc,
+      };
+    }
+    return this.getPresets();
+  }
+
+  capturePreset(position: string): PresetsState {
+    if (position === "idle") {
+      const captured = this.captureCurrentAsPreset("IDLE");
+      this.idlePreset = { ...captured, name: this.idlePreset.name };
+    } else {
+      const pos = parseInt(position, 10);
+      if (isNaN(pos) || pos < 0 || pos > 4) return this.getPresets();
+      const name = this.presets[pos]?.name ?? `POS ${pos}`;
+      this.presets[pos] = { ...this.captureCurrentAsPreset(name) };
+    }
+    return this.getPresets();
+  }
+
+  updatePresetTimer(timerSeconds?: number, enabled?: boolean): PresetsState {
+    if (timerSeconds !== undefined) this.idleTimerSeconds = Math.max(1, Math.min(3600, timerSeconds));
+    if (enabled !== undefined) this.idleTimerEnabled = enabled;
+    if (!this.idleTimerEnabled) this.stopIdleTimer();
+    return this.getPresets();
+  }
+
+  hardwareFaderInput(position: number): DmxState {
+    const pos = Math.max(0, Math.min(4, Math.round(position)));
+    this.hardwareLastSeen = Date.now();
+
+    this.state.painFader.position = pos;
+    this.state.painFader.dmxValue = PAIN_FADER_DMX[pos] ?? 0;
+
+    if (pos === 0) {
+      this.startIdleTimer();
+    } else {
+      this.stopIdleTimer();
+      this.state.mode = "experience";
+      const preset = this.presets[pos];
+      if (preset) this.applyPreset(preset);
+    }
+
+    this.syncChannels();
+    logger.info({ position: pos }, "Hardware fader input received");
+    return this.getState();
   }
 
   setMode(mode: "idle" | "experience"): DmxState {
@@ -350,54 +619,29 @@ class DmxController {
     switch (scene) {
       case "idle":
         this.state.mode = "idle";
-        this.state.fan = { ...this.state.fan, speed: 0, enabled: false };
-        this.state.ledMatrix = { ...this.state.ledMatrix, r: 255, g: 200, b: 120, brightness: 60, pattern: 0, enabled: true };
-        this.state.ledStrips.strip1 = { ...this.state.ledStrips.strip1, r: 255, g: 200, b: 120, brightness: 50, enabled: true };
-        this.state.ledStrips.strip2 = { ...this.state.ledStrips.strip2, r: 255, g: 200, b: 120, brightness: 50, enabled: true };
-        this.state.disc = { ...this.state.disc, speed: 30, direction: "cw", enabled: true };
+        this.applyPreset(this.idlePreset);
         this.state.painFader = { ...this.state.painFader, position: 0, dmxValue: PAIN_FADER_DMX[0] };
         break;
-
       case "warmup":
         this.state.mode = "experience";
-        this.state.fan = { ...this.state.fan, speed: 80, enabled: true };
-        this.state.ledMatrix = { ...this.state.ledMatrix, r: 255, g: 140, b: 0, brightness: 140, pattern: 10, enabled: true };
-        this.state.ledStrips.strip1 = { ...this.state.ledStrips.strip1, r: 255, g: 80, b: 0, brightness: 100, enabled: true };
-        this.state.ledStrips.strip2 = { ...this.state.ledStrips.strip2, r: 255, g: 80, b: 0, brightness: 100, enabled: true };
-        this.state.disc = { ...this.state.disc, speed: 80, direction: "cw", enabled: true };
+        this.applyPreset(this.presets[1]);
         this.state.painFader = { ...this.state.painFader, position: 1, dmxValue: PAIN_FADER_DMX[1] };
         break;
-
       case "experience_low":
         this.state.mode = "experience";
-        this.state.fan = { ...this.state.fan, speed: 130, enabled: true };
-        this.state.ledMatrix = { ...this.state.ledMatrix, r: 200, g: 0, b: 255, brightness: 180, pattern: 30, enabled: true };
-        this.state.ledStrips.strip1 = { ...this.state.ledStrips.strip1, r: 200, g: 0, b: 200, brightness: 150, enabled: true };
-        this.state.ledStrips.strip2 = { ...this.state.ledStrips.strip2, r: 200, g: 0, b: 200, brightness: 150, enabled: true };
-        this.state.disc = { ...this.state.disc, speed: 130, direction: "cw", enabled: true };
+        this.applyPreset(this.presets[2]);
         this.state.painFader = { ...this.state.painFader, position: 2, dmxValue: PAIN_FADER_DMX[2] };
         break;
-
       case "experience_mid":
         this.state.mode = "experience";
-        this.state.fan = { ...this.state.fan, speed: 190, enabled: true };
-        this.state.ledMatrix = { ...this.state.ledMatrix, r: 255, g: 0, b: 80, brightness: 220, pattern: 60, enabled: true };
-        this.state.ledStrips.strip1 = { ...this.state.ledStrips.strip1, r: 255, g: 0, b: 50, brightness: 200, enabled: true };
-        this.state.ledStrips.strip2 = { ...this.state.ledStrips.strip2, r: 255, g: 0, b: 50, brightness: 200, enabled: true };
-        this.state.disc = { ...this.state.disc, speed: 190, direction: "ccw", enabled: true };
+        this.applyPreset(this.presets[3]);
         this.state.painFader = { ...this.state.painFader, position: 3, dmxValue: PAIN_FADER_DMX[3] };
         break;
-
       case "experience_high":
         this.state.mode = "experience";
-        this.state.fan = { ...this.state.fan, speed: 255, enabled: true };
-        this.state.ledMatrix = { ...this.state.ledMatrix, r: 255, g: 0, b: 0, brightness: 255, pattern: 100, enabled: true };
-        this.state.ledStrips.strip1 = { ...this.state.ledStrips.strip1, r: 255, g: 0, b: 0, brightness: 255, enabled: true };
-        this.state.ledStrips.strip2 = { ...this.state.ledStrips.strip2, r: 255, g: 0, b: 0, brightness: 255, enabled: true };
-        this.state.disc = { ...this.state.disc, speed: 255, direction: "ccw", enabled: true };
+        this.applyPreset(this.presets[4]);
         this.state.painFader = { ...this.state.painFader, position: 4, dmxValue: PAIN_FADER_DMX[4] };
         break;
-
       case "blackout":
         this.channels.fill(0);
         this.state.fan = { ...this.state.fan, speed: 0, enabled: false };
@@ -408,7 +652,6 @@ class DmxController {
         this.sendArtNet();
         return this.getState();
     }
-
     this.syncChannels();
     return this.getState();
   }
@@ -419,6 +662,7 @@ class DmxController {
 
   destroy() {
     if (this.refreshTimer) clearInterval(this.refreshTimer);
+    if (this.idleTimerHandle) clearTimeout(this.idleTimerHandle);
     if (this.socket) this.socket.close();
   }
 }

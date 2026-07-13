@@ -6,6 +6,7 @@
  * OpenAPI spec version: 0.1.0
  */
 import type { DiscState } from './discState';
+import type { DmxStateIdleTimer } from './dmxStateIdleTimer';
 import type { DmxStateMode } from './dmxStateMode';
 import type { FanState } from './fanState';
 import type { LedMatrixState } from './ledMatrixState';
@@ -19,7 +20,9 @@ export interface DmxState {
   ledStrips: LedStripsState;
   disc: DiscState;
   painFader: PainFaderState;
-  /** Raw DMX channel values (512 channels, 0-255) */
   channels: number[];
   artnetConnected: boolean;
+  idleTimer: DmxStateIdleTimer;
+  /** @nullable */
+  hardwareLastSeen: number | null;
 }

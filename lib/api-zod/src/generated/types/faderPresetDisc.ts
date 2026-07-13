@@ -5,17 +5,14 @@
  * Painfader DMX Controller API
  * OpenAPI spec version: 0.1.0
  */
+import type { FaderPresetDiscDirection } from './faderPresetDiscDirection';
 
-export interface PainFaderState {
-  /**
-     * @minimum 0
-     * @maximum 4
-     */
-  position: number;
+export type FaderPresetDisc = {
   /**
      * @minimum 0
      * @maximum 255
      */
-  dmxValue: number;
-  channel: number;
-}
+  speed: number;
+  direction: FaderPresetDiscDirection;
+  enabled: boolean;
+};

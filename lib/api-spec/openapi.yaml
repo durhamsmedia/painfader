@@ -18,7 +18,6 @@ paths:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -32,7 +31,6 @@ paths:
       operationId: getDmxState
       tags: [dmx]
       summary: Get full DMX state
-      description: Returns the current DMX channel values and mode
       responses:
         "200":
           description: Current DMX state
@@ -46,7 +44,6 @@ paths:
       operationId: getDmxConfig
       tags: [dmx]
       summary: Get Art-Net config
-      description: Returns the current Art-Net/DMX output configuration
       responses:
         "200":
           description: DMX configuration
@@ -58,7 +55,6 @@ paths:
       operationId: updateDmxConfig
       tags: [dmx]
       summary: Update Art-Net config
-      description: Update Art-Net host/universe/port settings
       requestBody:
         required: true
         content:
@@ -78,7 +74,6 @@ paths:
       operationId: setMode
       tags: [dmx]
       summary: Set operating mode
-      description: Switch between Idle and Experience mode
       requestBody:
         required: true
         content:
@@ -220,6 +215,108 @@ paths:
               schema:
                 $ref: "#/components/schemas/DmxState"
 
+  /dmx/hardware-fader:
+    post:
+      operationId: hardwareFaderInput
+      tags: [dmx]
+      summary: Receive position from physical hardware fader
+      description: |
+        POST this from a microcontroller (Arduino, Raspberry Pi, etc.) when the physical fader moves.
+        Automatically applies the configured preset for that position and starts the idle timer when position returns to 0.
+        Example: POST /api/dmx/hardware-fader  { "position": 2 }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/HardwareFaderInput"
+      responses:
+        "200":
+          description: Fader position applied
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DmxState"
+
+  /dmx/presets:
+    get:
+      operationId: getPresets
+      tags: [dmx]
+      summary: Get all fader position presets
+      responses:
+        "200":
+          description: All presets
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PresetsState"
+
+  /dmx/presets/{position}:
+    put:
+      operationId: updatePreset
+      tags: [dmx]
+      summary: Save a preset for a fader position (0-4) or idle
+      parameters:
+        - name: position
+          in: path
+          required: true
+          schema:
+            type: string
+          description: "Fader position: 0, 1, 2, 3, 4, or idle"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FaderPresetInput"
+      responses:
+        "200":
+          description: Preset saved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PresetsState"
+
+  /dmx/presets/{position}/capture:
+    post:
+      operationId: capturePreset
+      tags: [dmx]
+      summary: Capture current live state as a preset
+      parameters:
+        - name: position
+          in: path
+          required: true
+          schema:
+            type: string
+          description: "Fader position: 0, 1, 2, 3, 4, or idle"
+      responses:
+        "200":
+          description: Current state captured as preset
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PresetsState"
+
+  /dmx/preset-timer:
+    put:
+      operationId: updatePresetTimer
+      tags: [dmx]
+      summary: Configure the idle timer
+      description: When the spring returns the fader to 0, the idle timer counts down and fires the idle preset.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PresetTimerInput"
+      responses:
+        "200":
+          description: Timer config updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PresetsState"
+
 components:
   schemas:
     HealthStatus:
@@ -241,6 +338,8 @@ components:
         - painFader
         - channels
         - artnetConnected
+        - idleTimer
+        - hardwareLastSeen
       properties:
         mode:
           type: string
@@ -259,9 +358,22 @@ components:
           type: array
           items:
             type: integer
-          description: Raw DMX channel values (512 channels, 0-255)
         artnetConnected:
           type: boolean
+        idleTimer:
+          type: object
+          required: [enabled, timerSeconds, remaining, triggered]
+          properties:
+            enabled:
+              type: boolean
+            timerSeconds:
+              type: integer
+            remaining:
+              type: ["number", "null"]
+            triggered:
+              type: boolean
+        hardwareLastSeen:
+          type: ["integer", "null"]
 
     DmxConfig:
       type: object
@@ -453,7 +565,6 @@ components:
           $ref: "#/components/schemas/LedStripInput"
         sync:
           type: boolean
-          description: Apply same values to both strips
 
     LedStripInput:
       type: object
@@ -521,7 +632,6 @@ components:
           type: integer
           minimum: 0
           maximum: 4
-          description: Physical fader position (0=min, 4=max pain)
         dmxValue:
           type: integer
           minimum: 0
@@ -547,3 +657,140 @@ components:
         scene:
           type: string
           enum: [idle, warmup, experience_low, experience_mid, experience_high, blackout]
+
+    HardwareFaderInput:
+      type: object
+      required:
+        - position
+      properties:
+        position:
+          type: integer
+          minimum: 0
+          maximum: 4
+          description: Physical fader position sent by the hardware controller
+
+    FaderPreset:
+      type: object
+      required:
+        - name
+        - fan
+        - ledMatrix
+        - ledStrip1
+        - ledStrip2
+        - disc
+      properties:
+        name:
+          type: string
+        fan:
+          type: object
+          required: [speed, enabled]
+          properties:
+            speed: { type: integer, minimum: 0, maximum: 255 }
+            enabled: { type: boolean }
+        ledMatrix:
+          type: object
+          required: [r, g, b, brightness, pattern, enabled]
+          properties:
+            r: { type: integer, minimum: 0, maximum: 255 }
+            g: { type: integer, minimum: 0, maximum: 255 }
+            b: { type: integer, minimum: 0, maximum: 255 }
+            brightness: { type: integer, minimum: 0, maximum: 255 }
+            pattern: { type: integer, minimum: 0, maximum: 255 }
+            enabled: { type: boolean }
+        ledStrip1:
+          type: object
+          required: [r, g, b, brightness, enabled]
+          properties:
+            r: { type: integer, minimum: 0, maximum: 255 }
+            g: { type: integer, minimum: 0, maximum: 255 }
+            b: { type: integer, minimum: 0, maximum: 255 }
+            brightness: { type: integer, minimum: 0, maximum: 255 }
+            enabled: { type: boolean }
+        ledStrip2:
+          type: object
+          required: [r, g, b, brightness, enabled]
+          properties:
+            r: { type: integer, minimum: 0, maximum: 255 }
+            g: { type: integer, minimum: 0, maximum: 255 }
+            b: { type: integer, minimum: 0, maximum: 255 }
+            brightness: { type: integer, minimum: 0, maximum: 255 }
+            enabled: { type: boolean }
+        disc:
+          type: object
+          required: [speed, direction, enabled]
+          properties:
+            speed: { type: integer, minimum: 0, maximum: 255 }
+            direction: { type: string, enum: [cw, ccw, stop] }
+            enabled: { type: boolean }
+
+    FaderPresetInput:
+      type: object
+      properties:
+        name:
+          type: string
+        fan:
+          type: object
+          properties:
+            speed: { type: integer, minimum: 0, maximum: 255 }
+            enabled: { type: boolean }
+        ledMatrix:
+          type: object
+          properties:
+            r: { type: integer, minimum: 0, maximum: 255 }
+            g: { type: integer, minimum: 0, maximum: 255 }
+            b: { type: integer, minimum: 0, maximum: 255 }
+            brightness: { type: integer, minimum: 0, maximum: 255 }
+            pattern: { type: integer, minimum: 0, maximum: 255 }
+            enabled: { type: boolean }
+        ledStrip1:
+          type: object
+          properties:
+            r: { type: integer, minimum: 0, maximum: 255 }
+            g: { type: integer, minimum: 0, maximum: 255 }
+            b: { type: integer, minimum: 0, maximum: 255 }
+            brightness: { type: integer, minimum: 0, maximum: 255 }
+            enabled: { type: boolean }
+        ledStrip2:
+          type: object
+          properties:
+            r: { type: integer, minimum: 0, maximum: 255 }
+            g: { type: integer, minimum: 0, maximum: 255 }
+            b: { type: integer, minimum: 0, maximum: 255 }
+            brightness: { type: integer, minimum: 0, maximum: 255 }
+            enabled: { type: boolean }
+        disc:
+          type: object
+          properties:
+            speed: { type: integer, minimum: 0, maximum: 255 }
+            direction: { type: string, enum: [cw, ccw, stop] }
+            enabled: { type: boolean }
+
+    PresetsState:
+      type: object
+      required:
+        - positions
+        - idlePreset
+        - idleTimerSeconds
+        - idleTimerEnabled
+      properties:
+        positions:
+          type: array
+          items:
+            $ref: "#/components/schemas/FaderPreset"
+          description: Presets for fader positions 0-4 (array index = position)
+        idlePreset:
+          $ref: "#/components/schemas/FaderPreset"
+        idleTimerSeconds:
+          type: integer
+        idleTimerEnabled:
+          type: boolean
+
+    PresetTimerInput:
+      type: object
+      properties:
+        timerSeconds:
+          type: integer
+          minimum: 1
+          maximum: 3600
+        enabled:
+          type: boolean

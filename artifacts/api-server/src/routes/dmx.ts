@@ -43,12 +43,7 @@ router.put("/dmx/fan", (req, res) => {
 
 router.put("/dmx/led-matrix", (req, res) => {
   const { r, g, b, brightness, pattern, enabled } = req.body as {
-    r?: number;
-    g?: number;
-    b?: number;
-    brightness?: number;
-    pattern?: number;
-    enabled?: boolean;
+    r?: number; g?: number; b?: number; brightness?: number; pattern?: number; enabled?: boolean;
   };
   const state = dmxController.setLedMatrix({ r, g, b, brightness, pattern, enabled });
   res.json(state);
@@ -66,9 +61,7 @@ router.put("/dmx/led-strips", (req, res) => {
 
 router.put("/dmx/disc", (req, res) => {
   const { speed, direction, enabled } = req.body as {
-    speed?: number;
-    direction?: "cw" | "ccw" | "stop";
-    enabled?: boolean;
+    speed?: number; direction?: "cw" | "ccw" | "stop"; enabled?: boolean;
   };
   const state = dmxController.setDisc({ speed, direction, enabled });
   res.json(state);
@@ -81,7 +74,6 @@ router.put("/dmx/pain-fader", (req, res) => {
     return;
   }
   const state = dmxController.setPainFader(position);
-  logger.info({ position }, "Pain fader position set");
   res.json(state);
 });
 
@@ -103,6 +95,51 @@ router.post("/dmx/blackout", (_req, res) => {
   const state = dmxController.blackout();
   logger.info("Blackout triggered");
   res.json(state);
+});
+
+router.post("/dmx/hardware-fader", (req, res) => {
+  const { position } = req.body as { position: number };
+  if (position === undefined || position < 0 || position > 4) {
+    res.status(400).json({ error: "position must be 0-4" });
+    return;
+  }
+  const state = dmxController.hardwareFaderInput(position);
+  res.json(state);
+});
+
+router.get("/dmx/presets", (_req, res) => {
+  res.json(dmxController.getPresets());
+});
+
+router.put("/dmx/presets/:position", (req, res) => {
+  const { position } = req.params;
+  const validPositions = ["0", "1", "2", "3", "4", "idle"];
+  if (!validPositions.includes(position)) {
+    res.status(400).json({ error: "position must be 0-4 or 'idle'" });
+    return;
+  }
+  const presets = dmxController.updatePreset(position, req.body);
+  logger.info({ position }, "Preset updated");
+  res.json(presets);
+});
+
+router.post("/dmx/presets/:position/capture", (req, res) => {
+  const { position } = req.params;
+  const validPositions = ["0", "1", "2", "3", "4", "idle"];
+  if (!validPositions.includes(position)) {
+    res.status(400).json({ error: "position must be 0-4 or 'idle'" });
+    return;
+  }
+  const presets = dmxController.capturePreset(position);
+  logger.info({ position }, "Preset captured from live state");
+  res.json(presets);
+});
+
+router.put("/dmx/preset-timer", (req, res) => {
+  const { timerSeconds, enabled } = req.body as { timerSeconds?: number; enabled?: boolean };
+  const presets = dmxController.updatePresetTimer(timerSeconds, enabled);
+  logger.info({ timerSeconds, enabled }, "Preset timer config updated");
+  res.json(presets);
 });
 
 export default router;
