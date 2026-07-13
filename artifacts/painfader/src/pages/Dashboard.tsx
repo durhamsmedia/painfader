@@ -23,10 +23,12 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
-  Activity, Settings2, Wind, Disc, Lightbulb, Zap, AlertTriangle, Clock, Cpu,
+  Activity, Settings2, Wind, Disc, Lightbulb, Zap, AlertTriangle, Clock, Cpu, HelpCircle,
 } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { toast } from 'sonner';
 import PresetEditor from '@/components/PresetEditor';
+import HelpModal from '@/components/HelpModal';
 
 const FADER_LABELS = ['SCHMERZ MAX', 'OPIOID LOW', 'OPIOID HIGH', 'NSAR LOW', 'NSAR HIGH'];
 const FADER_COLORS = ['#ef4444', '#a855f7', '#3b82f6', '#10b981', '#22c55e'];
@@ -43,6 +45,7 @@ export default function Dashboard() {
   const queryClient = useQueryClient();
   const [syncStrips, setSyncStrips] = useState(true);
   const [mainTab, setMainTab] = useState('live');
+  const [helpOpen, setHelpOpen] = useState(false);
 
   const { data: dmxState } = useGetDmxState({ query: { queryKey: getGetDmxStateQueryKey(), refetchInterval: 500 } });
   const { data: dmxConfig } = useGetDmxConfig();
@@ -123,6 +126,8 @@ export default function Dashboard() {
   const pos = dmxState.painFader.position;
 
   return (
+    <TooltipProvider delayDuration={400}>
+    <HelpModal open={helpOpen} onClose={() => setHelpOpen(false)} />
     <div className="min-h-screen bg-[#0a0a0c] text-zinc-300 font-sans">
       {/* HEADER */}
       <div className="sticky top-0 z-10 bg-[#0d0d0f] border-b border-zinc-800 px-4 md:px-6 py-3 flex flex-col xl:flex-row justify-between items-stretch xl:items-center gap-3">
@@ -177,26 +182,65 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <div className="flex items-center gap-5 justify-between xl:justify-end">
-          <div className="flex items-center gap-1.5 text-[10px] font-mono font-bold tracking-wider">
-            <div className={`w-2 h-2 rounded-full ${dmxState.artnetConnected ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`} />
-            <span className={dmxState.artnetConnected ? 'text-green-500' : 'text-red-500'}>
-              {dmxState.artnetConnected ? 'TX ACTIVE' : 'OFFLINE'}
-            </span>
-          </div>
+        <div className="flex items-center gap-3 justify-between xl:justify-end">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div className="flex items-center gap-1.5 text-[10px] font-mono font-bold tracking-wider cursor-default">
+                <div className={`w-2 h-2 rounded-full ${dmxState.artnetConnected ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`} />
+                <span className={dmxState.artnetConnected ? 'text-green-500' : 'text-red-500'}>
+                  {dmxState.artnetConnected ? 'TX ACTIVE' : 'OFFLINE'}
+                </span>
+              </div>
+            </TooltipTrigger>
+            <TooltipContent side="bottom" className="font-mono text-[10px]">
+              Art-Net UDP packets broadcasting to {dmxState.artnetConnected ? 'network' : 'no target — socket error'}
+            </TooltipContent>
+          </Tooltip>
+
           {dmxState.hardwareLastSeen && (
-            <div className="text-[10px] font-mono text-zinc-600 hidden md:flex items-center gap-1">
-              <Cpu className="w-3 h-3" />
-              HW {Math.round((Date.now() - dmxState.hardwareLastSeen) / 1000)}s ago
-            </div>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div className="text-[10px] font-mono text-zinc-600 hidden md:flex items-center gap-1 cursor-default">
+                  <Cpu className="w-3 h-3" />
+                  HW {Math.round((Date.now() - dmxState.hardwareLastSeen) / 1000)}s ago
+                </div>
+              </TooltipTrigger>
+              <TooltipContent side="bottom" className="font-mono text-[10px]">
+                Last hardware fader POST received {Math.round((Date.now() - dmxState.hardwareLastSeen) / 1000)}s ago
+              </TooltipContent>
+            </Tooltip>
           )}
-          <Button
-            variant="destructive"
-            className="uppercase tracking-widest font-black shrink-0 px-6 h-8 bg-red-600 hover:bg-red-700 text-white text-xs rounded-sm"
-            onClick={onBlackout}
-          >
-            BLACKOUT
-          </Button>
+
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-8 w-8 p-0 text-zinc-600 hover:text-zinc-300 hover:bg-zinc-800 rounded-sm"
+                onClick={() => setHelpOpen(true)}
+              >
+                <HelpCircle className="w-4 h-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="bottom" className="font-mono text-[10px]">
+              Open operator manual
+            </TooltipContent>
+          </Tooltip>
+
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="destructive"
+                className="uppercase tracking-widest font-black shrink-0 px-6 h-8 bg-red-600 hover:bg-red-700 text-white text-xs rounded-sm"
+                onClick={onBlackout}
+              >
+                BLACKOUT
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="bottom" className="font-mono text-[10px] bg-red-950 border-red-800 text-red-300">
+              Emergency — zeros ALL 512 DMX channels instantly
+            </TooltipContent>
+          </Tooltip>
         </div>
       </div>
 
@@ -723,5 +767,6 @@ void loop() {
         </Tabs>
       </div>
     </div>
+    </TooltipProvider>
   );
 }
