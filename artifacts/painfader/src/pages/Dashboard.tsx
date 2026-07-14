@@ -220,22 +220,6 @@ export default function Dashboard() {
                 </Tooltip>
               );
             })}
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className={`font-mono text-[10px] h-7 px-2.5 rounded-sm transition-all flex items-center gap-1.5 ${dmxState.mode === 'idle' ? 'border-primary bg-primary/10 text-primary shadow-[0_0_8px_rgba(99,102,241,0.4)]' : 'border-zinc-700 bg-transparent text-zinc-500 hover:bg-zinc-800 hover:text-white'}`}
-                  onClick={() => onLoadScene('idle')}
-                >
-                  IDLE
-                  <kbd className={`text-[8px] px-1 rounded border font-mono leading-tight ${lastKey === 'I' ? 'border-current bg-current/20' : 'border-zinc-700 bg-zinc-900 text-zinc-600'}`}>I</kbd>
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent side="bottom" className="font-mono text-[10px]">
-                Press <kbd className="px-1 border border-zinc-600 rounded text-[9px]">I</kbd> — apply idle preset
-              </TooltipContent>
-            </Tooltip>
           </div>
         </div>
 
