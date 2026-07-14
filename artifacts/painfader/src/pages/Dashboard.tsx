@@ -192,7 +192,7 @@ export default function Dashboard() {
           <div className="h-6 w-px bg-zinc-800 hidden sm:block" />
 
           <div className="flex gap-1.5 shrink-0 flex-wrap">
-            {([0, 1, 2, 3, 4] as const).map((p) => {
+            {([2, 1, 0, 3, 4] as const).map((p) => {
               const isActive = dmxState.painFader.position === p;
               const activeStyle = [
                 'border-red-600 bg-red-950/30 text-red-400 shadow-[0_0_8px_rgba(239,68,68,0.4)]',
@@ -343,13 +343,13 @@ export default function Dashboard() {
                       </div>
 
                       <div className="flex justify-between gap-2 mb-4">
-                        {[0, 1, 2, 3, 4].map((p) => (
+                        {([2, 1, 0, 3, 4] as const).map((p) => (
                           <button
                             key={p}
                             onClick={() => applyPosition.mutate({ data: { position: p } }, { onSuccess: inv })}
                             className={`flex-1 flex flex-col items-center justify-center py-4 rounded border-2 transition-all ${
                               pos === p ? FADER_BG[p] : FADER_INACTIVE
-                            }`}
+                            } ${p === 0 ? 'ring-1 ring-zinc-700' : ''}`}
                           >
                             <span className="text-lg font-black mb-0.5 font-mono">{p}</span>
                             <span className="text-[8px] uppercase tracking-widest leading-tight text-center px-0.5">
@@ -795,7 +795,7 @@ void loop() {
                 <CardContent className="pt-4">
                   <div className="text-[10px] font-mono text-zinc-600 mb-4">Test hardware fader positions without physical hardware</div>
                   <div className="flex gap-2 flex-wrap">
-                    {[0, 1, 2, 3, 4].map((p) => (
+                    {([2, 1, 0, 3, 4] as const).map((p) => (
                       <Button
                         key={p}
                         variant="outline"
