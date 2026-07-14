@@ -115,28 +115,73 @@ export default function Dashboard() {
   const [lastKey, setLastKey] = useState<string | null>(null);
   const lastKeyTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // Blackout hold-to-activate (1 second)
+  const HOLD_MS = 1000;
+  const [blackoutHoldPct, setBlackoutHoldPct] = useState(0);
+  const holdStartRef = useRef<number | null>(null);
+  const holdRafRef = useRef<number | null>(null);
+  const bKeyHeld = useRef(false);
+
+  const startBlackoutHold = () => {
+    holdStartRef.current = performance.now();
+    const tick = () => {
+      if (holdStartRef.current === null) return;
+      const elapsed = performance.now() - holdStartRef.current;
+      const pct = Math.min((elapsed / HOLD_MS) * 100, 100);
+      setBlackoutHoldPct(pct);
+      if (pct < 100) {
+        holdRafRef.current = requestAnimationFrame(tick);
+      } else {
+        cancelBlackoutHold();
+        onBlackout();
+      }
+    };
+    holdRafRef.current = requestAnimationFrame(tick);
+  };
+
+  const cancelBlackoutHold = () => {
+    holdStartRef.current = null;
+    if (holdRafRef.current !== null) cancelAnimationFrame(holdRafRef.current);
+    holdRafRef.current = null;
+    setBlackoutHoldPct(0);
+  };
+
   useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
+    const onKeyDown = (e: KeyboardEvent) => {
       if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+      if (e.repeat) return;
       const k = e.key.toLowerCase();
       if (['0','1','2','3','4'].includes(k)) {
         const p = parseInt(k, 10) as 0|1|2|3|4;
         applyPosition.mutate({ data: { position: p } }, { onSuccess: inv });
         setLastKey(k.toUpperCase());
+        if (lastKeyTimer.current) clearTimeout(lastKeyTimer.current);
+        lastKeyTimer.current = setTimeout(() => setLastKey(null), 800);
       } else if (k === 'i') {
         onLoadScene('idle');
         setLastKey('I');
-      } else if (k === 'b') {
-        onBlackout();
+        if (lastKeyTimer.current) clearTimeout(lastKeyTimer.current);
+        lastKeyTimer.current = setTimeout(() => setLastKey(null), 800);
+      } else if (k === 'b' && !bKeyHeld.current) {
+        bKeyHeld.current = true;
         setLastKey('B');
-      } else {
-        return;
+        startBlackoutHold();
       }
-      if (lastKeyTimer.current) clearTimeout(lastKeyTimer.current);
-      lastKeyTimer.current = setTimeout(() => setLastKey(null), 800);
     };
-    window.addEventListener('keydown', handler);
-    return () => window.removeEventListener('keydown', handler);
+    const onKeyUp = (e: KeyboardEvent) => {
+      if (e.key.toLowerCase() === 'b') {
+        bKeyHeld.current = false;
+        cancelBlackoutHold();
+        if (lastKey === 'B') setLastKey(null);
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    window.addEventListener('keyup', onKeyUp);
+    return () => {
+      window.removeEventListener('keydown', onKeyDown);
+      window.removeEventListener('keyup', onKeyUp);
+      cancelBlackoutHold();
+    };
   }, []);
 
   if (!dmxState) {
@@ -270,17 +315,25 @@ export default function Dashboard() {
 
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button
-                variant="destructive"
-                className="uppercase tracking-widest font-black shrink-0 px-4 h-8 bg-red-600 hover:bg-red-700 text-white text-xs rounded-sm flex items-center gap-2"
-                onClick={onBlackout}
+              <button
+                className="relative overflow-hidden uppercase tracking-widest font-black shrink-0 px-4 h-8 bg-red-900 hover:bg-red-800 border border-red-700 text-white text-xs rounded-sm flex items-center gap-2 select-none cursor-pointer transition-colors"
+                onMouseDown={startBlackoutHold}
+                onMouseUp={cancelBlackoutHold}
+                onMouseLeave={cancelBlackoutHold}
+                onTouchStart={startBlackoutHold}
+                onTouchEnd={cancelBlackoutHold}
               >
-                BLACKOUT
-                <kbd className={`text-[8px] px-1 rounded border font-mono leading-tight ${lastKey === 'B' ? 'border-white bg-white/20 text-white' : 'border-red-400/40 bg-red-900/40 text-red-300'}`}>B</kbd>
-              </Button>
+                {/* fill bar */}
+                <span
+                  className="absolute inset-0 bg-red-600 transition-none origin-left"
+                  style={{ transform: `scaleX(${blackoutHoldPct / 100})`, transformOrigin: 'left' }}
+                />
+                <span className="relative z-10">BLACKOUT</span>
+                <kbd className={`relative z-10 text-[8px] px-1 rounded border font-mono leading-tight ${blackoutHoldPct > 0 || lastKey === 'B' ? 'border-white bg-white/20 text-white' : 'border-red-400/40 bg-red-900/40 text-red-300'}`}>B</kbd>
+              </button>
             </TooltipTrigger>
             <TooltipContent side="bottom" className="font-mono text-[10px] bg-red-950 border-red-800 text-red-300">
-              Emergency — zeros ALL 512 DMX channels instantly
+              Hold 1 second to trigger — zeros ALL 512 DMX channels
             </TooltipContent>
           </Tooltip>
         </div>
