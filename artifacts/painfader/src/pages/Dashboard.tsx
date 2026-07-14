@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   useGetDmxState,
   useGetDmxConfig,
@@ -112,6 +112,33 @@ export default function Dashboard() {
     );
   };
 
+  const [lastKey, setLastKey] = useState<string | null>(null);
+  const lastKeyTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+      const k = e.key.toLowerCase();
+      if (['0','1','2','3','4'].includes(k)) {
+        const p = parseInt(k, 10) as 0|1|2|3|4;
+        applyPosition.mutate({ data: { position: p } }, { onSuccess: inv });
+        setLastKey(k.toUpperCase());
+      } else if (k === 'i') {
+        onLoadScene('idle');
+        setLastKey('I');
+      } else if (k === 'b') {
+        onBlackout();
+        setLastKey('B');
+      } else {
+        return;
+      }
+      if (lastKeyTimer.current) clearTimeout(lastKeyTimer.current);
+      lastKeyTimer.current = setTimeout(() => setLastKey(null), 800);
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, []);
+
   if (!dmxState) {
     return (
       <div className="min-h-screen flex items-center justify-center font-mono text-zinc-600 text-sm uppercase tracking-widest bg-[#050505]">
@@ -175,25 +202,40 @@ export default function Dashboard() {
                 'border-green-600 bg-green-950/30 text-green-400 shadow-[0_0_8px_rgba(34,197,94,0.4)]',
               ][p];
               return (
-                <Button
-                  key={p}
-                  variant="outline"
-                  size="sm"
-                  className={`font-mono text-[10px] h-7 px-3 rounded-sm transition-all ${isActive ? activeStyle : 'border-zinc-700 bg-transparent text-zinc-400 hover:bg-zinc-800 hover:text-white'}`}
-                  onClick={() => applyPosition.mutate({ data: { position: p } }, { onSuccess: inv })}
-                >
-                  POS {p}
-                </Button>
+                <Tooltip key={p}>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className={`font-mono text-[10px] h-7 px-2.5 rounded-sm transition-all flex items-center gap-1.5 ${isActive ? activeStyle : 'border-zinc-700 bg-transparent text-zinc-400 hover:bg-zinc-800 hover:text-white'}`}
+                      onClick={() => applyPosition.mutate({ data: { position: p } }, { onSuccess: inv })}
+                    >
+                      POS {p}
+                      <kbd className={`text-[8px] px-1 rounded border font-mono leading-tight ${lastKey === String(p) ? 'border-current bg-current/20' : 'border-zinc-700 bg-zinc-900 text-zinc-600'}`}>{p}</kbd>
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom" className="font-mono text-[10px]">
+                    Press <kbd className="px-1 border border-zinc-600 rounded text-[9px]">{p}</kbd> — {FADER_LABELS[p]}
+                  </TooltipContent>
+                </Tooltip>
               );
             })}
-            <Button
-              variant="outline"
-              size="sm"
-              className={`font-mono text-[10px] h-7 px-3 rounded-sm transition-all ${dmxState.mode === 'idle' && (dmxState.idleTimer as any)?.triggered ? 'border-primary bg-primary/10 text-primary shadow-[0_0_8px_rgba(99,102,241,0.4)]' : 'border-zinc-700 bg-transparent text-zinc-500 hover:bg-zinc-800 hover:text-white'}`}
-              onClick={() => onLoadScene('idle')}
-            >
-              IDLE
-            </Button>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className={`font-mono text-[10px] h-7 px-2.5 rounded-sm transition-all flex items-center gap-1.5 ${dmxState.mode === 'idle' ? 'border-primary bg-primary/10 text-primary shadow-[0_0_8px_rgba(99,102,241,0.4)]' : 'border-zinc-700 bg-transparent text-zinc-500 hover:bg-zinc-800 hover:text-white'}`}
+                  onClick={() => onLoadScene('idle')}
+                >
+                  IDLE
+                  <kbd className={`text-[8px] px-1 rounded border font-mono leading-tight ${lastKey === 'I' ? 'border-current bg-current/20' : 'border-zinc-700 bg-zinc-900 text-zinc-600'}`}>I</kbd>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="bottom" className="font-mono text-[10px]">
+                Press <kbd className="px-1 border border-zinc-600 rounded text-[9px]">I</kbd> — apply idle preset
+              </TooltipContent>
+            </Tooltip>
           </div>
         </div>
 
@@ -246,10 +288,11 @@ export default function Dashboard() {
             <TooltipTrigger asChild>
               <Button
                 variant="destructive"
-                className="uppercase tracking-widest font-black shrink-0 px-6 h-8 bg-red-600 hover:bg-red-700 text-white text-xs rounded-sm"
+                className="uppercase tracking-widest font-black shrink-0 px-4 h-8 bg-red-600 hover:bg-red-700 text-white text-xs rounded-sm flex items-center gap-2"
                 onClick={onBlackout}
               >
                 BLACKOUT
+                <kbd className={`text-[8px] px-1 rounded border font-mono leading-tight ${lastKey === 'B' ? 'border-white bg-white/20 text-white' : 'border-red-400/40 bg-red-900/40 text-red-300'}`}>B</kbd>
               </Button>
             </TooltipTrigger>
             <TooltipContent side="bottom" className="font-mono text-[10px] bg-red-950 border-red-800 text-red-300">
