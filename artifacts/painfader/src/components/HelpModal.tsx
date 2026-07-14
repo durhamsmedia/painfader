@@ -33,6 +33,14 @@ function Row({ label, desc }: { label: string; desc: string }) {
   );
 }
 
+function Kbd({ children }: { children: React.ReactNode }) {
+  return (
+    <kbd className="inline-block px-1.5 py-0.5 text-[9px] border border-zinc-600 rounded bg-zinc-900 text-zinc-300 font-mono leading-tight">
+      {children}
+    </kbd>
+  );
+}
+
 export default function HelpModal({ open, onClose }: HelpModalProps) {
   return (
     <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
@@ -55,54 +63,99 @@ export default function HelpModal({ open, onClose }: HelpModalProps) {
             </Section>
 
             <Section title="Pain Fader — 5 Positions">
-              <Row label="0 — SCHMERZ MAX" desc="Maximum pain. No medication. Spring default position. Triggers the idle countdown timer when held." />
-              <Row label="1 — OPIOID LOW"  desc="Low-dose opioid relief. Reduced pain state." />
-              <Row label="2 — OPIOID HIGH" desc="High-dose opioid relief. Further reduced pain state." />
-              <Row label="3 — NSAR LOW"    desc="Low-dose NSAID (non-steroidal anti-inflammatory). Mild relief." />
+              <p className="text-zinc-500 mb-1">
+                Position 0 (SCHMERZ MAX) sits in the <span className="text-zinc-300">center</span> of the fader panel.
+                Opioid states are to the <span className="text-zinc-300">left</span>, NSAR states to the <span className="text-zinc-300">right</span>.
+              </p>
+              <div className="bg-black border border-zinc-800 rounded-sm p-2 my-2 flex justify-between text-center text-[9px] font-mono gap-1">
+                {[
+                  { n: '2', l: 'OPI H', c: 'text-blue-400' },
+                  { n: '1', l: 'OPI L', c: 'text-purple-400' },
+                  { n: '0', l: 'SCHMERZ', c: 'text-red-400', center: true },
+                  { n: '3', l: 'NSR L', c: 'text-emerald-400' },
+                  { n: '4', l: 'NSR H', c: 'text-green-400' },
+                ].map(({ n, l, c, center }) => (
+                  <div key={n} className={`flex-1 py-2 rounded border ${center ? 'border-red-800 bg-red-950/20' : 'border-zinc-800'}`}>
+                    <div className={`font-black text-base ${c}`}>{n}</div>
+                    <div className="text-zinc-600 mt-0.5">{l}</div>
+                  </div>
+                ))}
+              </div>
+              <Row label="0 — SCHMERZ MAX" desc="Maximum pain. No medication. Spring default — triggers idle countdown when held." />
+              <Row label="1 — OPIOID LOW"  desc="Low-dose opioid relief." />
+              <Row label="2 — OPIOID HIGH" desc="High-dose opioid relief." />
+              <Row label="3 — NSAR LOW"    desc="Low-dose NSAID (non-steroidal anti-inflammatory)." />
               <Row label="4 — NSAR HIGH"   desc="High-dose NSAID. Maximum relief state." />
             </Section>
 
-            <Section title="Presets — PRESETS Tab">
-              <p>Each fader position (0–4) plus a dedicated IDLE state has a fully configurable preset defining the exact DMX output for that state.</p>
-              <div className="mt-2 space-y-1">
-                <Row label="CAPTURE FROM LIVE" desc="Snapshot the current live DMX state and save it as the preset for this position." />
-                <Row label="SAVE PRESET"       desc="Manually save the slider values you have edited in the preset form." />
-                <Row label="APPLY TO LIVE"     desc="Fire this preset immediately — same as the hardware fader reaching this position." />
+            <Section title="Header — Quick Controls">
+              <p>The sticky header contains mode, position shortcuts, and emergency controls.</p>
+              <div className="mt-1 space-y-1">
+                <Row label="IDLE / EXPERIENCE" desc="Mode switch. IDLE = ambient warm state. EXPERIENCE = active installation." />
+                <Row label="POS 2 1 0 3 4"     desc="One-click preset shortcuts. Active position glows in its color. Clicking applies the full position preset immediately." />
+                <Row label="TX ACTIVE"          desc="Green pulse = Art-Net UDP packets are broadcasting. Red = socket error." />
+                <Row label="HW Xs ago"          desc="Seconds since the last hardware fader HTTP signal was received." />
+                <Row label="BLACKOUT"           desc="Hold 1 second to zero all 512 DMX channels. A fill bar sweeps right as you hold — release early to cancel." />
               </div>
-              <p className="mt-2 text-zinc-600">Preset values are stored in-memory on the server. A server restart resets them to defaults.</p>
+            </Section>
+
+            <Section title="Keyboard Shortcuts">
+              <div className="bg-black border border-zinc-800 rounded-sm p-3 space-y-1.5 text-[11px]">
+                {[
+                  { key: '0', desc: 'Apply POS 0 preset — SCHMERZ MAX', color: 'text-red-400' },
+                  { key: '1', desc: 'Apply POS 1 preset — OPIOID LOW',  color: 'text-purple-400' },
+                  { key: '2', desc: 'Apply POS 2 preset — OPIOID HIGH', color: 'text-blue-400' },
+                  { key: '3', desc: 'Apply POS 3 preset — NSAR LOW',    color: 'text-emerald-400' },
+                  { key: '4', desc: 'Apply POS 4 preset — NSAR HIGH',   color: 'text-green-400' },
+                  { key: 'I', desc: 'Apply IDLE preset + switch to IDLE mode', color: 'text-zinc-300' },
+                  { key: 'B', desc: 'BLACKOUT — hold 1 second to activate. Release early to cancel.', color: 'text-red-500' },
+                ].map(({ key, desc, color }) => (
+                  <div key={key} className="flex items-center gap-3">
+                    <Kbd>{key}</Kbd>
+                    <span className={color}>{desc}</span>
+                  </div>
+                ))}
+              </div>
+              <p className="text-zinc-600 mt-1">Shortcuts are disabled when an input field is focused (e.g. typing in Art-Net config).</p>
+            </Section>
+
+            <Section title="Presets — PRESETS Tab">
+              <p>Each position (0–4) plus IDLE has a fully configurable preset. The active position tab shows a pulsing dot.</p>
+              <div className="mt-1 space-y-1">
+                <Row label="CAPTURE FROM LIVE" desc="Snapshot the current live DMX state as the preset for this position." />
+                <Row label="SAVE PRESET"       desc="Save manually edited slider values." />
+                <Row label="APPLY TO LIVE"     desc="Fire this preset immediately to the DMX output." />
+              </div>
+              <p className="mt-1 text-zinc-600">Presets are stored in-memory. A server restart resets them to defaults.</p>
             </Section>
 
             <Section title="Idle Timer">
-              <p>When the spring returns the fader to position 0, the idle countdown starts. After the configured number of seconds with no other fader input, the IDLE preset fires and the mode switches to IDLE.</p>
-              <Row label="Timer duration" desc="Configurable 1–3600 seconds (default 30s). Set in PRESETS → IDLE (TIMER) tab." />
-              <Row label="Interruption"   desc="Any fader position 1–4 received while counting cancels the timer immediately." />
-              <Row label="Visual"         desc="A progress bar appears in the pain fader card while counting down. Turns amber below 40%, red below 15%." />
+              <p>When the spring returns the fader to position 0, the idle countdown starts. After N seconds with no other fader input, the IDLE preset fires automatically.</p>
+              <Row label="Duration"    desc="1–3600 seconds (default 30s). Configure in PRESETS → IDLE (TIMER) tab." />
+              <Row label="Cancels on"  desc="Any fader position 1–4 received while counting." />
+              <Row label="Visual"      desc="Progress bar in the pain fader card. Green → amber (40%) → red (15%)." />
             </Section>
 
             <Section title="Hardware Fader Input — HARDWARE INPUT Tab">
-              <p>The physical fader sends its position via HTTP POST. Any microcontroller (Arduino, Raspberry Pi, ESP32) or system on the same network can trigger it.</p>
-              <Row label="Endpoint"  desc="POST /api/dmx/hardware-fader" />
-              <Row label="Body"      desc='{ "position": 0 }  — integer 0–4' />
-              <Row label="Response"  desc="Full DMX state JSON including idleTimer and hardwareLastSeen." />
-              <p className="mt-2">The header shows <span className="text-zinc-200">HW Xs ago</span> to indicate how recently a hardware signal was received.</p>
-              <p>The HARDWARE INPUT tab contains a simulate panel for testing without physical hardware, plus Arduino code examples.</p>
+              <p>The physical fader sends its position via HTTP POST from any microcontroller on the same network.</p>
+              <Row label="Endpoint" desc="POST /api/dmx/hardware-fader" />
+              <Row label="Body"     desc='{ "position": 0 }  — integer 0–4' />
+              <Row label="Response" desc="Full DMX state JSON including idleTimer and hardwareLastSeen." />
+              <p className="mt-1">The HARDWARE INPUT tab has a software simulate panel for testing and Arduino/ESP32 code examples.</p>
             </Section>
 
             <Section title="Live Control — LIVE CONTROL Tab">
-              <Row label="IDLE / EXPERIENCE"  desc="Mode toggle. IDLE = warm ambient state. EXPERIENCE = active installation running." />
-              <Row label="POS 1–4 buttons"    desc="Shortcut to instantly load the preset for that position." />
-              <Row label="Fan Speed (DMX)"    desc="DMX value 0–255. Maps proportionally to the fan's voltage/RPM." />
-              <Row label="LED Matrix"         desc="RGB color, brightness, and pattern channel for the matrix fixture." />
-              <Row label="LED Strips"         desc="Two independent strips with R/G/B/brightness. SYNC mirrors Strip 1 onto Strip 2." />
-              <Row label="Disc Drive"         desc="Speed 0–255, direction CW/CCW/STOP." />
+              <Row label="Fan Speed"   desc="DMX value 0–255. Maps to fan voltage/RPM." />
+              <Row label="LED Matrix"  desc="RGB color, brightness, and pattern channel." />
+              <Row label="LED Strips"  desc="Two independent strips with R/G/B/brightness. SYNC mirrors Strip 1 onto Strip 2." />
+              <Row label="Disc Drive"  desc="Speed 0–255, direction CW / CCW / STOP." />
             </Section>
 
             <Section title="Art-Net Configuration">
-              <Row label="Host IP"      desc="Target Art-Net node IP. Default 255.255.255.255 broadcasts to all nodes on the LAN." />
-              <Row label="Universe"     desc="Art-Net universe number (0-indexed). Match to your fixture patch." />
-              <Row label="Port"         desc="UDP port. Standard Art-Net port is 6454." />
-              <Row label="Refresh Rate" desc="Packets sent per second (Hz). Default 44Hz. Lower to reduce network load." />
-              <Row label="TX ACTIVE"    desc="Green = Art-Net UDP packets are being sent. Red = socket error." />
+              <Row label="Host IP"      desc="Target node IP. 255.255.255.255 broadcasts to all nodes on the LAN." />
+              <Row label="Universe"     desc="Art-Net universe (0-indexed). Match to your fixture patch." />
+              <Row label="Port"         desc="UDP port. Standard is 6454." />
+              <Row label="Refresh Rate" desc="Packets per second (Hz). Default 44 Hz." />
             </Section>
 
             <Section title="DMX Channel Map">
@@ -134,14 +187,10 @@ export default function HelpModal({ open, onClose }: HelpModalProps) {
               </div>
             </Section>
 
-            <Section title="BLACKOUT">
-              <p>The red <span className="text-white font-bold">BLACKOUT</span> button in the top-right immediately zeroes all 512 DMX channels and disables every component. Use in emergencies. State is not saved — re-apply presets or adjust sliders to restore output.</p>
-            </Section>
-
             <Section title="Notes">
               <Row label="No database"   desc="All state is in-memory. A server restart resets everything to defaults." />
-              <Row label="Windows"       desc="Runs on any machine with Node.js. Art-Net targets LAN devices." />
-              <Row label="No response"   desc="Art-Net is UDP — there is no acknowledgement. TX ACTIVE only confirms packets were sent, not received." />
+              <Row label="Art-Net / UDP" desc="No connection confirmation. TX ACTIVE confirms packets were sent, not received." />
+              <Row label="Windows"       desc="Runs on any machine with Node.js. Art-Net targets any LAN device." />
             </Section>
 
           </div>
