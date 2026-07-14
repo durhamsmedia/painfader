@@ -164,18 +164,36 @@ export default function Dashboard() {
 
           <div className="h-6 w-px bg-zinc-800 hidden sm:block" />
 
-          <div className="flex gap-1.5 shrink-0">
-            {([0, 1, 2, 3, 4] as const).map((p) => (
-              <Button
-                key={p}
-                variant="outline"
-                size="sm"
-                className="font-mono text-[10px] border-zinc-700 bg-transparent text-zinc-400 hover:bg-zinc-800 hover:text-white h-7 px-3 rounded-sm"
-                onClick={() => applyPosition.mutate({ data: { position: p } }, { onSuccess: inv })}
-              >
-                POS {p}
-              </Button>
-            ))}
+          <div className="flex gap-1.5 shrink-0 flex-wrap">
+            {([0, 1, 2, 3, 4] as const).map((p) => {
+              const isActive = dmxState.painFader.position === p;
+              const activeStyle = [
+                'border-red-600 bg-red-950/30 text-red-400 shadow-[0_0_8px_rgba(239,68,68,0.4)]',
+                'border-purple-600 bg-purple-950/30 text-purple-400 shadow-[0_0_8px_rgba(168,85,247,0.4)]',
+                'border-blue-600 bg-blue-950/30 text-blue-400 shadow-[0_0_8px_rgba(59,130,246,0.4)]',
+                'border-emerald-600 bg-emerald-950/30 text-emerald-400 shadow-[0_0_8px_rgba(16,185,129,0.4)]',
+                'border-green-600 bg-green-950/30 text-green-400 shadow-[0_0_8px_rgba(34,197,94,0.4)]',
+              ][p];
+              return (
+                <Button
+                  key={p}
+                  variant="outline"
+                  size="sm"
+                  className={`font-mono text-[10px] h-7 px-3 rounded-sm transition-all ${isActive ? activeStyle : 'border-zinc-700 bg-transparent text-zinc-400 hover:bg-zinc-800 hover:text-white'}`}
+                  onClick={() => applyPosition.mutate({ data: { position: p } }, { onSuccess: inv })}
+                >
+                  POS {p}
+                </Button>
+              );
+            })}
+            <Button
+              variant="outline"
+              size="sm"
+              className={`font-mono text-[10px] h-7 px-3 rounded-sm transition-all ${dmxState.mode === 'idle' && (dmxState.idleTimer as any)?.triggered ? 'border-primary bg-primary/10 text-primary shadow-[0_0_8px_rgba(99,102,241,0.4)]' : 'border-zinc-700 bg-transparent text-zinc-500 hover:bg-zinc-800 hover:text-white'}`}
+              onClick={() => onLoadScene('idle')}
+            >
+              IDLE
+            </Button>
           </div>
         </div>
 
@@ -285,7 +303,7 @@ export default function Dashboard() {
                         {[0, 1, 2, 3, 4].map((p) => (
                           <button
                             key={p}
-                            onClick={() => onSetPainFader(p)}
+                            onClick={() => applyPosition.mutate({ data: { position: p } }, { onSuccess: inv })}
                             className={`flex-1 flex flex-col items-center justify-center py-4 rounded border-2 transition-all ${
                               pos === p ? FADER_BG[p] : FADER_INACTIVE
                             }`}

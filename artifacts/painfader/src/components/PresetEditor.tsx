@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
   useGetPresets,
+  useGetDmxState,
   useUpdatePreset,
   useCapturePreset,
   useUpdatePresetTimer,
@@ -300,6 +301,10 @@ export default function PresetEditor() {
   const [timerEnabled, setTimerEnabled] = useState(true);
 
   const { data: presetsState } = useGetPresets({ query: { queryKey: getGetPresetsQueryKey(), refetchInterval: 2000 } });
+  const { data: dmxState } = useGetDmxState({ query: { queryKey: getGetDmxStateQueryKey(), refetchInterval: 500 } });
+  const activePosition = dmxState?.painFader.position ?? -1;
+  const isIdleActive = dmxState?.mode === 'idle';
+
   const updatePreset = useUpdatePreset();
   const capturePreset = useCapturePreset();
   const updateTimer = useUpdatePresetTimer();
@@ -393,20 +398,25 @@ export default function PresetEditor() {
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="bg-black border border-zinc-800 rounded-sm p-1 h-auto flex-wrap gap-1 w-full justify-start">
-          {[0, 1, 2, 3, 4].map((pos) => (
-            <TabsTrigger
-              key={pos}
-              value={String(pos)}
-              className={`font-mono text-[10px] tracking-widest rounded-sm px-3 py-1.5 border ${POSITION_COLORS[pos]}`}
-            >
-              <span className="font-black mr-1.5">{pos}</span>
-              {POSITION_LABELS[pos]}
-            </TabsTrigger>
-          ))}
+          {[0, 1, 2, 3, 4].map((pos) => {
+            const isLive = activePosition === pos;
+            return (
+              <TabsTrigger
+                key={pos}
+                value={String(pos)}
+                className={`font-mono text-[10px] tracking-widest rounded-sm px-3 py-1.5 border ${POSITION_COLORS[pos]} ${isLive ? 'ring-1 ring-inset ring-current' : ''}`}
+              >
+                {isLive && <span className="w-1.5 h-1.5 rounded-full bg-current mr-1.5 animate-pulse shrink-0" />}
+                <span className="font-black mr-1.5">{pos}</span>
+                {POSITION_LABELS[pos]}
+              </TabsTrigger>
+            );
+          })}
           <TabsTrigger
             value="idle"
-            className={`font-mono text-[10px] tracking-widest rounded-sm px-3 py-1.5 border ${POSITION_COLORS[5]}`}
+            className={`font-mono text-[10px] tracking-widest rounded-sm px-3 py-1.5 border ${POSITION_COLORS[5]} ${isIdleActive ? 'ring-1 ring-inset ring-current' : ''}`}
           >
+            {isIdleActive && <span className="w-1.5 h-1.5 rounded-full bg-current mr-1.5 animate-pulse shrink-0" />}
             <Clock className="w-3 h-3 mr-1.5" />
             IDLE (TIMER)
           </TabsTrigger>
