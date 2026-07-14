@@ -11,6 +11,7 @@ import {
   useSetPainFader,
   useLoadScene,
   useBlackout,
+  useHardwareFaderInput,
   getGetDmxStateQueryKey,
 } from '@workspace/api-client-react';
 import { useQueryClient } from '@tanstack/react-query';
@@ -59,6 +60,7 @@ export default function Dashboard() {
   const setPainFader = useSetPainFader();
   const loadScene = useLoadScene();
   const blackout = useBlackout();
+  const applyPosition = useHardwareFaderInput();
 
   const inv = () => queryClient.invalidateQueries({ queryKey: getGetDmxStateQueryKey() });
 
@@ -163,21 +165,15 @@ export default function Dashboard() {
           <div className="h-6 w-px bg-zinc-800 hidden sm:block" />
 
           <div className="flex gap-1.5 shrink-0">
-            {([
-              { label: 'POS 0', scene: 'blackout' as const },
-              { label: 'POS 1', scene: 'warmup' as const },
-              { label: 'POS 2', scene: 'experience_low' as const },
-              { label: 'POS 3', scene: 'experience_mid' as const },
-              { label: 'POS 4', scene: 'experience_high' as const },
-            ]).map(({ label, scene }) => (
+            {([0, 1, 2, 3, 4] as const).map((p) => (
               <Button
-                key={scene}
+                key={p}
                 variant="outline"
                 size="sm"
                 className="font-mono text-[10px] border-zinc-700 bg-transparent text-zinc-400 hover:bg-zinc-800 hover:text-white h-7 px-3 rounded-sm"
-                onClick={() => onLoadScene(scene)}
+                onClick={() => applyPosition.mutate({ data: { position: p } }, { onSuccess: inv })}
               >
-                {label}
+                POS {p}
               </Button>
             ))}
           </div>
