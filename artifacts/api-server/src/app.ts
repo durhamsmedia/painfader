@@ -38,37 +38,36 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api", router);
 
 // ── Serve the built Painfader frontend ───────────────────────────────────────
-// Explicit path via env var, or relative to WorkingDirectory set in systemd.
-// On Giada: WorkingDirectory=/opt/painfader/artifacts/api-server
-//           FRONTEND_DIST=/opt/painfader/artifacts/painfader/dist/public
 const frontendDist =
   process.env.FRONTEND_DIST ||
   path.resolve(process.cwd(), "../painfader/dist/public");
 
-logger.info({ frontendDist, exists: fs.existsSync(frontendDist) }, "Frontend dist path");
+const indexHtml = path.join(frontendDist, "index.html");
+const dirExists = fs.existsSync(frontendDist);
+const indexExists = fs.existsSync(indexHtml);
 
-if (fs.existsSync(frontendDist)) {
+logger.info({ frontendDist, dirExists, indexExists }, "Frontend dist path");
+
+// ── Debug: reachable before static handler ────────────────────────────────────
+app.get("/_debug", (_req, res) => {
+  res.json({
+    frontendDist,
+    dirExists,
+    indexExists,
+    cwd: process.cwd(),
+    env_FRONTEND_DIST: process.env.FRONTEND_DIST,
+  });
+});
+
+if (dirExists) {
   app.use(express.static(frontendDist));
   // SPA fallback — serve index.html for any unmatched route
-  const indexHtml = path.join(frontendDist, "index.html");
   app.use((_req, res) => {
     res.type("html").send(fs.readFileSync(indexHtml));
   });
 } else {
   logger.warn({ frontendDist }, "Frontend dist not found — UI will not be served");
 }
-
-// ── Debug: show what the running server sees ─────────────────────────────────
-app.get("/_debug", (_req, res) => {
-  const indexPath = path.join(frontendDist, "index.html");
-  res.json({
-    frontendDist,
-    dirExists: fs.existsSync(frontendDist),
-    indexExists: fs.existsSync(indexPath),
-    cwd: process.cwd(),
-    env_FRONTEND_DIST: process.env.FRONTEND_DIST,
-  });
-});
 
 // ── Error handler — logs actual error instead of generic HTML page ────────────
 app.use((err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
