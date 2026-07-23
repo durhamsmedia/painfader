@@ -41,7 +41,9 @@ app.use("/api", router);
 // From dist/index.mjs (artifacts/api-server/dist/), go up two levels then into
 // artifacts/painfader/dist/public.
 if (process.env.NODE_ENV === "production") {
-  const frontendDist = path.resolve(process.cwd(), "../painfader/dist/public");
+  const frontendDist =
+    process.env.FRONTEND_DIST ||
+    path.resolve(process.cwd(), "../painfader/dist/public");
   app.use(express.static(frontendDist));
   // SPA fallback — all non-API routes serve index.html
   app.get("*", (_req, res) => {
