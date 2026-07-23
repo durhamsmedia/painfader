@@ -17,8 +17,12 @@
  *
  * OpenAPI spec version: 0.3.0
  */
-import type { ModeInputMode } from './modeInputMode';
 
-export interface ModeInput {
-  mode: ModeInputMode;
-}
+export type MotorInputPosition = typeof MotorInputPosition[keyof typeof MotorInputPosition];
+
+
+export const MotorInputPosition = {
+  up: 'up',
+  down: 'down',
+  stop: 'stop',
+} as const;

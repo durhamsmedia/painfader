@@ -17,8 +17,14 @@
  *
  * OpenAPI spec version: 0.3.0
  */
-import type { ModeInputMode } from './modeInputMode';
 
-export interface ModeInput {
-  mode: ModeInputMode;
-}
+export type PatternType = typeof PatternType[keyof typeof PatternType];
+
+
+export const PatternType = {
+  solid: 'solid',
+  pulse: 'pulse',
+  chase: 'chase',
+  wave: 'wave',
+  sparkle: 'sparkle',
+} as const;

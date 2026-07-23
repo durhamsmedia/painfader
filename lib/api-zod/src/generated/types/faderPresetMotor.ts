@@ -17,8 +17,11 @@
  *
  * OpenAPI spec version: 0.3.0
  */
-import type { ModeInputMode } from './modeInputMode';
+import type { FaderPresetMotorPosition } from './faderPresetMotorPosition';
 
-export interface ModeInput {
-  mode: ModeInputMode;
-}
+export type FaderPresetMotor = {
+  position: FaderPresetMotorPosition;
+  /** @minimum 0 */
+  speed: number;
+  enabled: boolean;
+};

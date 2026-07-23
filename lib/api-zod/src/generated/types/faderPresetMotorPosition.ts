@@ -17,8 +17,12 @@
  *
  * OpenAPI spec version: 0.3.0
  */
-import type { ModeInputMode } from './modeInputMode';
 
-export interface ModeInput {
-  mode: ModeInputMode;
-}
+export type FaderPresetMotorPosition = typeof FaderPresetMotorPosition[keyof typeof FaderPresetMotorPosition];
+
+
+export const FaderPresetMotorPosition = {
+  up: 'up',
+  down: 'down',
+  stop: 'stop',
+} as const;

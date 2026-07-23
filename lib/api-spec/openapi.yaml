@@ -1,9 +1,21 @@
 openapi: 3.1.0
 info:
-  # Do not change the title, if the title changes, the import paths will be broken
+  # Do not change the title — import paths depend on it
   title: Api
-  version: 0.1.0
-  description: Painfader DMX Controller API
+  version: 0.3.0
+  description: |
+    Painfader DMX Controller API — hardware layer
+    3-position lever (−1=NSAR, 0=SCHMERZ, 1=OPIAT)
+    
+    LED zones (WS2812b via Gledopto 2D-EXMU, Art-Net pixel streaming):
+      haube   = Hood matrices (2 × 16×16 = 512 px)
+      schmerz = Schmerz band (5 × 16×16 = 1280 px)
+      nsar    = NSAR strip (configurable length)
+      opiat   = Opiat strip (configurable length)
+    
+    Fan:   Enttec OpenDMX USB → single DMX channel
+    Motor: USB-TTL step/dir board (GRBL or Pololu Tic)
+    Lever: GPIO reed contacts (GPI1=N, GPI2=0, GPI3=O)
 servers:
   - url: /api
     description: Base API path
@@ -11,7 +23,8 @@ tags:
   - name: health
     description: Health operations
   - name: dmx
-    description: DMX controller operations
+    description: DMX / hardware controller operations
+
 paths:
   /healthz:
     get:
@@ -30,44 +43,44 @@ paths:
     get:
       operationId: getDmxState
       tags: [dmx]
-      summary: Get full DMX state
+      summary: Get full controller state
       responses:
         "200":
-          description: Current DMX state
+          description: Current state
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/DmxState"
 
-  /dmx/config:
+  /dmx/hardware-config:
     get:
-      operationId: getDmxConfig
+      operationId: getHardwareConfig
       tags: [dmx]
-      summary: Get Art-Net config
+      summary: Get hardware configuration (IPs, ports, pin numbers…)
       responses:
         "200":
-          description: DMX configuration
+          description: Hardware configuration
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/DmxConfig"
+                $ref: "#/components/schemas/HardwareConfig"
     put:
-      operationId: updateDmxConfig
+      operationId: updateHardwareConfig
       tags: [dmx]
-      summary: Update Art-Net config
+      summary: Update hardware configuration
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/DmxConfigInput"
+              $ref: "#/components/schemas/HardwareConfig"
       responses:
         "200":
-          description: Updated config
+          description: Updated hardware configuration
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/DmxConfig"
+                $ref: "#/components/schemas/HardwareConfig"
 
   /dmx/mode:
     put:
@@ -92,7 +105,7 @@ paths:
     put:
       operationId: setFan
       tags: [dmx]
-      summary: Control the fan (Entour Cyclone)
+      summary: Control fan (via OpenDMX USB)
       requestBody:
         required: true
         content:
@@ -107,58 +120,77 @@ paths:
               schema:
                 $ref: "#/components/schemas/DmxState"
 
-  /dmx/led-matrix:
+  /dmx/zone/{name}:
     put:
-      operationId: setLedMatrix
+      operationId: setZone
       tags: [dmx]
-      summary: Control the LED matrix
+      summary: Update LED zone pattern (Art-Net pixel)
+      parameters:
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+            enum: [haube, schmerz, nsar, opiat]
+          description: "LED zone: haube | schmerz | nsar | opiat"
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/LedMatrixInput"
+              $ref: "#/components/schemas/ZonePatternInput"
       responses:
         "200":
-          description: LED matrix updated
+          description: Zone updated
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/DmxState"
 
-  /dmx/led-strips:
+  /dmx/motor:
     put:
-      operationId: setLedStrips
+      operationId: setMotor
       tags: [dmx]
-      summary: Control the LED strips
+      summary: Control Opiat sign stepper motor (USB-TTL)
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/LedStripsInput"
+              $ref: "#/components/schemas/MotorInput"
       responses:
         "200":
-          description: LED strips updated
+          description: Motor command sent
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/DmxState"
 
-  /dmx/disc:
-    put:
-      operationId: setDisc
+  /dmx/screen:
+    get:
+      operationId: getScreen
       tags: [dmx]
-      summary: Control the plexiglass disc drive
+      summary: Get current screen/video state (media player polls this)
+      responses:
+        "200":
+          description: Screen state
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ScreenState"
+    put:
+      operationId: setScreen
+      tags: [dmx]
+      summary: Set screen video file
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/DiscInput"
+              $ref: "#/components/schemas/ScreenInput"
       responses:
         "200":
-          description: Disc updated
+          description: Screen updated
           content:
             application/json:
               schema:
@@ -168,16 +200,16 @@ paths:
     put:
       operationId: setPainFader
       tags: [dmx]
-      summary: Set pain fader position (0-4)
+      summary: Set fader position (software control / testing)
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/PainFaderInput"
+              $ref: "#/components/schemas/FaderPositionInput"
       responses:
         "200":
-          description: Pain fader updated
+          description: Position applied
           content:
             application/json:
               schema:
@@ -187,7 +219,7 @@ paths:
     put:
       operationId: loadScene
       tags: [dmx]
-      summary: Load a preset scene
+      summary: Load a named scene
       requestBody:
         required: true
         content:
@@ -206,10 +238,10 @@ paths:
     post:
       operationId: blackout
       tags: [dmx]
-      summary: Blackout all channels
+      summary: Blackout — zero all LED outputs, cut fan
       responses:
         "200":
-          description: All channels zeroed
+          description: Blackout applied
           content:
             application/json:
               schema:
@@ -219,20 +251,16 @@ paths:
     post:
       operationId: hardwareFaderInput
       tags: [dmx]
-      summary: Receive position from physical hardware fader
-      description: |
-        POST this from a microcontroller (Arduino, Raspberry Pi, etc.) when the physical fader moves.
-        Automatically applies the configured preset for that position and starts the idle timer when position returns to 0.
-        Example: POST /api/dmx/hardware-fader  { "position": 2 }
+      summary: Receive position from physical 3-position lever (also called by GPIO reader internally)
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/HardwareFaderInput"
+              $ref: "#/components/schemas/FaderPositionInput"
       responses:
         "200":
-          description: Fader position applied
+          description: Position applied
           content:
             application/json:
               schema:
@@ -242,7 +270,7 @@ paths:
     get:
       operationId: getPresets
       tags: [dmx]
-      summary: Get all fader position presets
+      summary: Get all presets
       responses:
         "200":
           description: All presets
@@ -255,14 +283,14 @@ paths:
     put:
       operationId: updatePreset
       tags: [dmx]
-      summary: Save a preset for a fader position (0-4) or idle
+      summary: Save preset for position
       parameters:
         - name: position
           in: path
           required: true
           schema:
             type: string
-          description: "Fader position: 0, 1, 2, 3, 4, or idle"
+          description: "-1 (NSAR), 0 (SCHMERZ), 1 (OPIAT), or idle"
       requestBody:
         required: true
         content:
@@ -281,28 +309,45 @@ paths:
     post:
       operationId: capturePreset
       tags: [dmx]
-      summary: Capture current live state as a preset
+      summary: Capture current live state as preset
       parameters:
         - name: position
           in: path
           required: true
           schema:
             type: string
-          description: "Fader position: 0, 1, 2, 3, 4, or idle"
       responses:
         "200":
-          description: Current state captured as preset
+          description: Captured
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/PresetsState"
 
+  /dmx/presets/{position}/apply:
+    post:
+      operationId: applyPreset
+      tags: [dmx]
+      summary: Apply a saved preset to live outputs
+      parameters:
+        - name: position
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Preset applied
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DmxState"
+
   /dmx/preset-timer:
     put:
       operationId: updatePresetTimer
       tags: [dmx]
-      summary: Configure the idle timer
-      description: When the spring returns the fader to 0, the idle timer counts down and fires the idle preset.
+      summary: Configure idle timer
       requestBody:
         required: true
         content:
@@ -322,468 +367,338 @@ components:
     HealthStatus:
       type: object
       properties:
-        status:
-          type: string
-      required:
-        - status
+        status: { type: string }
+      required: [status]
+
+    # ── Zone pattern ───────────────────────────────────────────────────────────
+
+    RgbColor:
+      type: object
+      required: [r, g, b]
+      properties:
+        r: { type: integer, minimum: 0, maximum: 255 }
+        g: { type: integer, minimum: 0, maximum: 255 }
+        b: { type: integer, minimum: 0, maximum: 255 }
+
+    PatternType:
+      type: string
+      enum: [solid, pulse, chase, wave, sparkle]
+
+    ZonePattern:
+      type: object
+      required: [type, primaryColor, secondaryColor, brightness, speed, enabled]
+      properties:
+        type:
+          $ref: "#/components/schemas/PatternType"
+        primaryColor:
+          $ref: "#/components/schemas/RgbColor"
+        secondaryColor:
+          $ref: "#/components/schemas/RgbColor"
+        brightness:
+          type: integer
+          minimum: 0
+          maximum: 255
+        speed:
+          type: integer
+          minimum: 0
+          maximum: 255
+          description: "Animation speed: 0=static, 255=~2 Hz cycle"
+        enabled:
+          type: boolean
+
+    ZonePatternInput:
+      type: object
+      properties:
+        type:
+          $ref: "#/components/schemas/PatternType"
+        primaryColor:
+          $ref: "#/components/schemas/RgbColor"
+        secondaryColor:
+          $ref: "#/components/schemas/RgbColor"
+        brightness:
+          type: integer
+          minimum: 0
+          maximum: 255
+        speed:
+          type: integer
+          minimum: 0
+          maximum: 255
+        enabled:
+          type: boolean
+
+    ZoneState:
+      type: object
+      required: [pattern, pixelCount]
+      properties:
+        pattern:
+          $ref: "#/components/schemas/ZonePattern"
+        pixelCount:
+          type: integer
+          description: "Physical pixel count for this zone (from hardware config)"
+
+    # ── Full controller state ──────────────────────────────────────────────────
 
     DmxState:
       type: object
-      required:
-        - mode
-        - fan
-        - ledMatrix
-        - ledStrips
-        - disc
-        - painFader
-        - channels
-        - artnetConnected
-        - idleTimer
-        - hardwareLastSeen
+      required: [mode, fan, haube, schmerz, nsar, opiat, motor, screen, painFader, gpio, hardwareConfig, idleTimer]
       properties:
         mode:
           type: string
           enum: [idle, experience]
         fan:
           $ref: "#/components/schemas/FanState"
-        ledMatrix:
-          $ref: "#/components/schemas/LedMatrixState"
-        ledStrips:
-          $ref: "#/components/schemas/LedStripsState"
-        disc:
-          $ref: "#/components/schemas/DiscState"
+        haube:
+          $ref: "#/components/schemas/ZoneState"
+        schmerz:
+          $ref: "#/components/schemas/ZoneState"
+        nsar:
+          $ref: "#/components/schemas/ZoneState"
+        opiat:
+          $ref: "#/components/schemas/ZoneState"
+        motor:
+          $ref: "#/components/schemas/MotorState"
+        screen:
+          $ref: "#/components/schemas/ScreenState"
         painFader:
           $ref: "#/components/schemas/PainFaderState"
-        channels:
-          type: array
-          items:
-            type: integer
-        artnetConnected:
-          type: boolean
+        gpio:
+          $ref: "#/components/schemas/GpioStatus"
+        hardwareConfig:
+          $ref: "#/components/schemas/HardwareConfig"
         idleTimer:
           type: object
           required: [enabled, timerSeconds, remaining, triggered]
           properties:
-            enabled:
-              type: boolean
-            timerSeconds:
-              type: integer
-            remaining:
-              type: ["number", "null"]
-            triggered:
-              type: boolean
-        hardwareLastSeen:
-          type: ["integer", "null"]
+            enabled: { type: boolean }
+            timerSeconds: { type: integer }
+            remaining: { type: ["number", "null"] }
+            triggered: { type: boolean }
 
-    DmxConfig:
+    # ── Sub-states ─────────────────────────────────────────────────────────────
+
+    FanState:
       type: object
-      required:
-        - host
-        - universe
-        - port
-        - refreshRate
+      required: [speed, enabled, dmxChannel]
       properties:
-        host:
+        speed: { type: integer, minimum: 0, maximum: 255 }
+        enabled: { type: boolean }
+        dmxChannel: { type: integer }
+
+    MotorState:
+      type: object
+      required: [position, speed, enabled, simulated]
+      properties:
+        position:
           type: string
-        universe:
+          enum: [up, down, stop]
+        speed:
           type: integer
-        port:
+          minimum: 0
+        enabled:
+          type: boolean
+        simulated:
+          type: boolean
+
+    ScreenState:
+      type: object
+      required: [videoFile, enabled]
+      properties:
+        videoFile: { type: string }
+        enabled: { type: boolean }
+
+    PainFaderState:
+      type: object
+      required: [position, channel]
+      properties:
+        position:
           type: integer
-        refreshRate:
+          minimum: -1
+          maximum: 1
+        channel:
           type: integer
 
-    DmxConfigInput:
+    GpioStatus:
       type: object
+      required: [simulated, position, raw]
       properties:
-        host:
+        simulated: { type: boolean }
+        position:
+          type: integer
+          minimum: -1
+          maximum: 1
+        raw:
+          type: object
+          required: [nsar, schmerz, opiat]
+          properties:
+            nsar:    { type: boolean }
+            schmerz: { type: boolean }
+            opiat:   { type: boolean }
+
+    # ── Hardware config ────────────────────────────────────────────────────────
+
+    HardwareConfig:
+      type: object
+      required: [gledopto1, gledopto2, artnetPort, artnetRefreshRate, openDmxPort, fanDmxChannel, motorPort, motorDriverType, motorUpPosition, motorDownPosition, motorMaxSpeed, gpioChip, gpioPinNsar, gpioPinSchmerz, gpioPinOpiat, gpioPollIntervalMs, gpioDebounceMs]
+      properties:
+        gledopto1:
+          type: object
+          required: [host, universeStart, haubePixelCount, schmerzPixelCount]
+          properties:
+            host: { type: string }
+            universeStart: { type: integer }
+            haubePixelCount: { type: integer }
+            schmerzPixelCount: { type: integer }
+        gledopto2:
+          type: object
+          required: [host, universeStart, nsarPixelCount, opiatPixelCount]
+          properties:
+            host: { type: string }
+            universeStart: { type: integer }
+            nsarPixelCount: { type: integer }
+            opiatPixelCount: { type: integer }
+        artnetPort: { type: integer }
+        artnetRefreshRate: { type: integer }
+        openDmxPort: { type: string }
+        fanDmxChannel: { type: integer }
+        motorPort: { type: string }
+        motorDriverType:
           type: string
-        universe:
-          type: integer
-        port:
-          type: integer
-        refreshRate:
-          type: integer
+          enum: [grbl, tic, simulated]
+        motorUpPosition: { type: number }
+        motorDownPosition: { type: number }
+        motorMaxSpeed: { type: number }
+        gpioChip: { type: integer }
+        gpioPinNsar: { type: integer }
+        gpioPinSchmerz: { type: integer }
+        gpioPinOpiat: { type: integer }
+        gpioPollIntervalMs: { type: integer }
+        gpioDebounceMs: { type: integer }
+
+    # ── Inputs ─────────────────────────────────────────────────────────────────
 
     ModeInput:
       type: object
-      required:
-        - mode
+      required: [mode]
       properties:
         mode:
           type: string
           enum: [idle, experience]
 
-    FanState:
-      type: object
-      required:
-        - speed
-        - enabled
-        - channel
-      properties:
-        speed:
-          type: integer
-          minimum: 0
-          maximum: 255
-        enabled:
-          type: boolean
-        channel:
-          type: integer
-
     FanInput:
       type: object
       properties:
-        speed:
-          type: integer
-          minimum: 0
-          maximum: 255
-        enabled:
-          type: boolean
+        speed: { type: integer, minimum: 0, maximum: 255 }
+        enabled: { type: boolean }
 
-    LedMatrixState:
-      type: object
-      required:
-        - r
-        - g
-        - b
-        - brightness
-        - pattern
-        - enabled
-        - channels
-      properties:
-        r:
-          type: integer
-          minimum: 0
-          maximum: 255
-        g:
-          type: integer
-          minimum: 0
-          maximum: 255
-        b:
-          type: integer
-          minimum: 0
-          maximum: 255
-        brightness:
-          type: integer
-          minimum: 0
-          maximum: 255
-        pattern:
-          type: integer
-          minimum: 0
-          maximum: 255
-        enabled:
-          type: boolean
-        channels:
-          type: object
-          required: [r, g, b, brightness, pattern]
-          properties:
-            r: { type: integer }
-            g: { type: integer }
-            b: { type: integer }
-            brightness: { type: integer }
-            pattern: { type: integer }
-
-    LedMatrixInput:
+    MotorInput:
       type: object
       properties:
-        r:
-          type: integer
-          minimum: 0
-          maximum: 255
-        g:
-          type: integer
-          minimum: 0
-          maximum: 255
-        b:
-          type: integer
-          minimum: 0
-          maximum: 255
-        brightness:
-          type: integer
-          minimum: 0
-          maximum: 255
-        pattern:
-          type: integer
-          minimum: 0
-          maximum: 255
-        enabled:
-          type: boolean
-
-    LedStripsState:
-      type: object
-      required:
-        - strip1
-        - strip2
-      properties:
-        strip1:
-          $ref: "#/components/schemas/LedStripState"
-        strip2:
-          $ref: "#/components/schemas/LedStripState"
-
-    LedStripState:
-      type: object
-      required:
-        - r
-        - g
-        - b
-        - brightness
-        - enabled
-        - channels
-      properties:
-        r:
-          type: integer
-          minimum: 0
-          maximum: 255
-        g:
-          type: integer
-          minimum: 0
-          maximum: 255
-        b:
-          type: integer
-          minimum: 0
-          maximum: 255
-        brightness:
-          type: integer
-          minimum: 0
-          maximum: 255
-        enabled:
-          type: boolean
-        channels:
-          type: object
-          required: [r, g, b, brightness]
-          properties:
-            r: { type: integer }
-            g: { type: integer }
-            b: { type: integer }
-            brightness: { type: integer }
-
-    LedStripsInput:
-      type: object
-      properties:
-        strip1:
-          $ref: "#/components/schemas/LedStripInput"
-        strip2:
-          $ref: "#/components/schemas/LedStripInput"
-        sync:
-          type: boolean
-
-    LedStripInput:
-      type: object
-      properties:
-        r:
-          type: integer
-          minimum: 0
-          maximum: 255
-        g:
-          type: integer
-          minimum: 0
-          maximum: 255
-        b:
-          type: integer
-          minimum: 0
-          maximum: 255
-        brightness:
-          type: integer
-          minimum: 0
-          maximum: 255
-        enabled:
-          type: boolean
-
-    DiscState:
-      type: object
-      required:
-        - speed
-        - direction
-        - enabled
-        - channel
-      properties:
-        speed:
-          type: integer
-          minimum: 0
-          maximum: 255
-        direction:
+        position:
           type: string
-          enum: [cw, ccw, stop]
-        enabled:
-          type: boolean
-        channel:
-          type: integer
+          enum: [up, down, stop]
+        speed: { type: integer, minimum: 0 }
+        enabled: { type: boolean }
 
-    DiscInput:
+    ScreenInput:
       type: object
       properties:
-        speed:
-          type: integer
-          minimum: 0
-          maximum: 255
-        direction:
-          type: string
-          enum: [cw, ccw, stop]
-        enabled:
-          type: boolean
+        videoFile: { type: string }
+        enabled: { type: boolean }
 
-    PainFaderState:
+    FaderPositionInput:
       type: object
-      required:
-        - position
-        - dmxValue
-        - channel
+      required: [position]
       properties:
         position:
           type: integer
-          minimum: 0
-          maximum: 4
-        dmxValue:
-          type: integer
-          minimum: 0
-          maximum: 255
-        channel:
-          type: integer
-
-    PainFaderInput:
-      type: object
-      required:
-        - position
-      properties:
-        position:
-          type: integer
-          minimum: 0
-          maximum: 4
+          minimum: -1
+          maximum: 1
 
     SceneInput:
       type: object
-      required:
-        - scene
+      required: [scene]
       properties:
         scene:
           type: string
-          enum: [idle, warmup, experience_low, experience_mid, experience_high, blackout]
+          enum: [idle, schmerz, opiat, nsar, blackout]
 
-    HardwareFaderInput:
-      type: object
-      required:
-        - position
-      properties:
-        position:
-          type: integer
-          minimum: 0
-          maximum: 4
-          description: Physical fader position sent by the hardware controller
+    # ── Presets ────────────────────────────────────────────────────────────────
 
     FaderPreset:
       type: object
-      required:
-        - name
-        - fan
-        - ledMatrix
-        - ledStrip1
-        - ledStrip2
-        - disc
+      required: [name, fan, haube, schmerz, nsar, opiat, motor, screen]
       properties:
-        name:
-          type: string
+        name: { type: string }
         fan:
           type: object
           required: [speed, enabled]
           properties:
             speed: { type: integer, minimum: 0, maximum: 255 }
             enabled: { type: boolean }
-        ledMatrix:
+        haube:
+          $ref: "#/components/schemas/ZonePattern"
+        schmerz:
+          $ref: "#/components/schemas/ZonePattern"
+        nsar:
+          $ref: "#/components/schemas/ZonePattern"
+        opiat:
+          $ref: "#/components/schemas/ZonePattern"
+        motor:
           type: object
-          required: [r, g, b, brightness, pattern, enabled]
+          required: [position, speed, enabled]
           properties:
-            r: { type: integer, minimum: 0, maximum: 255 }
-            g: { type: integer, minimum: 0, maximum: 255 }
-            b: { type: integer, minimum: 0, maximum: 255 }
-            brightness: { type: integer, minimum: 0, maximum: 255 }
-            pattern: { type: integer, minimum: 0, maximum: 255 }
+            position: { type: string, enum: [up, down, stop] }
+            speed: { type: integer, minimum: 0 }
             enabled: { type: boolean }
-        ledStrip1:
+        screen:
           type: object
-          required: [r, g, b, brightness, enabled]
+          required: [videoFile, enabled]
           properties:
-            r: { type: integer, minimum: 0, maximum: 255 }
-            g: { type: integer, minimum: 0, maximum: 255 }
-            b: { type: integer, minimum: 0, maximum: 255 }
-            brightness: { type: integer, minimum: 0, maximum: 255 }
-            enabled: { type: boolean }
-        ledStrip2:
-          type: object
-          required: [r, g, b, brightness, enabled]
-          properties:
-            r: { type: integer, minimum: 0, maximum: 255 }
-            g: { type: integer, minimum: 0, maximum: 255 }
-            b: { type: integer, minimum: 0, maximum: 255 }
-            brightness: { type: integer, minimum: 0, maximum: 255 }
-            enabled: { type: boolean }
-        disc:
-          type: object
-          required: [speed, direction, enabled]
-          properties:
-            speed: { type: integer, minimum: 0, maximum: 255 }
-            direction: { type: string, enum: [cw, ccw, stop] }
+            videoFile: { type: string }
             enabled: { type: boolean }
 
     FaderPresetInput:
       type: object
       properties:
-        name:
-          type: string
+        name: { type: string }
         fan:
           type: object
           properties:
             speed: { type: integer, minimum: 0, maximum: 255 }
             enabled: { type: boolean }
-        ledMatrix:
+        haube:
+          $ref: "#/components/schemas/ZonePatternInput"
+        schmerz:
+          $ref: "#/components/schemas/ZonePatternInput"
+        nsar:
+          $ref: "#/components/schemas/ZonePatternInput"
+        opiat:
+          $ref: "#/components/schemas/ZonePatternInput"
+        motor:
           type: object
           properties:
-            r: { type: integer, minimum: 0, maximum: 255 }
-            g: { type: integer, minimum: 0, maximum: 255 }
-            b: { type: integer, minimum: 0, maximum: 255 }
-            brightness: { type: integer, minimum: 0, maximum: 255 }
-            pattern: { type: integer, minimum: 0, maximum: 255 }
+            position: { type: string, enum: [up, down, stop] }
+            speed: { type: integer, minimum: 0 }
             enabled: { type: boolean }
-        ledStrip1:
+        screen:
           type: object
           properties:
-            r: { type: integer, minimum: 0, maximum: 255 }
-            g: { type: integer, minimum: 0, maximum: 255 }
-            b: { type: integer, minimum: 0, maximum: 255 }
-            brightness: { type: integer, minimum: 0, maximum: 255 }
-            enabled: { type: boolean }
-        ledStrip2:
-          type: object
-          properties:
-            r: { type: integer, minimum: 0, maximum: 255 }
-            g: { type: integer, minimum: 0, maximum: 255 }
-            b: { type: integer, minimum: 0, maximum: 255 }
-            brightness: { type: integer, minimum: 0, maximum: 255 }
-            enabled: { type: boolean }
-        disc:
-          type: object
-          properties:
-            speed: { type: integer, minimum: 0, maximum: 255 }
-            direction: { type: string, enum: [cw, ccw, stop] }
+            videoFile: { type: string }
             enabled: { type: boolean }
 
     PresetsState:
       type: object
-      required:
-        - positions
-        - idlePreset
-        - idleTimerSeconds
-        - idleTimerEnabled
+      required: [positions, idlePreset, idleTimerSeconds, idleTimerEnabled]
       properties:
         positions:
           type: array
           items:
             $ref: "#/components/schemas/FaderPreset"
-          description: Presets for fader positions 0-4 (array index = position)
+          description: "[0]=NSAR(-1)  [1]=SCHMERZ(0)  [2]=OPIAT(1)"
         idlePreset:
           $ref: "#/components/schemas/FaderPreset"
-        idleTimerSeconds:
-          type: integer
-        idleTimerEnabled:
-          type: boolean
+        idleTimerSeconds: { type: integer }
+        idleTimerEnabled: { type: boolean }
 
     PresetTimerInput:
       type: object
@@ -792,5 +707,4 @@ components:
           type: integer
           minimum: 1
           maximum: 3600
-        enabled:
-          type: boolean
+        enabled: { type: boolean }

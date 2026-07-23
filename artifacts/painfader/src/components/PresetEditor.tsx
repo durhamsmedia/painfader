@@ -1,89 +1,221 @@
-import React, { useState, useEffect } from 'react';
+/**
+ * Preset editor — edit the 4 zone patterns, fan, motor, screen, and idle timer
+ * for each of the 3 lever positions (NSAR / SCHMERZ / OPIAT) and the IDLE preset.
+ *
+ * Data model (post hardware rework):
+ *   Each preset stores ZonePattern objects (type + primaryColor + secondaryColor +
+ *   brightness + speed + enabled) instead of raw RGBA values.
+ */
+
+import { useState, useEffect } from 'react';
 import {
-  useGetPresets,
   useGetDmxState,
+  useGetPresets,
   useUpdatePreset,
   useCapturePreset,
+  useApplyPreset,
   useUpdatePresetTimer,
-  useHardwareFaderInput,
-  useLoadScene,
   getGetPresetsQueryKey,
   getGetDmxStateQueryKey,
 } from '@workspace/api-client-react';
+import type { ZonePattern, PatternType, FaderPreset } from '@workspace/api-client-react';
 import { useQueryClient } from '@tanstack/react-query';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { Wind, Lightbulb, Disc, Clock, Download, Play, Save } from 'lucide-react';
+import { Wind, Lightbulb, Monitor, ChevronsUpDown, Clock, Waves } from 'lucide-react';
 import { toast } from 'sonner';
 
-const POSITION_LABELS = ['SCHMERZ MAX', 'OPIOID LOW', 'OPIOID HIGH', 'NSAR LOW', 'NSAR HIGH'];
-const POSITION_COLORS = [
-  'text-red-400 border-red-900 data-[state=active]:bg-red-950 data-[state=active]:text-red-300',
-  'text-purple-400 border-purple-900 data-[state=active]:bg-purple-950 data-[state=active]:text-purple-300',
-  'text-blue-400 border-blue-900 data-[state=active]:bg-blue-950 data-[state=active]:text-blue-300',
-  'text-emerald-400 border-emerald-900 data-[state=active]:bg-emerald-950 data-[state=active]:text-emerald-300',
-  'text-green-400 border-green-900 data-[state=active]:bg-green-950 data-[state=active]:text-green-300',
-  'text-zinc-400 border-zinc-700 data-[state=active]:bg-zinc-800 data-[state=active]:text-zinc-200',
-];
+// ─── Pattern types ────────────────────────────────────────────────────────────
+
+const PATTERN_TYPES: PatternType[] = ['solid', 'pulse', 'chase', 'wave', 'sparkle'];
+const PATTERN_ICONS: Record<string, React.ReactNode> = {
+  solid:   <span className="text-[8px]">■</span>,
+  pulse:   <span className="text-[8px]">◐</span>,
+  chase:   <span className="text-[8px]">►</span>,
+  wave:    <Waves className="w-2.5 h-2.5" />,
+  sparkle: <span className="text-[8px]">✦</span>,
+};
+
+// ─── Types ────────────────────────────────────────────────────────────────────
+
+type ZoneName = 'haube' | 'schmerz' | 'nsar' | 'opiat';
 
 interface PresetValues {
   name: string;
   fan: { speed: number; enabled: boolean };
-  ledMatrix: { r: number; g: number; b: number; brightness: number; pattern: number; enabled: boolean };
-  ledStrip1: { r: number; g: number; b: number; brightness: number; enabled: boolean };
-  ledStrip2: { r: number; g: number; b: number; brightness: number; enabled: boolean };
-  disc: { speed: number; direction: 'cw' | 'ccw' | 'stop'; enabled: boolean };
+  haube:   ZonePattern;
+  schmerz: ZonePattern;
+  nsar:    ZonePattern;
+  opiat:   ZonePattern;
+  motor: { position: 'up' | 'down' | 'stop'; speed: number; enabled: boolean };
+  screen: { videoFile: string; enabled: boolean };
 }
 
-function ColorSwatch({ r, g, b, enabled }: { r: number; g: number; b: number; enabled: boolean }) {
-  return (
-    <div
-      className="w-6 h-6 rounded-sm border border-zinc-700 shrink-0"
-      style={{
-        backgroundColor: enabled ? `rgb(${r},${g},${b})` : 'transparent',
-        opacity: enabled ? 0.9 : 0.2,
-      }}
-    />
-  );
+const DEFAULT_ZONE: ZonePattern = {
+  type: 'solid',
+  primaryColor:   { r: 0, g: 0, b: 0 },
+  secondaryColor: { r: 0, g: 0, b: 0 },
+  brightness: 0,
+  speed: 64,
+  enabled: false,
+};
+
+const DEFAULT_PRESET: PresetValues = {
+  name: '',
+  fan:    { speed: 0, enabled: false },
+  haube:   { ...DEFAULT_ZONE },
+  schmerz: { ...DEFAULT_ZONE },
+  nsar:    { ...DEFAULT_ZONE },
+  opiat:   { ...DEFAULT_ZONE },
+  motor:  { position: 'stop', speed: 3000, enabled: false },
+  screen: { videoFile: 'idle.mp4', enabled: false },
+};
+
+function mergePreset(raw: unknown): PresetValues {
+  const p = (raw ?? {}) as Partial<PresetValues>;
+  return {
+    ...DEFAULT_PRESET,
+    ...p,
+    haube:   { ...DEFAULT_ZONE, ...(p.haube   ?? {}) },
+    schmerz: { ...DEFAULT_ZONE, ...(p.schmerz ?? {}) },
+    nsar:    { ...DEFAULT_ZONE, ...(p.nsar    ?? {}) },
+    opiat:   { ...DEFAULT_ZONE, ...(p.opiat   ?? {}) },
+    motor:  { ...DEFAULT_PRESET.motor,  ...(p.motor  ?? {}) },
+    screen: { ...DEFAULT_PRESET.screen, ...(p.screen ?? {}) },
+  };
 }
 
-function CompactSlider({
+// ─── Tab config ───────────────────────────────────────────────────────────────
+
+const LEVER_POSITIONS = [
+  { key: '-1', label: 'NSAR',    shortLabel: 'N',  idx: 0 },
+  { key: '0',  label: 'SCHMERZ', shortLabel: '0',  idx: 1 },
+  { key: '1',  label: 'OPIAT',   shortLabel: 'O',  idx: 2 },
+] as const;
+
+const POS_COLORS: Record<string, string> = {
+  '-1': 'border-blue-800 text-blue-400 data-[state=active]:bg-blue-950/30 data-[state=active]:border-blue-600',
+  '0':  'border-orange-800 text-orange-400 data-[state=active]:bg-orange-950/30 data-[state=active]:border-orange-600',
+  '1':  'border-teal-800 text-teal-400 data-[state=active]:bg-teal-950/30 data-[state=active]:border-teal-600',
+  'idle': 'border-zinc-700 text-zinc-400 data-[state=active]:bg-zinc-900 data-[state=active]:border-zinc-500',
+};
+
+// ─── Zone pattern editor ──────────────────────────────────────────────────────
+
+function ZoneEditor({
   label,
-  value,
+  pattern,
   onChange,
-  color,
 }: {
   label: string;
-  value: number;
-  onChange: (v: number) => void;
-  color?: string;
+  pattern: ZonePattern;
+  onChange: (p: ZonePattern) => void;
 }) {
+  const { primaryColor: pc, secondaryColor: sc } = pattern;
+  const isAnimated = pattern.type !== 'solid';
+
   return (
-    <div className="flex items-center gap-2">
-      <span className={`text-[10px] font-mono w-7 shrink-0 ${color ?? 'text-zinc-500'}`}>{label}</span>
-      <Slider value={[value]} min={0} max={255} step={1} onValueChange={([v]) => onChange(v)} className="flex-1" />
-      <span className="font-mono text-[10px] w-7 text-right text-zinc-500">{value}</span>
+    <div className="space-y-2 bg-[#0d0d0f] border border-zinc-800 rounded-sm p-3">
+      <div className="flex items-center justify-between">
+        <span className="text-[10px] font-mono text-zinc-400 flex items-center gap-1.5">
+          <Lightbulb className="w-3 h-3" /> {label}
+        </span>
+        <Switch checked={pattern.enabled} onCheckedChange={(v) => onChange({ ...pattern, enabled: v })} className="scale-75" />
+      </div>
+
+      {/* Pattern type */}
+      <div className="flex flex-wrap gap-1">
+        {PATTERN_TYPES.map((t) => (
+          <button key={t}
+            onClick={() => onChange({ ...pattern, type: t })}
+            className={`flex items-center gap-1 px-1.5 py-0.5 rounded-sm text-[8px] font-mono uppercase tracking-wider border ${
+              pattern.type === t
+                ? 'bg-primary/20 border-primary text-primary'
+                : 'bg-black border-zinc-700 text-zinc-600 hover:border-zinc-500 hover:text-zinc-400'
+            }`}>
+            {PATTERN_ICONS[t]} {t}
+          </button>
+        ))}
+      </div>
+
+      {/* Primary color */}
+      <div className="space-y-1">
+        <div className="flex items-center gap-1.5">
+          <div className="w-3 h-3 rounded-sm border border-zinc-700" style={{ backgroundColor: `rgb(${pc.r},${pc.g},${pc.b})` }} />
+          <span className="text-[8px] font-mono text-zinc-500">PRIMARY</span>
+        </div>
+        <div className="grid grid-cols-3 gap-1">
+          {(['r','g','b'] as const).map((ch) => (
+            <div key={ch}>
+              <div className="flex justify-between mb-0.5">
+                <span className={`text-[8px] font-mono font-bold ${ch==='r'?'text-red-500':ch==='g'?'text-green-500':'text-blue-500'}`}>{ch.toUpperCase()}</span>
+                <span className="text-[8px] font-mono text-zinc-600">{pc[ch]}</span>
+              </div>
+              <Slider value={[pc[ch]]} min={0} max={255} step={1}
+                onValueChange={([v]) => onChange({ ...pattern, primaryColor: { ...pc, [ch]: v } })} />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Secondary color (animated patterns only) */}
+      {isAnimated && (
+        <div className="space-y-1">
+          <div className="flex items-center gap-1.5">
+            <div className="w-3 h-3 rounded-sm border border-zinc-700" style={{ backgroundColor: `rgb(${sc.r},${sc.g},${sc.b})` }} />
+            <span className="text-[8px] font-mono text-zinc-500">SECONDARY</span>
+          </div>
+          <div className="grid grid-cols-3 gap-1">
+            {(['r','g','b'] as const).map((ch) => (
+              <div key={ch}>
+                <div className="flex justify-between mb-0.5">
+                  <span className={`text-[8px] font-mono font-bold ${ch==='r'?'text-red-500':ch==='g'?'text-green-500':'text-blue-500'}`}>{ch.toUpperCase()}</span>
+                  <span className="text-[8px] font-mono text-zinc-600">{sc[ch]}</span>
+                </div>
+                <Slider value={[sc[ch]]} min={0} max={255} step={1}
+                  onValueChange={([v]) => onChange({ ...pattern, secondaryColor: { ...sc, [ch]: v } })} />
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Brightness + Speed */}
+      <div className={`grid gap-2 ${isAnimated ? 'grid-cols-2' : 'grid-cols-1'}`}>
+        <div>
+          <div className="flex justify-between mb-0.5">
+            <span className="text-[8px] font-mono text-zinc-500">BRIGHTNESS</span>
+            <span className="text-[8px] font-mono text-primary">{pattern.brightness}</span>
+          </div>
+          <Slider value={[pattern.brightness]} min={0} max={255} step={1}
+            onValueChange={([v]) => onChange({ ...pattern, brightness: v })} />
+        </div>
+        {isAnimated && (
+          <div>
+            <div className="flex justify-between mb-0.5">
+              <span className="text-[8px] font-mono text-zinc-500">SPEED</span>
+              <span className="text-[8px] font-mono text-accent">{pattern.speed}</span>
+            </div>
+            <Slider value={[pattern.speed]} min={0} max={255} step={1}
+              onValueChange={([v]) => onChange({ ...pattern, speed: v })} />
+          </div>
+        )}
+      </div>
     </div>
   );
 }
 
+// ─── Preset card ──────────────────────────────────────────────────────────────
+
 function PresetCard({
-  positionKey,
-  label,
-  preset,
-  onSave,
-  onCapture,
-  onApply,
-  isSaving,
-  isCapturing,
+  positionKey, preset, onSave, onCapture, onApply, isSaving, isCapturing,
 }: {
   positionKey: string;
-  label: string;
   preset: PresetValues;
   onSave: (v: PresetValues) => void;
   onCapture: () => void;
@@ -92,207 +224,138 @@ function PresetCard({
   isCapturing: boolean;
 }) {
   const [local, setLocal] = useState<PresetValues>(preset);
-  const [syncStrips, setSyncStrips] = useState(false);
+  useEffect(() => { setLocal(preset); }, [preset]);
 
-  useEffect(() => {
-    setLocal(preset);
-  }, [preset]);
+  const updFan    = (k: keyof PresetValues['fan'],    v: number | boolean) => setLocal((p) => ({ ...p, fan:    { ...p.fan,    [k]: v } }));
+  const updMotor  = (k: keyof PresetValues['motor'],  v: string | number | boolean) => setLocal((p) => ({ ...p, motor:  { ...p.motor,  [k]: v } }));
+  const updScreen = (k: keyof PresetValues['screen'], v: string | boolean) => setLocal((p) => ({ ...p, screen: { ...p.screen, [k]: v } }));
+  const updZone   = (zone: ZoneName, pattern: ZonePattern) => setLocal((p) => ({ ...p, [zone]: pattern }));
 
-  const updateFan = (k: keyof typeof local.fan, v: number | boolean) =>
-    setLocal((p) => ({ ...p, fan: { ...p.fan, [k]: v } }));
+  const zones: { key: ZoneName; label: string }[] = [
+    { key: 'haube',   label: 'HAUBE (Gledopto #1 OUT1)' },
+    { key: 'schmerz', label: 'SCHMERZ-BAND (Gledopto #1 OUT2)' },
+    { key: 'nsar',    label: 'NSAR-BAND (Gledopto #2 OUT1)' },
+    { key: 'opiat',   label: 'OPIAT-BAND (Gledopto #2 OUT2)' },
+  ];
 
-  const updateMatrix = (k: keyof typeof local.ledMatrix, v: number | boolean) =>
-    setLocal((p) => ({ ...p, ledMatrix: { ...p.ledMatrix, [k]: v } }));
-
-  const updateStrip1 = (k: keyof typeof local.ledStrip1, v: number | boolean) => {
-    setLocal((p) => {
-      const s1 = { ...p.ledStrip1, [k]: v };
-      return { ...p, ledStrip1: s1, ledStrip2: syncStrips ? { ...p.ledStrip2, ...s1 } : p.ledStrip2 };
-    });
-  };
-
-  const updateStrip2 = (k: keyof typeof local.ledStrip2, v: number | boolean) =>
-    setLocal((p) => ({ ...p, ledStrip2: { ...p.ledStrip2, [k]: v } }));
-
-  const updateDisc = (k: keyof typeof local.disc, v: number | boolean | string) =>
-    setLocal((p) => ({ ...p, disc: { ...p.disc, [k]: v } }));
+  const isDirty = JSON.stringify(local) !== JSON.stringify(preset);
 
   return (
     <div className="space-y-4">
       {/* Name */}
       <div className="flex items-center gap-3">
         <Label className="text-[10px] font-mono text-zinc-500 shrink-0">NAME</Label>
-        <Input
-          value={local.name}
-          onChange={(e) => setLocal((p) => ({ ...p, name: e.target.value }))}
-          className="h-7 text-xs font-mono bg-black border-zinc-800"
-        />
+        <Input value={local.name} onChange={(e) => setLocal((p) => ({ ...p, name: e.target.value }))}
+          className="h-7 text-xs font-mono bg-black border-zinc-800" />
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+
         {/* Fan */}
-        <div className="space-y-3 bg-[#0d0d0f] border border-zinc-800 rounded-sm p-3">
+        <div className="space-y-2 bg-[#0d0d0f] border border-zinc-800 rounded-sm p-3">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] font-mono text-zinc-400 flex items-center gap-1.5">
-              <Wind className="w-3 h-3" /> FAN
-            </span>
-            <Switch
-              checked={local.fan.enabled}
-              onCheckedChange={(v) => updateFan('enabled', v)}
-              className="scale-75"
-            />
+            <span className="text-[10px] font-mono text-zinc-400 flex items-center gap-1.5"><Wind className="w-3 h-3" /> VENTILATOR</span>
+            <Switch checked={local.fan.enabled} onCheckedChange={(v) => updFan('enabled', v)} className="scale-75" />
           </div>
-          <CompactSlider
-            label="SPD"
-            value={local.fan.speed}
-            onChange={(v) => updateFan('speed', v)}
-            color="text-zinc-400"
-          />
+          <div>
+            <div className="flex justify-between mb-1">
+              <span className="text-[9px] font-mono text-zinc-500">SPEED</span>
+              <span className="text-[9px] font-mono text-zinc-400">{local.fan.speed}</span>
+            </div>
+            <Slider value={[local.fan.speed]} min={0} max={255} step={1}
+              onValueChange={([v]) => updFan('speed', v)} />
+          </div>
         </div>
 
-        {/* Disc */}
-        <div className="space-y-3 bg-[#0d0d0f] border border-zinc-800 rounded-sm p-3">
+        {/* Motor */}
+        <div className="space-y-2 bg-[#0d0d0f] border border-zinc-800 rounded-sm p-3">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] font-mono text-zinc-400 flex items-center gap-1.5">
-              <Disc className="w-3 h-3" /> DISC DRIVE
-            </span>
-            <Switch
-              checked={local.disc.enabled}
-              onCheckedChange={(v) => updateDisc('enabled', v)}
-              className="scale-75"
-            />
+            <div>
+              <span className="text-[10px] font-mono text-zinc-400 flex items-center gap-1.5">
+                <ChevronsUpDown className="w-3 h-3 text-primary" /> OPIAT-SCHILD MOTOR
+              </span>
+              <div className="text-[9px] font-mono text-zinc-600 mt-0.5">AUF = sichtbar · AB = versteckt</div>
+            </div>
+            <Switch checked={local.motor.enabled} onCheckedChange={(v) => updMotor('enabled', v)} className="scale-75" />
           </div>
-          <CompactSlider
-            label="SPD"
-            value={local.disc.speed}
-            onChange={(v) => updateDisc('speed', v)}
-            color="text-zinc-400"
-          />
           <div className="flex gap-1">
-            {(['ccw', 'stop', 'cw'] as const).map((d) => (
-              <Button
-                key={d}
-                size="sm"
-                onClick={() => updateDisc('direction', d)}
+            {(['up','stop','down'] as const).map((d) => (
+              <Button key={d} size="sm" variant="outline"
+                onClick={() => updMotor('position', d)}
                 className={`flex-1 h-6 text-[9px] font-mono tracking-widest rounded-sm ${
-                  local.disc.direction === d
-                    ? d === 'stop'
-                      ? 'bg-red-600 text-white border-red-600'
-                      : 'bg-primary text-black border-primary'
+                  local.motor.position === d
+                    ? d === 'stop' ? 'bg-red-600 text-white border-red-600'
+                      : d === 'up' ? 'bg-teal-700 text-white border-teal-600'
+                      : 'bg-zinc-700 text-white border-zinc-600'
                     : 'bg-black border-zinc-800 text-zinc-600 hover:text-zinc-300'
-                }`}
-                variant="outline"
-              >
-                {d.toUpperCase()}
+                }`}>
+                {d === 'up' ? '▲ AUF' : d === 'stop' ? '■ STOP' : '▼ AB'}
               </Button>
+            ))}
+          </div>
+          <div>
+            <div className="flex justify-between mb-1">
+              <span className="text-[9px] font-mono text-zinc-500">SPEED (mm/min)</span>
+              <span className="text-[9px] font-mono text-zinc-400">{local.motor.speed}</span>
+            </div>
+            <Slider value={[Math.min(local.motor.speed, 10000)]} min={0} max={10000} step={100}
+              onValueChange={([v]) => updMotor('speed', v)} />
+          </div>
+        </div>
+
+        {/* Screen */}
+        <div className="space-y-2 bg-[#0d0d0f] border border-zinc-800 rounded-sm p-3">
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] font-mono text-zinc-400 flex items-center gap-1.5"><Monitor className="w-3 h-3 text-accent" /> SCREEN / VIDEO</span>
+            <Switch checked={local.screen.enabled} onCheckedChange={(v) => updScreen('enabled', v)} className="scale-75" />
+          </div>
+          <Input value={local.screen.videoFile} onChange={(e) => updScreen('videoFile', e.target.value)}
+            placeholder="schmerz.mp4" className="h-7 text-xs font-mono bg-black border-zinc-800 rounded-sm" />
+          <div className="flex flex-wrap gap-1">
+            {['idle.mp4','schmerz.mp4','opiat.mp4','nsar.mp4'].map((f) => (
+              <button key={f} onClick={() => updScreen('videoFile', f)}
+                className={`text-[8px] font-mono px-1.5 py-0.5 rounded border ${
+                  local.screen.videoFile === f
+                    ? 'border-accent text-accent bg-accent/10'
+                    : 'border-zinc-700 text-zinc-600 hover:border-zinc-500 hover:text-zinc-400'
+                }`}>{f}</button>
             ))}
           </div>
         </div>
 
-        {/* LED Matrix */}
-        <div className="space-y-3 bg-[#0d0d0f] border border-zinc-800 rounded-sm p-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <span className="text-[10px] font-mono text-zinc-400 flex items-center gap-1.5">
-                <Lightbulb className="w-3 h-3" /> LED MATRIX
-              </span>
-              <ColorSwatch r={local.ledMatrix.r} g={local.ledMatrix.g} b={local.ledMatrix.b} enabled={local.ledMatrix.enabled} />
-            </div>
-            <Switch
-              checked={local.ledMatrix.enabled}
-              onCheckedChange={(v) => updateMatrix('enabled', v)}
-              className="scale-75"
-            />
-          </div>
-          <CompactSlider label="R" value={local.ledMatrix.r} onChange={(v) => updateMatrix('r', v)} color="text-red-500" />
-          <CompactSlider label="G" value={local.ledMatrix.g} onChange={(v) => updateMatrix('g', v)} color="text-green-500" />
-          <CompactSlider label="B" value={local.ledMatrix.b} onChange={(v) => updateMatrix('b', v)} color="text-blue-500" />
-          <CompactSlider label="LUM" value={local.ledMatrix.brightness} onChange={(v) => updateMatrix('brightness', v)} color="text-zinc-400" />
-          <CompactSlider label="PAT" value={local.ledMatrix.pattern} onChange={(v) => updateMatrix('pattern', v)} color="text-zinc-500" />
-        </div>
-
-        {/* LED Strips */}
-        <div className="space-y-3 bg-[#0d0d0f] border border-zinc-800 rounded-sm p-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <span className="text-[10px] font-mono text-zinc-400 flex items-center gap-1.5">
-                <Lightbulb className="w-3 h-3" /> LED STRIPS
-              </span>
-              <ColorSwatch r={local.ledStrip1.r} g={local.ledStrip1.g} b={local.ledStrip1.b} enabled={local.ledStrip1.enabled} />
-            </div>
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => setSyncStrips((v) => !v)}
-                className={`text-[9px] font-mono px-1.5 py-0.5 rounded border ${
-                  syncStrips ? 'border-primary text-primary bg-primary/10' : 'border-zinc-700 text-zinc-600'
-                }`}
-              >
-                SYNC
-              </button>
-              <Switch
-                checked={local.ledStrip1.enabled}
-                onCheckedChange={(v) => {
-                  updateStrip1('enabled', v);
-                  if (syncStrips) updateStrip2('enabled', v);
-                }}
-                className="scale-75"
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-2">
-            <div className="space-y-1.5">
-              <span className="text-[9px] font-mono text-zinc-600">STRIP 1</span>
-              <CompactSlider label="R" value={local.ledStrip1.r} onChange={(v) => updateStrip1('r', v)} color="text-red-500" />
-              <CompactSlider label="G" value={local.ledStrip1.g} onChange={(v) => updateStrip1('g', v)} color="text-green-500" />
-              <CompactSlider label="B" value={local.ledStrip1.b} onChange={(v) => updateStrip1('b', v)} color="text-blue-500" />
-              <CompactSlider label="LUM" value={local.ledStrip1.brightness} onChange={(v) => updateStrip1('brightness', v)} color="text-zinc-400" />
-            </div>
-            <div className={`space-y-1.5 ${syncStrips ? 'opacity-30 pointer-events-none' : ''}`}>
-              <span className="text-[9px] font-mono text-zinc-600">STRIP 2</span>
-              <CompactSlider label="R" value={local.ledStrip2.r} onChange={(v) => updateStrip2('r', v)} color="text-red-500" />
-              <CompactSlider label="G" value={local.ledStrip2.g} onChange={(v) => updateStrip2('g', v)} color="text-green-500" />
-              <CompactSlider label="B" value={local.ledStrip2.b} onChange={(v) => updateStrip2('b', v)} color="text-blue-500" />
-              <CompactSlider label="LUM" value={local.ledStrip2.brightness} onChange={(v) => updateStrip2('brightness', v)} color="text-zinc-400" />
-            </div>
-          </div>
-        </div>
       </div>
 
-      {/* Actions */}
-      <div className="flex gap-2 pt-2">
-        <Button
-          variant="outline"
-          size="sm"
-          className="flex-1 font-mono text-[10px] tracking-widest border-zinc-700 bg-black text-zinc-400 hover:bg-zinc-900 hover:text-white rounded-sm h-8"
-          onClick={onCapture}
-          disabled={isCapturing}
-        >
-          <Download className="w-3 h-3 mr-1.5" />
-          {isCapturing ? 'CAPTURING...' : 'CAPTURE FROM LIVE'}
+      {/* LED zones — 2 columns */}
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-3">
+        {zones.map(({ key, label }) => (
+          <ZoneEditor key={key} label={label} pattern={local[key]}
+            onChange={(p) => updZone(key, p)} />
+        ))}
+      </div>
+
+      {/* Action buttons */}
+      <div className="flex flex-wrap gap-2 pt-2 border-t border-zinc-800">
+        <Button size="sm" variant="secondary" disabled={!isDirty || isSaving}
+          className="font-mono text-[10px] tracking-widest bg-zinc-800 hover:bg-zinc-700 rounded-sm h-7"
+          onClick={() => onSave(local)}>
+          {isSaving ? 'SPEICHERN...' : isDirty ? '● SPEICHERN' : 'GESPEICHERT'}
         </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          className="flex-1 font-mono text-[10px] tracking-widest border-zinc-700 bg-black text-zinc-400 hover:bg-zinc-900 hover:text-white rounded-sm h-8"
-          onClick={() => onSave(local)}
-          disabled={isSaving}
-        >
-          <Save className="w-3 h-3 mr-1.5" />
-          {isSaving ? 'SAVING...' : 'SAVE PRESET'}
+        <Button size="sm" variant="outline"
+          className="font-mono text-[10px] tracking-widest border-zinc-700 text-zinc-500 hover:text-zinc-300 rounded-sm h-7"
+          disabled={isCapturing} onClick={onCapture}>
+          {isCapturing ? 'CAPTURING...' : '⊙ CAPTURE LIVE'}
         </Button>
-        <Button
-          size="sm"
-          className="flex-1 font-mono text-[10px] tracking-widest bg-primary text-black hover:bg-primary/90 rounded-sm h-8 font-bold"
-          onClick={onApply}
-        >
-          <Play className="w-3 h-3 mr-1.5" />
-          APPLY TO LIVE
+        <Button size="sm" variant="outline"
+          className="font-mono text-[10px] tracking-widest border-primary/40 text-primary hover:bg-primary/10 rounded-sm h-7"
+          onClick={onApply}>
+          ▶ APPLY
         </Button>
       </div>
     </div>
   );
 }
+
+// ─── Main PresetEditor ────────────────────────────────────────────────────────
 
 export default function PresetEditor() {
   const queryClient = useQueryClient();
@@ -300,80 +363,51 @@ export default function PresetEditor() {
   const [timerSeconds, setTimerSeconds] = useState(30);
   const [timerEnabled, setTimerEnabled] = useState(true);
 
-  const { data: presetsState } = useGetPresets({ query: { queryKey: getGetPresetsQueryKey(), refetchInterval: 2000 } });
-  const { data: dmxState } = useGetDmxState({ query: { queryKey: getGetDmxStateQueryKey(), refetchInterval: 500 } });
-  const activePosition = dmxState?.painFader.position ?? -1;
-  const isIdleActive = dmxState?.mode === 'idle';
+  const { data: presetsState } = useGetPresets({ query: { queryKey: getGetPresetsQueryKey() } });
+  const { data: dmxState }     = useGetDmxState({ query: { queryKey: getGetDmxStateQueryKey(), refetchInterval: 500 } });
 
-  const updatePreset = useUpdatePreset();
+  const updatePreset  = useUpdatePreset();
   const capturePreset = useCapturePreset();
-  const updateTimer = useUpdatePresetTimer();
-  const applyFader = useHardwareFaderInput();
-  const loadScene = useLoadScene();
+  const applyPreset   = useApplyPreset();
+  const updateTimer   = useUpdatePresetTimer();
+
+  const invalidate = () => queryClient.invalidateQueries({ queryKey: getGetPresetsQueryKey() });
 
   useEffect(() => {
     if (presetsState) {
-      setTimerSeconds(presetsState.idleTimerSeconds);
-      setTimerEnabled(presetsState.idleTimerEnabled);
+      setTimerSeconds(presetsState.idleTimerSeconds ?? 30);
+      setTimerEnabled(presetsState.idleTimerEnabled ?? true);
     }
   }, [presetsState?.idleTimerSeconds, presetsState?.idleTimerEnabled]);
 
-  const invalidate = () => {
-    queryClient.invalidateQueries({ queryKey: getGetPresetsQueryKey() });
-    queryClient.invalidateQueries({ queryKey: getGetDmxStateQueryKey() });
-  };
+  const activePosition = dmxState?.painFader?.position;
+  const isIdleActive   = dmxState?.mode === 'idle';
 
   const handleSave = (position: string, values: PresetValues) => {
-    updatePreset.mutate(
-      { position, data: values },
-      {
-        onSuccess: () => {
-          toast.success(`Preset ${position.toUpperCase()} saved`);
-          invalidate();
-        },
-        onError: () => toast.error('Failed to save preset'),
-      }
-    );
+    updatePreset.mutate({ position, data: values as any }, {
+      onSuccess: () => { toast.success(`Preset ${position} gespeichert`); invalidate(); },
+    });
   };
 
   const handleCapture = (position: string) => {
-    capturePreset.mutate(
-      { position },
-      {
-        onSuccess: () => {
-          toast.success(`Live state captured as preset ${position.toUpperCase()}`);
-          invalidate();
-        },
-        onError: () => toast.error('Capture failed'),
-      }
-    );
+    capturePreset.mutate({ position }, {
+      onSuccess: () => { toast.success(`Live-State als Preset ${position} gespeichert`); invalidate(); },
+    });
   };
 
   const handleApply = (position: string) => {
-    if (position === 'idle') {
-      loadScene.mutate({ data: { scene: 'idle' } }, { onSuccess: invalidate });
-    } else {
-      applyFader.mutate(
-        { data: { position: parseInt(position, 10) } },
-        { onSuccess: invalidate }
-      );
-    }
-    toast.success(`Preset ${position.toUpperCase()} applied to live`);
+    applyPreset.mutate({ position }, {
+      onSuccess: () => toast.info(`Preset ${position} angewendet`),
+    });
   };
 
   const handleSaveTimer = () => {
-    updateTimer.mutate(
-      { data: { timerSeconds, enabled: timerEnabled } },
-      {
-        onSuccess: () => {
-          toast.success('Timer config saved');
-          invalidate();
-        },
-      }
+    updateTimer.mutate({ data: { timerSeconds, enabled: timerEnabled } },
+      { onSuccess: () => { toast.success('Timer-Konfiguration gespeichert'); invalidate(); } }
     );
   };
 
-  if (!presetsState) {
+  if (!presetsState?.positions?.[0]?.haube) {
     return (
       <div className="flex items-center justify-center h-64 font-mono text-[10px] text-zinc-600 tracking-widest">
         LOADING PRESETS...
@@ -381,134 +415,108 @@ export default function PresetEditor() {
     );
   }
 
-  const SCENE_MAP: Record<string, 'warmup' | 'experience_low' | 'experience_mid' | 'experience_high'> = {
-    '1': 'warmup',
-    '2': 'experience_low',
-    '3': 'experience_mid',
-    '4': 'experience_high',
-  };
-
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <div className="text-xs font-mono text-zinc-500 tracking-widest">
-          FADER POSITION PRESETS — each position fires automatically when hardware fader is pushed
-        </div>
+      <div className="text-xs font-mono text-zinc-500 tracking-widest">
+        FADER PRESETS — jede Position lädt: Licht (Art-Net Pixel), Lüfter (OpenDMX), Motor (USB-TTL), Screen
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="bg-black border border-zinc-800 rounded-sm p-1 h-auto flex-wrap gap-1 w-full justify-start">
-          {[0, 1, 2, 3, 4].map((pos) => {
-            const isLive = activePosition === pos;
+          {LEVER_POSITIONS.map(({ key, label, shortLabel, idx }) => {
+            const posNum = parseInt(key, 10);
+            const isLive = activePosition === posNum && dmxState?.mode === 'experience';
             return (
-              <TabsTrigger
-                key={pos}
-                value={String(pos)}
-                className={`font-mono text-[10px] tracking-widest rounded-sm px-3 py-1.5 border ${POSITION_COLORS[pos]} ${isLive ? 'ring-1 ring-inset ring-current' : ''}`}
-              >
+              <TabsTrigger key={key} value={key}
+                className={`font-mono text-[10px] tracking-widest rounded-sm px-3 py-1.5 border ${POS_COLORS[key]} ${isLive ? 'ring-1 ring-inset ring-current' : ''}`}>
                 {isLive && <span className="w-1.5 h-1.5 rounded-full bg-current mr-1.5 animate-pulse shrink-0" />}
-                <span className="font-black mr-1.5">{pos}</span>
-                {POSITION_LABELS[pos]}
+                <span className="font-black mr-1.5">{shortLabel}</span>
+                {label}
               </TabsTrigger>
             );
           })}
-          <TabsTrigger
-            value="idle"
-            className={`font-mono text-[10px] tracking-widest rounded-sm px-3 py-1.5 border ${POSITION_COLORS[5]} ${isIdleActive ? 'ring-1 ring-inset ring-current' : ''}`}
-          >
+          <TabsTrigger value="idle"
+            className={`font-mono text-[10px] tracking-widest rounded-sm px-3 py-1.5 border ${POS_COLORS['idle']} ${isIdleActive ? 'ring-1 ring-inset ring-current' : ''}`}>
             {isIdleActive && <span className="w-1.5 h-1.5 rounded-full bg-current mr-1.5 animate-pulse shrink-0" />}
-            <Clock className="w-3 h-3 mr-1.5" />
-            IDLE (TIMER)
+            <Clock className="w-3 h-3 mr-1.5" /> IDLE (TIMER)
           </TabsTrigger>
         </TabsList>
 
-        {[0, 1, 2, 3, 4].map((pos) => {
-          const preset = presetsState.positions[pos];
+        {/* Position preset tabs */}
+        {LEVER_POSITIONS.map(({ key, label, shortLabel, idx }) => {
+          const preset = presetsState.positions[idx];
           if (!preset) return null;
+          const posColor = key === '-1' ? 'text-blue-400' : key === '0' ? 'text-orange-400' : 'text-teal-400';
           return (
-            <TabsContent key={pos} value={String(pos)} className="mt-4">
+            <TabsContent key={key} value={key} className="mt-4">
               <Card className="bg-[#111113] border-zinc-800 rounded-sm">
                 <CardHeader className="pb-3 border-b border-zinc-800/50 bg-[#161618] py-3">
-                  <CardTitle className="text-xs font-mono tracking-widest text-zinc-400 uppercase flex items-center gap-2">
-                    <span className={`font-black text-sm ${POSITION_COLORS[pos].split(' ')[0]}`}>{pos}</span>
-                    {POSITION_LABELS[pos]}
-                  </CardTitle>
+                  <div className="flex items-center gap-3">
+                    <span className={`font-black text-2xl font-mono ${posColor}`}>{shortLabel}</span>
+                    <div>
+                      <div className={`text-xs font-mono font-bold tracking-widest ${posColor}`}>{label}</div>
+                      <div className="text-[9px] font-mono text-zinc-600">Hebel-Position {key}</div>
+                    </div>
+                  </div>
                 </CardHeader>
                 <CardContent className="pt-4">
-                  <PresetCard
-                    positionKey={String(pos)}
-                    label={POSITION_LABELS[pos]}
-                    preset={preset as PresetValues}
-                    onSave={(v) => handleSave(String(pos), v)}
-                    onCapture={() => handleCapture(String(pos))}
-                    onApply={() => handleApply(String(pos))}
+                  <PresetCard positionKey={key} preset={mergePreset(preset)}
+                    onSave={(v) => handleSave(key, v)}
+                    onCapture={() => handleCapture(key)}
+                    onApply={() => handleApply(key)}
                     isSaving={updatePreset.isPending}
-                    isCapturing={capturePreset.isPending}
-                  />
+                    isCapturing={capturePreset.isPending} />
                 </CardContent>
               </Card>
             </TabsContent>
           );
         })}
 
+        {/* IDLE tab */}
         <TabsContent value="idle" className="mt-4 space-y-4">
           <Card className="bg-[#111113] border-zinc-800 rounded-sm">
             <CardHeader className="pb-3 border-b border-zinc-800/50 bg-[#161618] py-3">
               <CardTitle className="text-xs font-mono tracking-widest text-zinc-400 uppercase flex items-center gap-2">
-                <Clock className="w-4 h-4" /> IDLE PRESET + TIMER CONFIG
+                <Clock className="w-4 h-4" /> IDLE PRESET + TIMER
               </CardTitle>
             </CardHeader>
             <CardContent className="pt-4 space-y-4">
               <div className="bg-[#0a0a0c] border border-zinc-800 rounded-sm p-3 text-xs font-mono text-zinc-500 leading-relaxed">
-                When the spring returns the fader to <span className="text-primary">position 0</span>, the idle timer starts counting down.
-                After <span className="text-primary">{timerSeconds}s</span> of inactivity at position 0, this idle preset fires automatically.
+                Wenn der Hebel in Position <span className="text-primary font-bold">0 (SCHMERZ)</span> zurückfedert,
+                startet der Timer. Nach <span className="text-primary">{timerSeconds}s</span> ohne Bewegung wird das IDLE-Preset geladen.
               </div>
 
-              {/* Timer config */}
               <div className="grid grid-cols-2 gap-4 p-3 bg-[#0d0d0f] border border-zinc-800 rounded-sm">
                 <div className="space-y-2">
-                  <Label className="text-[10px] font-mono text-zinc-500">TIMER DURATION (seconds)</Label>
-                  <Input
-                    type="number"
-                    min={1}
-                    max={3600}
-                    value={timerSeconds}
+                  <Label className="text-[10px] font-mono text-zinc-500">TIMER DAUER (Sekunden)</Label>
+                  <Input type="number" min={1} max={3600} value={timerSeconds}
                     onChange={(e) => setTimerSeconds(Math.max(1, parseInt(e.target.value) || 1))}
-                    className="h-8 font-mono text-sm bg-black border-zinc-800"
-                  />
+                    className="h-8 font-mono text-sm bg-black border-zinc-800" />
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-[10px] font-mono text-zinc-500">TIMER ENABLED</Label>
+                  <Label className="text-[10px] font-mono text-zinc-500">TIMER AKTIV</Label>
                   <div className="flex items-center gap-3 h-8">
                     <Switch checked={timerEnabled} onCheckedChange={setTimerEnabled} />
                     <span className={`text-[10px] font-mono ${timerEnabled ? 'text-primary' : 'text-zinc-600'}`}>
-                      {timerEnabled ? 'ON' : 'OFF'}
+                      {timerEnabled ? 'EIN' : 'AUS'}
                     </span>
                   </div>
                 </div>
               </div>
 
-              <Button
-                onClick={handleSaveTimer}
-                variant="secondary"
-                size="sm"
+              <Button onClick={handleSaveTimer} variant="secondary" size="sm"
                 disabled={updateTimer.isPending}
-                className="font-mono text-[10px] tracking-widest bg-zinc-800 hover:bg-zinc-700 rounded-sm h-7"
-              >
-                {updateTimer.isPending ? 'SAVING...' : 'SAVE TIMER CONFIG'}
+                className="font-mono text-[10px] tracking-widest bg-zinc-800 hover:bg-zinc-700 rounded-sm h-7">
+                {updateTimer.isPending ? 'SPEICHERN...' : 'TIMER SPEICHERN'}
               </Button>
 
               <div className="border-t border-zinc-800 pt-4">
-                <PresetCard
-                  positionKey="idle"
-                  label="IDLE"
-                  preset={presetsState.idlePreset as PresetValues}
+                <PresetCard positionKey="idle" preset={mergePreset(presetsState.idlePreset)}
                   onSave={(v) => handleSave('idle', v)}
                   onCapture={() => handleCapture('idle')}
                   onApply={() => handleApply('idle')}
                   isSaving={updatePreset.isPending}
-                  isCapturing={capturePreset.isPending}
-                />
+                  isCapturing={capturePreset.isPending} />
               </div>
             </CardContent>
           </Card>

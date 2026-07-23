@@ -17,8 +17,12 @@
  *
  * OpenAPI spec version: 0.3.0
  */
-import type { ModeInputMode } from './modeInputMode';
+import type { MotorStatePosition } from './motorStatePosition';
 
-export interface ModeInput {
-  mode: ModeInputMode;
+export interface MotorState {
+  position: MotorStatePosition;
+  /** @minimum 0 */
+  speed: number;
+  enabled: boolean;
+  simulated: boolean;
 }

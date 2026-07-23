@@ -17,8 +17,10 @@
  *
  * OpenAPI spec version: 0.3.0
  */
-import type { ModeInputMode } from './modeInputMode';
+import type { ZonePattern } from './zonePattern';
 
-export interface ModeInput {
-  mode: ModeInputMode;
+export interface ZoneState {
+  pattern: ZonePattern;
+  /** Physical pixel count for this zone (from hardware config) */
+  pixelCount: number;
 }

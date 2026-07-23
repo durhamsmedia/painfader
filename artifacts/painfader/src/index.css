@@ -59,8 +59,9 @@
   --popover-foreground: 0 0% 98%;
   --popover-border: 240 10% 12%;
 
-  --primary: 190 90% 50%;
-  --primary-foreground: 240 10% 4%;
+  /* CI Primary: #009999 — teal */
+  --primary: 180 100% 30%;
+  --primary-foreground: 0 0% 100%;
 
   --secondary: 240 10% 15%;
   --secondary-foreground: 0 0% 98%;
@@ -68,15 +69,16 @@
   --muted: 240 10% 12%;
   --muted-foreground: 240 5% 65%;
 
-  --accent: 30 90% 55%;
-  --accent-foreground: 240 10% 4%;
+  /* CI Accent: #EC6602 — orange */
+  --accent: 26 98% 47%;
+  --accent-foreground: 0 0% 100%;
 
   --destructive: 0 85% 60%;
   --destructive-foreground: 0 0% 98%;
 
   --border: 240 10% 15%;
   --input: 240 10% 15%;
-  --ring: 190 90% 50%;
+  --ring: 180 100% 30%;
 
   --app-font-sans: 'Inter', system-ui, sans-serif;
   --app-font-mono: 'JetBrains Mono', 'Menlo', monospace;
@@ -95,8 +97,9 @@
   --popover-foreground: 0 0% 98%;
   --popover-border: 240 10% 12%;
 
-  --primary: 190 90% 50%;
-  --primary-foreground: 240 10% 4%;
+  /* CI Primary: #009999 — teal */
+  --primary: 180 100% 30%;
+  --primary-foreground: 0 0% 100%;
 
   --secondary: 240 10% 15%;
   --secondary-foreground: 0 0% 98%;
@@ -104,15 +107,16 @@
   --muted: 240 10% 12%;
   --muted-foreground: 240 5% 65%;
 
-  --accent: 30 90% 55%;
-  --accent-foreground: 240 10% 4%;
+  /* CI Accent: #EC6602 — orange */
+  --accent: 26 98% 47%;
+  --accent-foreground: 0 0% 100%;
 
   --destructive: 0 85% 60%;
   --destructive-foreground: 0 0% 98%;
 
   --border: 240 10% 15%;
   --input: 240 10% 15%;
-  --ring: 190 90% 50%;
+  --ring: 180 100% 30%;
 }
 
 @layer base {

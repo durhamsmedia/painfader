@@ -17,8 +17,12 @@
  *
  * OpenAPI spec version: 0.3.0
  */
-import type { ModeInputMode } from './modeInputMode';
 
-export interface ModeInput {
-  mode: ModeInputMode;
-}
+export type HardwareConfigMotorDriverType = typeof HardwareConfigMotorDriverType[keyof typeof HardwareConfigMotorDriverType];
+
+
+export const HardwareConfigMotorDriverType = {
+  grbl: 'grbl',
+  tic: 'tic',
+  simulated: 'simulated',
+} as const;

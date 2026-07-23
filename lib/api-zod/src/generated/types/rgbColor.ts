@@ -17,8 +17,21 @@
  *
  * OpenAPI spec version: 0.3.0
  */
-import type { ModeInputMode } from './modeInputMode';
 
-export interface ModeInput {
-  mode: ModeInputMode;
+export interface RgbColor {
+  /**
+     * @minimum 0
+     * @maximum 255
+     */
+  r: number;
+  /**
+     * @minimum 0
+     * @maximum 255
+     */
+  g: number;
+  /**
+     * @minimum 0
+     * @maximum 255
+     */
+  b: number;
 }

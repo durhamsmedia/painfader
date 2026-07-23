@@ -4,119 +4,119 @@ import { logger } from "../lib/logger";
 
 const router = Router();
 
-router.get("/dmx/state", (_req, res) => {
-  res.json(dmxController.getState());
-});
+const VALID_POSITIONS = [-1, 0, 1];
+const VALID_ZONES = ["haube", "schmerz", "nsar", "opiat"] as const;
 
-router.get("/dmx/config", (_req, res) => {
-  res.json(dmxController.getConfig());
-});
+// ── State / config ────────────────────────────────────────────────────────────
 
-router.put("/dmx/config", (req, res) => {
-  const { host, universe, port, refreshRate } = req.body as {
-    host?: string;
-    universe?: number;
-    port?: number;
-    refreshRate?: number;
-  };
-  const config = dmxController.updateConfig({ host, universe, port, refreshRate });
-  logger.info({ config }, "DMX config updated");
+router.get("/dmx/state", (_req, res) => { res.json(dmxController.getState()); });
+
+router.get("/dmx/hardware-config", (_req, res) => { res.json(dmxController.getHardwareConfig()); });
+router.put("/dmx/hardware-config", (req, res) => {
+  const config = dmxController.updateHardwareConfig(req.body);
+  logger.info("Hardware config updated");
   res.json(config);
 });
+
+// ── Mode ──────────────────────────────────────────────────────────────────────
 
 router.put("/dmx/mode", (req, res) => {
   const { mode } = req.body as { mode: "idle" | "experience" };
   if (mode !== "idle" && mode !== "experience") {
-    res.status(400).json({ error: "mode must be 'idle' or 'experience'" });
-    return;
+    res.status(400).json({ error: "mode must be 'idle' or 'experience'" }); return;
   }
-  const state = dmxController.setMode(mode);
-  logger.info({ mode }, "Mode changed");
-  res.json(state);
+  res.json(dmxController.setMode(mode));
 });
+
+// ── Fan ───────────────────────────────────────────────────────────────────────
 
 router.put("/dmx/fan", (req, res) => {
   const { speed, enabled } = req.body as { speed?: number; enabled?: boolean };
-  const state = dmxController.setFan({ speed, enabled });
+  res.json(dmxController.setFan({ speed, enabled }));
+});
+
+// ── Pixel zones ───────────────────────────────────────────────────────────────
+
+/**
+ * PUT /dmx/zone/:name  — update one LED zone's pattern
+ * name: haube | schmerz | nsar | opiat
+ * body: Partial<ZonePattern>
+ */
+router.put("/dmx/zone/:name", (req, res) => {
+  const { name } = req.params;
+  if (!VALID_ZONES.includes(name as any)) {
+    res.status(400).json({ error: `zone must be one of: ${VALID_ZONES.join(", ")}` }); return;
+  }
+  const state = dmxController.setZone(name as typeof VALID_ZONES[number], req.body);
+  logger.debug({ zone: name }, "Zone pattern updated");
   res.json(state);
 });
 
-router.put("/dmx/led-matrix", (req, res) => {
-  const { r, g, b, brightness, pattern, enabled } = req.body as {
-    r?: number; g?: number; b?: number; brightness?: number; pattern?: number; enabled?: boolean;
+// ── Motor ─────────────────────────────────────────────────────────────────────
+
+router.put("/dmx/motor", (req, res) => {
+  const { position, speed, enabled } = req.body as {
+    position?: "up" | "down" | "stop"; speed?: number; enabled?: boolean;
   };
-  const state = dmxController.setLedMatrix({ r, g, b, brightness, pattern, enabled });
+  const state = dmxController.setMotor({ position, speed, enabled });
+  logger.info({ position, speed, enabled }, "Motor command");
   res.json(state);
 });
 
-router.put("/dmx/led-strips", (req, res) => {
-  const { strip1, strip2, sync } = req.body as {
-    strip1?: { r?: number; g?: number; b?: number; brightness?: number; enabled?: boolean };
-    strip2?: { r?: number; g?: number; b?: number; brightness?: number; enabled?: boolean };
-    sync?: boolean;
-  };
-  const state = dmxController.setLedStrips({ strip1, strip2, sync });
-  res.json(state);
+// ── Screen ────────────────────────────────────────────────────────────────────
+
+router.get("/dmx/screen", (_req, res) => { res.json(dmxController.getState().screen); });
+
+router.put("/dmx/screen", (req, res) => {
+  const { videoFile, enabled } = req.body as { videoFile?: string; enabled?: boolean };
+  res.json(dmxController.setScreen({ videoFile, enabled }));
 });
 
-router.put("/dmx/disc", (req, res) => {
-  const { speed, direction, enabled } = req.body as {
-    speed?: number; direction?: "cw" | "ccw" | "stop"; enabled?: boolean;
-  };
-  const state = dmxController.setDisc({ speed, direction, enabled });
-  res.json(state);
-});
+// ── Fader / scene ─────────────────────────────────────────────────────────────
 
 router.put("/dmx/pain-fader", (req, res) => {
   const { position } = req.body as { position: number };
-  if (position === undefined || position < 0 || position > 4) {
-    res.status(400).json({ error: "position must be 0-4" });
-    return;
+  if (position === undefined || !VALID_POSITIONS.includes(Math.round(position))) {
+    res.status(400).json({ error: "position must be -1, 0, or 1" }); return;
   }
-  const state = dmxController.setPainFader(position);
-  res.json(state);
+  res.json(dmxController.hardwareFaderInput(position as -1 | 0 | 1));
 });
 
 router.put("/dmx/scene", (req, res) => {
-  const { scene } = req.body as {
-    scene: "idle" | "warmup" | "experience_low" | "experience_mid" | "experience_high" | "blackout";
-  };
-  const validScenes = ["idle", "warmup", "experience_low", "experience_mid", "experience_high", "blackout"];
-  if (!validScenes.includes(scene)) {
-    res.status(400).json({ error: "Invalid scene" });
-    return;
-  }
-  const state = dmxController.loadScene(scene);
+  const { scene } = req.body as { scene: string };
+  const valid = ["idle", "schmerz", "opiat", "nsar", "blackout"];
+  if (!valid.includes(scene)) { res.status(400).json({ error: "Invalid scene" }); return; }
+  const state = dmxController.loadScene(scene as any);
   logger.info({ scene }, "Scene loaded");
   res.json(state);
 });
 
 router.post("/dmx/blackout", (_req, res) => {
-  const state = dmxController.blackout();
   logger.info("Blackout triggered");
-  res.json(state);
+  res.json(dmxController.blackout());
 });
 
+/**
+ * POST /dmx/hardware-fader  — called by GPIO daemon / external MCU.
+ * The GpioReader now calls hardwareFaderInput() directly; this endpoint
+ * remains for manual testing and external integration.
+ */
 router.post("/dmx/hardware-fader", (req, res) => {
   const { position } = req.body as { position: number };
-  if (position === undefined || position < 0 || position > 4) {
-    res.status(400).json({ error: "position must be 0-4" });
-    return;
+  if (position === undefined || !VALID_POSITIONS.includes(Math.round(position))) {
+    res.status(400).json({ error: "position must be -1, 0, or 1" }); return;
   }
-  const state = dmxController.hardwareFaderInput(position);
-  res.json(state);
+  res.json(dmxController.hardwareFaderInput(position as -1 | 0 | 1));
 });
 
-router.get("/dmx/presets", (_req, res) => {
-  res.json(dmxController.getPresets());
-});
+// ── Presets ───────────────────────────────────────────────────────────────────
+
+router.get("/dmx/presets", (_req, res) => { res.json(dmxController.getPresets()); });
 
 router.put("/dmx/presets/:position", (req, res) => {
   const { position } = req.params;
-  const validPositions = ["0", "1", "2", "3", "4", "idle"];
-  if (!validPositions.includes(position)) {
-    res.status(400).json({ error: "position must be 0-4 or 'idle'" });
-    return;
+  if (!["-1", "0", "1", "idle"].includes(position)) {
+    res.status(400).json({ error: "position must be -1, 0, 1, or idle" }); return;
   }
   const presets = dmxController.updatePreset(position, req.body);
   logger.info({ position }, "Preset updated");
@@ -125,13 +125,11 @@ router.put("/dmx/presets/:position", (req, res) => {
 
 router.post("/dmx/presets/:position/capture", (req, res) => {
   const { position } = req.params;
-  const validPositions = ["0", "1", "2", "3", "4", "idle"];
-  if (!validPositions.includes(position)) {
-    res.status(400).json({ error: "position must be 0-4 or 'idle'" });
-    return;
+  if (!["-1", "0", "1", "idle"].includes(position)) {
+    res.status(400).json({ error: "position must be -1, 0, 1, or idle" }); return;
   }
   const presets = dmxController.capturePreset(position);
-  logger.info({ position }, "Preset captured from live state");
+  logger.info({ position }, "Preset captured");
   res.json(presets);
 });
 
@@ -140,6 +138,20 @@ router.put("/dmx/preset-timer", (req, res) => {
   const presets = dmxController.updatePresetTimer(timerSeconds, enabled);
   logger.info({ timerSeconds, enabled }, "Preset timer config updated");
   res.json(presets);
+});
+
+// ── Apply preset position ─────────────────────────────────────────────────────
+
+router.post("/dmx/presets/:position/apply", (req, res) => {
+  const { position } = req.params;
+  if (!["-1", "0", "1", "idle"].includes(position)) {
+    res.status(400).json({ error: "position must be -1, 0, 1, or idle" }); return;
+  }
+  const pos = position === "idle" ? null : (parseInt(position, 10) as -1 | 0 | 1);
+  const state = pos === null
+    ? dmxController.setMode("idle")
+    : dmxController.hardwareFaderInput(pos);
+  res.json(state);
 });
 
 export default router;

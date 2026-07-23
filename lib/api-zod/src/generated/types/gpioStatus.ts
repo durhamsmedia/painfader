@@ -17,8 +17,14 @@
  *
  * OpenAPI spec version: 0.3.0
  */
-import type { ModeInputMode } from './modeInputMode';
+import type { GpioStatusRaw } from './gpioStatusRaw';
 
-export interface ModeInput {
-  mode: ModeInputMode;
+export interface GpioStatus {
+  simulated: boolean;
+  /**
+     * @minimum -1
+     * @maximum 1
+     */
+  position: number;
+  raw: GpioStatusRaw;
 }

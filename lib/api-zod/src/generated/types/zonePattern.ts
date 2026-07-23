@@ -17,8 +17,23 @@
  *
  * OpenAPI spec version: 0.3.0
  */
-import type { ModeInputMode } from './modeInputMode';
+import type { PatternType } from './patternType';
+import type { RgbColor } from './rgbColor';
 
-export interface ModeInput {
-  mode: ModeInputMode;
+export interface ZonePattern {
+  type: PatternType;
+  primaryColor: RgbColor;
+  secondaryColor: RgbColor;
+  /**
+     * @minimum 0
+     * @maximum 255
+     */
+  brightness: number;
+  /**
+     * Animation speed: 0=static, 255=~2 Hz cycle
+     * @minimum 0
+     * @maximum 255
+     */
+  speed: number;
+  enabled: boolean;
 }
