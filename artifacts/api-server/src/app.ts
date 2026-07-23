@@ -58,4 +58,10 @@ if (fs.existsSync(frontendDist)) {
   logger.warn({ frontendDist }, "Frontend dist not found — UI will not be served");
 }
 
+// ── Error handler — logs actual error instead of generic HTML page ────────────
+app.use((err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
+  logger.error({ errMsg: err?.message, errCode: err?.code, stack: err?.stack }, "Express error handler");
+  res.status(500).json({ error: err?.message ?? "unknown", code: err?.code });
+});
+
 export default app;
