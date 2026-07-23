@@ -36,19 +36,25 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use("/api", router);
 
-// ── Production: serve the built Painfader frontend ───────────────────────────
-// Build output is at artifacts/painfader/dist/public relative to workspace root.
-// From dist/index.mjs (artifacts/api-server/dist/), go up two levels then into
-// artifacts/painfader/dist/public.
-if (process.env.NODE_ENV === "production") {
-  const frontendDist =
-    process.env.FRONTEND_DIST ||
-    path.resolve(process.cwd(), "../painfader/dist/public");
+// ── Serve the built Painfader frontend ───────────────────────────────────────
+// Explicit path via env var, or relative to WorkingDirectory set in systemd.
+// On Giada: WorkingDirectory=/opt/painfader/artifacts/api-server
+//           FRONTEND_DIST=/opt/painfader/artifacts/painfader/dist/public
+import fs from "fs";
+
+const frontendDist =
+  process.env.FRONTEND_DIST ||
+  path.resolve(process.cwd(), "../painfader/dist/public");
+
+logger.info({ frontendDist, exists: fs.existsSync(frontendDist) }, "Frontend dist path");
+
+if (fs.existsSync(frontendDist)) {
   app.use(express.static(frontendDist));
-  // SPA fallback — all non-API routes serve index.html
   app.get("*", (_req, res) => {
     res.sendFile(path.join(frontendDist, "index.html"));
   });
+} else {
+  logger.warn({ frontendDist }, "Frontend dist not found — UI will not be served");
 }
 
 export default app;
