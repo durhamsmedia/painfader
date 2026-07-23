@@ -49,7 +49,8 @@ logger.info({ frontendDist, exists: fs.existsSync(frontendDist) }, "Frontend dis
 
 if (fs.existsSync(frontendDist)) {
   app.use(express.static(frontendDist));
-  app.get("/{*path}", (_req, res) => {
+  // SPA fallback — serve index.html for any unmatched route
+  app.use((_req, res) => {
     res.sendFile(path.join(frontendDist, "index.html"));
   });
 } else {
