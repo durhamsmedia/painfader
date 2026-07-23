@@ -8,8 +8,9 @@ import runtimeErrorOverlay from "@replit/vite-plugin-runtime-error-modal";
 // Default to 3000 so the build command never throws when PORT is unset.
 const port = Number(process.env.PORT ?? "3000");
 
-// BASE_PATH defaults to /painfader for production static serving.
-const basePath = process.env.BASE_PATH ?? "/painfader";
+// BASE_PATH is set by Replit's artifact system (e.g. /painfader).
+// On the Giada (plain Express at root), it is unset → default to "/".
+const basePath = process.env.BASE_PATH ?? "/";
 
 export default defineConfig({
   base: basePath,
