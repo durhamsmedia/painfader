@@ -1,0 +1,72 @@
+/opt/painfader/artifacts/painfader:
+[ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL] @workspace/painfader@0.0.0 build: `vite build --config vite.config.ts`
+Exit status 1
+bash: cd: artifacts/api-server: No such file or directory
+root@paintable:/opt/painfader/artifacts/api-server# cd /opt/painfader && git pull
+pnpm --filter @workspace/painfader run build
+cd artifacts/api-server && node ./build.mjs
+systemctl restart painfader
+remote: Enumerating objects: 12, done.
+remote: Counting objects: 100% (12/12), done.
+remote: Compressing objects: 100% (2/2), done.
+remote: Total 7 (delta 5), reused 7 (delta 5), pack-reused 0 (from 0)
+Unpacking objects: 100% (7/7), 1.58 KiB | 269.00 KiB/s, done.
+From https://github.com/durhamsmedia/painfader
+   a3dca52..9c67b5f  main       -> origin/main
+Updating a3dca52..9c67b5f
+Fast-forward
+ artifacts/painfader/vite.config.ts                                          | 23 ++++++------------
+ ...one-in-129ms-root-paintable-opt-painfader-artifacts-ap_1784808189024.txt | 45 ++++++++++++++++++++++++++++++++++++
+ 2 files changed, 52 insertions(+), 16 deletions(-)
+ create mode 100644 attached_assets/Pasted-Done-in-129ms-root-paintable-opt-painfader-artifacts-ap_1784808189024.txt
+$ vite build --config vite.config.ts
+vite v7.3.6 building client environment for production...
+src/components/ui/tooltip.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+src/components/ui/label.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+✓ 1829 modules transformed.
+dist/public/index.html                   1.50 kB │ gzip:   0.56 kB
+dist/public/assets/index-B05pDRAe.css  102.00 kB │ gzip:  16.90 kB
+dist/public/assets/index-BB6hXobm.js   458.62 kB │ gzip: 139.02 kB
+✓ built in 3.20s
+
+  dist/index.mjs                       1.7mb ⚠️
+  dist/pino-worker.mjs               153.4kb
+  dist/pino-file.mjs                 142.0kb
+  dist/pino-pretty.mjs               114.6kb
+  dist/thread-stream-worker.mjs        7.3kb
+  dist/index.mjs.map                   2.6mb
+  dist/pino-worker.mjs.map           256.9kb
+  dist/pino-file.mjs.map             229.0kb
+  dist/pino-pretty.mjs.map           204.0kb
+  dist/thread-stream-worker.mjs.map   12.0kb
+
+⚡ Done in 137ms
+root@paintable:/opt/painfader/artifacts/api-server# cd /opt/painfader && git pull
+pnpm --filter @workspace/painfader run build
+systemctl restart painfader
+remote: Enumerating objects: 16, done.
+remote: Counting objects: 100% (16/16), done.
+remote: Compressing objects: 100% (3/3), done.
+remote: Total 11 (delta 8), reused 11 (delta 8), pack-reused 0 (from 0)
+Unpacking objects: 100% (11/11), 2.62 KiB | 335.00 KiB/s, done.
+From https://github.com/durhamsmedia/painfader
+   9c67b5f..f2ad909  main       -> origin/main
+Updating 9c67b5f..f2ad909
+Fast-forward
+ artifacts/painfader/vite.config.ts                                          | 14 +++-----
+ ...Done-in-127ms-root-paintable-opt-painfader-artifacts-a_1784809353112.txt | 62 ++++++++++++++++++++++++++++++++++++
+ ...ERR-PNPM-RECURSIVE-RUN-FIRST-FAIL-workspace-painfader-_1784808703314.txt | 37 +++++++++++++++++++++
+ 3 files changed, 103 insertions(+), 10 deletions(-)
+ create mode 100644 attached_assets/Pasted--Done-in-127ms-root-paintable-opt-painfader-artifacts-a_1784809353112.txt
+ create mode 100644 attached_assets/Pasted--ERR-PNPM-RECURSIVE-RUN-FIRST-FAIL-workspace-painfader-_1784808703314.txt
+$ vite build --config vite.config.ts
+vite v7.3.6 building client environment for production...
+src/components/ui/tooltip.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+src/components/ui/label.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+✓ 1829 modules transformed.
+dist/public/index.html                   1.50 kB │ gzip:   0.56 kB
+dist/public/assets/index-B05pDRAe.css  102.00 kB │ gzip:  16.90 kB
+dist/public/assets/index-BB6hXobm.js   458.62 kB │ gzip: 139.02 kB
+✓ built in 3.17s
+root@paintable:/opt/painfader# 
+
