@@ -4,17 +4,11 @@ import tailwindcss from "@tailwindcss/vite";
 import path from "path";
 import runtimeErrorOverlay from "@replit/vite-plugin-runtime-error-modal";
 
-const isBuild = process.env.NODE_ENV === "production" || process.argv.includes("build");
+// PORT is only needed by the dev/preview server, not during `vite build`.
+// Default to 3000 so the build command never throws when PORT is unset.
+const port = Number(process.env.PORT ?? "3000");
 
-const rawPort = process.env.PORT;
-if (!isBuild && !rawPort) {
-  throw new Error("PORT environment variable is required but was not provided.");
-}
-const port = Number(rawPort ?? "3000");
-if (!isBuild && (Number.isNaN(port) || port <= 0)) {
-  throw new Error(`Invalid PORT value: "${rawPort}"`);
-}
-
+// BASE_PATH defaults to /painfader for production static serving.
 const basePath = process.env.BASE_PATH ?? "/painfader";
 
 export default defineConfig({
