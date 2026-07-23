@@ -212,8 +212,8 @@ export default function Dashboard() {
   const onSetMotor = (position: 'up' | 'down' | 'stop', speed: number, enabled: boolean) =>
     setMotor.mutate({ data: { position, speed, enabled } }, { onSuccess: inv });
 
-  const onSetScreen = (videoFile: string, enabled: boolean) =>
-    setScreen.mutate({ data: { videoFile, enabled } }, { onSuccess: inv });
+  const onSetScreen = (videoFile: string, enabled: boolean, loop: boolean) =>
+    setScreen.mutate({ data: { videoFile, enabled, loop } }, { onSuccess: inv });
 
   const onLoadScene = (scene: 'idle' | 'schmerz' | 'opiat' | 'nsar' | 'blackout') =>
     loadScene.mutate({ data: { scene } }, { onSuccess: inv });
@@ -556,23 +556,35 @@ export default function Dashboard() {
                       <CardTitle className="text-xs font-mono tracking-widest flex items-center gap-2 text-zinc-400 uppercase">
                         <Monitor className="w-4 h-4 text-accent" /> SCREEN
                       </CardTitle>
-                      <Switch checked={dmxState.screen.enabled}
-                        onCheckedChange={(c) => onSetScreen(dmxState.screen.videoFile, c)} />
+                      <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-[9px] font-mono text-zinc-600">LOOP</span>
+                          <Switch checked={!!dmxState.screen.loop}
+                            onCheckedChange={(c) => onSetScreen(dmxState.screen.videoFile, dmxState.screen.enabled, c)} />
+                        </div>
+                        <Switch checked={dmxState.screen.enabled}
+                          onCheckedChange={(c) => onSetScreen(dmxState.screen.videoFile, c, !!dmxState.screen.loop)} />
+                      </div>
                     </CardHeader>
                     <CardContent className="pt-4 space-y-3 transition-opacity" style={{ opacity: dmxState.screen.enabled ? 1 : 0.45 }}>
                       <Input value={dmxState.screen.videoFile}
-                        onChange={(e) => onSetScreen(e.target.value, dmxState.screen.enabled)}
-                        placeholder="schmerz.mp4"
+                        onChange={(e) => onSetScreen(e.target.value, dmxState.screen.enabled, !!dmxState.screen.loop)}
+                        placeholder="Screen-Video_01.mp4"
                         className="h-7 text-xs font-mono bg-black border-zinc-800 rounded-sm" />
-                      <div className="grid grid-cols-2 gap-1">
-                        {['idle.mp4','schmerz.mp4','opiat.mp4','nsar.mp4'].map((f) => (
+                      <div className="grid grid-cols-5 gap-1">
+                        {Array.from({ length: 10 }, (_, i) => `Screen-Video_${String(i + 1).padStart(2, '0')}.mp4`).map((f) => (
                           <Button key={f} size="sm" variant="outline"
                             className={`font-mono text-[9px] h-6 rounded-sm ${dmxState.screen.videoFile === f ? 'border-accent bg-accent/10 text-accent' : 'border-zinc-800 bg-black text-zinc-600 hover:border-zinc-600'}`}
-                            onClick={() => onSetScreen(f, dmxState.screen.enabled)}>{f}</Button>
+                            onClick={() => onSetScreen(f, dmxState.screen.enabled, !!dmxState.screen.loop)}>
+                            {f.replace('Screen-Video_', 'V').replace('.mp4', '')}
+                          </Button>
                         ))}
                       </div>
                       {dmxState.screen.enabled && dmxState.screen.videoFile && (
-                        <div className="text-[10px] font-mono text-accent font-bold">▶ {dmxState.screen.videoFile}</div>
+                        <div className="text-[10px] font-mono text-accent font-bold flex items-center gap-2">
+                          ▶ {dmxState.screen.videoFile}
+                          {dmxState.screen.loop && <span className="text-zinc-500">∞ LOOP</span>}
+                        </div>
                       )}
                     </CardContent>
                   </Card>

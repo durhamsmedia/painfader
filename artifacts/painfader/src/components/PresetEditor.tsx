@@ -307,18 +307,22 @@ function PresetCard({
         <div className="space-y-2 bg-[#0d0d0f] border border-zinc-800 rounded-sm p-3">
           <div className="flex items-center justify-between">
             <span className="text-[10px] font-mono text-zinc-400 flex items-center gap-1.5"><Monitor className="w-3 h-3 text-accent" /> SCREEN / VIDEO</span>
-            <Switch checked={local.screen.enabled} onCheckedChange={(v) => updScreen('enabled', v)} className="scale-75" />
+            <div className="flex items-center gap-2">
+              <span className="text-[8px] font-mono text-zinc-600">LOOP</span>
+              <Switch checked={!!local.screen.loop} onCheckedChange={(v) => updScreen('loop', v)} className="scale-75" />
+              <Switch checked={local.screen.enabled} onCheckedChange={(v) => updScreen('enabled', v)} className="scale-75" />
+            </div>
           </div>
           <Input value={local.screen.videoFile} onChange={(e) => updScreen('videoFile', e.target.value)}
-            placeholder="schmerz.mp4" className="h-7 text-xs font-mono bg-black border-zinc-800 rounded-sm" />
-          <div className="flex flex-wrap gap-1">
-            {['idle.mp4','schmerz.mp4','opiat.mp4','nsar.mp4'].map((f) => (
+            placeholder="Screen-Video_01.mp4" className="h-7 text-xs font-mono bg-black border-zinc-800 rounded-sm" />
+          <div className="grid grid-cols-5 gap-1">
+            {Array.from({ length: 10 }, (_, i) => `Screen-Video_${String(i + 1).padStart(2, '0')}.mp4`).map((f) => (
               <button key={f} onClick={() => updScreen('videoFile', f)}
-                className={`text-[8px] font-mono px-1.5 py-0.5 rounded border ${
+                className={`text-[8px] font-mono px-1 py-0.5 rounded border ${
                   local.screen.videoFile === f
                     ? 'border-accent text-accent bg-accent/10'
                     : 'border-zinc-700 text-zinc-600 hover:border-zinc-500 hover:text-zinc-400'
-                }`}>{f}</button>
+                }`}>{f.replace('Screen-Video_', 'V').replace('.mp4', '')}</button>
             ))}
           </div>
         </div>

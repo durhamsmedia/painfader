@@ -41,7 +41,7 @@ export interface FaderPreset {
   nsar: ZonePattern;
   opiat: ZonePattern;
   motor: { position: MotorPosition; speed: number; enabled: boolean };
-  screen: { videoFile: string; enabled: boolean };
+  screen: { videoFile: string; enabled: boolean; loop: boolean };
 }
 
 export interface PresetsState {
@@ -57,7 +57,7 @@ export interface PresetsState {
 export interface FanState   { speed: number; enabled: boolean; dmxChannel: number }
 export interface ZoneState  { pattern: ZonePattern; pixelCount: number }
 export interface MotorState { position: MotorPosition; speed: number; enabled: boolean; simulated: boolean }
-export interface ScreenState{ videoFile: string; enabled: boolean }
+export interface ScreenState{ videoFile: string; enabled: boolean; loop: boolean }
 export interface PainFaderState { position: FaderPosition; channel: number }
 
 export interface DmxState {
@@ -92,7 +92,7 @@ function makePreset(name: string, overrides: Partial<FaderPreset> = {}): FaderPr
     nsar:    { ...off },
     opiat:   { ...off },
     motor:   { position: "down", speed: 3000, enabled: false },
-    screen:  { videoFile: "", enabled: false },
+    screen:  { videoFile: "", enabled: false, loop: true },
     ...overrides,
   };
 }
@@ -106,7 +106,7 @@ const DEFAULT_PRESETS: FaderPreset[] = [
     nsar:    { ...NSAR_NSAR },
     opiat:   { ...off },
     motor:   { position: "down", speed: 3000, enabled: true },
-    screen:  { videoFile: "nsar.mp4", enabled: true },
+    screen:  { videoFile: "Screen-Video_01.mp4", enabled: true, loop: true },
   }),
   // index 1 → position 0 (SCHMERZ)
   makePreset("SCHMERZ", {
@@ -116,7 +116,7 @@ const DEFAULT_PRESETS: FaderPreset[] = [
     nsar:    { ...off },
     opiat:   { ...off },
     motor:   { position: "down", speed: 3000, enabled: true },
-    screen:  { videoFile: "schmerz.mp4", enabled: true },
+    screen:  { videoFile: "Screen-Video_02.mp4", enabled: true, loop: true },
   }),
   // index 2 → position +1 (O / OPIAT)
   makePreset("O – OPIAT", {
@@ -126,7 +126,7 @@ const DEFAULT_PRESETS: FaderPreset[] = [
     nsar:    { ...off },
     opiat:   { ...OPIAT_OPIAT },
     motor:   { position: "up",  speed: 3000, enabled: true },
-    screen:  { videoFile: "opiat.mp4", enabled: true },
+    screen:  { videoFile: "Screen-Video_03.mp4", enabled: true, loop: true },
   }),
 ];
 
@@ -137,7 +137,7 @@ const DEFAULT_IDLE_PRESET: FaderPreset = makePreset("IDLE", {
   nsar:    { ...off },
   opiat:   { ...off },
   motor:   { position: "down", speed: 3000, enabled: false },
-  screen:  { videoFile: "idle.mp4", enabled: true },
+  screen:  { videoFile: "Screen-Video_01.mp4", enabled: true, loop: true },
 });
 
 // ─── Controller ───────────────────────────────────────────────────────────────
@@ -358,9 +358,10 @@ class DmxController {
     return this.getState();
   }
 
-  setScreen(updates: { videoFile?: string; enabled?: boolean }): DmxState {
+  setScreen(updates: { videoFile?: string; enabled?: boolean; loop?: boolean }): DmxState {
     if (updates.videoFile !== undefined) this.screen.videoFile = updates.videoFile;
     if (updates.enabled   !== undefined) this.screen.enabled   = updates.enabled;
+    if (updates.loop      !== undefined) this.screen.loop      = updates.loop;
     return this.getState();
   }
 

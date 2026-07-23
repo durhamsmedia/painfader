@@ -68,8 +68,8 @@ router.put("/dmx/motor", (req, res) => {
 router.get("/dmx/screen", (_req, res) => { res.json(dmxController.getState().screen); });
 
 router.put("/dmx/screen", (req, res) => {
-  const { videoFile, enabled } = req.body as { videoFile?: string; enabled?: boolean };
-  res.json(dmxController.setScreen({ videoFile, enabled }));
+  const { videoFile, enabled, loop } = req.body as { videoFile?: string; enabled?: boolean; loop?: boolean };
+  res.json(dmxController.setScreen({ videoFile, enabled, loop }));
 });
 
 // ── Fader / scene ─────────────────────────────────────────────────────────────
