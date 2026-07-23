@@ -50,8 +50,9 @@ logger.info({ frontendDist, exists: fs.existsSync(frontendDist) }, "Frontend dis
 if (fs.existsSync(frontendDist)) {
   app.use(express.static(frontendDist));
   // SPA fallback — serve index.html for any unmatched route
+  const indexHtml = path.join(frontendDist, "index.html");
   app.use((_req, res) => {
-    res.sendFile(path.join(frontendDist, "index.html"));
+    res.type("html").send(fs.readFileSync(indexHtml));
   });
 } else {
   logger.warn({ frontendDist }, "Frontend dist not found — UI will not be served");
