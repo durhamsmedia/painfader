@@ -58,6 +58,18 @@ if (fs.existsSync(frontendDist)) {
   logger.warn({ frontendDist }, "Frontend dist not found — UI will not be served");
 }
 
+// ── Debug: show what the running server sees ─────────────────────────────────
+app.get("/_debug", (_req, res) => {
+  const indexPath = path.join(frontendDist, "index.html");
+  res.json({
+    frontendDist,
+    dirExists: fs.existsSync(frontendDist),
+    indexExists: fs.existsSync(indexPath),
+    cwd: process.cwd(),
+    env_FRONTEND_DIST: process.env.FRONTEND_DIST,
+  });
+});
+
 // ── Error handler — logs actual error instead of generic HTML page ────────────
 app.use((err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
   logger.error({ errMsg: err?.message, errCode: err?.code, stack: err?.stack }, "Express error handler");
