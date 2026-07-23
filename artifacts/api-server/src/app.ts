@@ -3,6 +3,7 @@ import cors from "cors";
 import pinoHttp from "pino-http";
 import path from "path";
 import { fileURLToPath } from "url";
+import fs from "fs";
 import router from "./routes";
 import { logger } from "./lib/logger";
 
@@ -40,8 +41,6 @@ app.use("/api", router);
 // Explicit path via env var, or relative to WorkingDirectory set in systemd.
 // On Giada: WorkingDirectory=/opt/painfader/artifacts/api-server
 //           FRONTEND_DIST=/opt/painfader/artifacts/painfader/dist/public
-import fs from "fs";
-
 const frontendDist =
   process.env.FRONTEND_DIST ||
   path.resolve(process.cwd(), "../painfader/dist/public");
