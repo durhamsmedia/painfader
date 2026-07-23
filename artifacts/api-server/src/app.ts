@@ -48,17 +48,6 @@ const indexExists = fs.existsSync(indexHtml);
 
 logger.info({ frontendDist, dirExists, indexExists }, "Frontend dist path");
 
-// ── Debug: reachable before static handler ────────────────────────────────────
-app.get("/_debug", (_req, res) => {
-  res.json({
-    frontendDist,
-    dirExists,
-    indexExists,
-    cwd: process.cwd(),
-    env_FRONTEND_DIST: process.env.FRONTEND_DIST,
-  });
-});
-
 if (dirExists) {
   app.use(express.static(frontendDist));
   // SPA fallback — serve index.html for any unmatched route
@@ -68,11 +57,5 @@ if (dirExists) {
 } else {
   logger.warn({ frontendDist }, "Frontend dist not found — UI will not be served");
 }
-
-// ── Error handler — logs actual error instead of generic HTML page ────────────
-app.use((err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
-  logger.error({ errMsg: err?.message, errCode: err?.code, stack: err?.stack }, "Express error handler");
-  res.status(500).json({ error: err?.message ?? "unknown", code: err?.code });
-});
 
 export default app;
