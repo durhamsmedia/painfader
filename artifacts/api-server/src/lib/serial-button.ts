@@ -22,7 +22,7 @@ export interface SerialButtonConfig {
 }
 
 export const DEFAULT_SERIAL_BUTTON_CONFIG: SerialButtonConfig = {
-  port:       "/dev/ttyUSB0",
+  port:       "/dev/ttyUSB1",
   baudRate:   9600,
   debounceMs: 800,
 };
