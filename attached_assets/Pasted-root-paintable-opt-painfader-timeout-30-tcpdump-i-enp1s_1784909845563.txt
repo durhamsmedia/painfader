@@ -1,0 +1,66 @@
+root@paintable:/opt/painfader# timeout 30 tcpdump -i enp1s0 -n -e 2>&1
+tcpdump: verbose output suppressed, use -v[v]... for full protocol decode
+listening on enp1s0, link-type EN10MB (Ethernet), snapshot length 262144 bytes
+18:16:23.010236 24:1c:04:22:ed:94 > ff:ff:ff:ff:ff:ff, ethertype ARP (0x0806), length 42: Request who-has 2.0.0.2 tell 2.0.0.10, length 28
+18:16:23.010254 24:1c:04:22:ed:94 > ff:ff:ff:ff:ff:ff, ethertype ARP (0x0806), length 42: Request who-has 2.0.0.1 tell 2.0.0.10, length 28
+18:16:24.034576 24:1c:04:22:ed:94 > ff:ff:ff:ff:ff:ff, ethertype ARP (0x0806), length 42: Request who-has 2.0.0.1 tell 2.0.0.10, length 28
+18:16:24.034609 24:1c:04:22:ed:94 > ff:ff:ff:ff:ff:ff, ethertype ARP (0x0806), length 42: Request who-has 2.0.0.2 tell 2.0.0.10, length 28
+18:16:24.840833 70:4b:ca:5b:c5:ab > ff:ff:ff:ff:ff:ff, ethertype IPv4 (0x0800), length 350: 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 70:4b:ca:5b:c5:ab, length 308
+18:16:24.848092 70:4b:ca:5b:c5:ab > ff:ff:ff:ff:ff:ff, ethertype IPv4 (0x0800), length 350: 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 70:4b:ca:5b:c5:ab, length 308
+18:16:24.903468 70:4b:ca:5b:c5:ab > ff:ff:ff:ff:ff:ff, ethertype IPv4 (0x0800), length 350: 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 70:4b:ca:5b:c5:ab, length 308
+18:16:25.062198 24:1c:04:22:ed:94 > ff:ff:ff:ff:ff:ff, ethertype ARP (0x0806), length 42: Request who-has 2.0.0.2 tell 2.0.0.10, length 28
+18:16:25.062218 24:1c:04:22:ed:94 > ff:ff:ff:ff:ff:ff, ethertype ARP (0x0806), length 42: Request who-has 2.0.0.1 tell 2.0.0.10, length 28
+18:16:25.903749 70:4b:ca:5b:c5:ab > ff:ff:ff:ff:ff:ff, ethertype IPv4 (0x0800), length 350: 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 70:4b:ca:5b:c5:ab, length 308
+18:16:26.082187 24:1c:04:22:ed:94 > ff:ff:ff:ff:ff:ff, ethertype ARP (0x0806), length 42: Request who-has 2.0.0.1 tell 2.0.0.10, length 28
+18:16:26.082202 24:1c:04:22:ed:94 > ff:ff:ff:ff:ff:ff, ethertype ARP (0x0806), length 42: Request who-has 2.0.0.2 tell 2.0.0.10, length 28
+18:16:27.110821 24:1c:04:22:ed:94 > ff:ff:ff:ff:ff:ff, ethertype ARP (0x0806), length 42: Request who-has 2.0.0.1 tell 2.0.0.10, length 28
+18:16:27.110854 24:1c:04:22:ed:94 > ff:ff:ff:ff:ff:ff, ethertype ARP (0x0806), length 42: Request who-has 2.0.0.2 tell 2.0.0.10, length 28
+18:16:27.903577 70:4b:ca:5b:c5:ab > ff:ff:ff:ff:ff:ff, ethertype IPv4 (0x0800), length 350: 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 70:4b:ca:5b:c5:ab, length 308
+18:16:28.130219 24:1c:04:22:ed:94 > ff:ff:ff:ff:ff:ff, ethertype ARP (0x0806), length 42: Request who-has 2.0.0.2 tell 2.0.0.10, length 28
+18:16:28.130236 24:1c:04:22:ed:94 > ff:ff:ff:ff:ff:ff, ethertype ARP (0x0806), length 42: Request who-has 2.0.0.1 tell 2.0.0.10, length 28
+18:16:29.154320 24:1c:04:22:ed:94 > ff:ff:ff:ff:ff:ff, ethertype ARP (0x0806), length 42: Request who-has 2.0.0.1 tell 2.0.0.10, length 28
+18:16:29.154342 24:1c:04:22:ed:94 > ff:ff:ff:ff:ff:ff, ethertype ARP (0x0806), length 42: Request who-has 2.0.0.2 tell 2.0.0.10, length 28
+18:16:30.182665 24:1c:04:22:ed:94 > ff:ff:ff:ff:ff:ff, ethertype ARP (0x0806), length 42: Request who-has 2.0.0.1 tell 2.0.0.10, length 28
+18:16:30.182706 24:1c:04:22:ed:94 > ff:ff:ff:ff:ff:ff, ethertype ARP (0x0806), length 42: Request who-has 2.0.0.2 tell 2.0.0.10, length 28
+18:16:31.202200 24:1c:04:22:ed:94 > ff:ff:ff:ff:ff:ff, ethertype ARP (0x0806), length 42: Request who-has 2.0.0.2 tell 2.0.0.10, length 28
+18:16:31.202217 24:1c:04:22:ed:94 > ff:ff:ff:ff:ff:ff, ethertype ARP (0x0806), length 42: Request who-has 2.0.0.1 tell 2.0.0.10, length 28
+18:16:31.903905 70:4b:ca:5b:c5:ab > ff:ff:ff:ff:ff:ff, ethertype IPv4 (0x0800), length 350: 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 70:4b:ca:5b:c5:ab, length 308
+18:16:32.226207 24:1c:04:22:ed:94 > ff:ff:ff:ff:ff:ff, ethertype ARP (0x0806), length 42: Request who-has 2.0.0.1 tell 2.0.0.10, length 28
+18:16:32.226233 24:1c:04:22:ed:94 > ff:ff:ff:ff:ff:ff, ethertype ARP (0x0806), length 42: Request who-has 2.0.0.2 tell 2.0.0.10, length 28
+18:16:33.250507 24:1c:04:22:ed:94 > ff:ff:ff:ff:ff:ff, ethertype ARP (0x0806), length 42: Request who-has 2.0.0.2 tell 2.0.0.10, length 28
+18:16:33.250528 24:1c:04:22:ed:94 > ff:ff:ff:ff:ff:ff, ethertype ARP (0x0806), length 42: Request who-has 2.0.0.1 tell 2.0.0.10, length 28
+18:16:34.274244 24:1c:04:22:ed:94 > ff:ff:ff:ff:ff:ff, ethertype ARP (0x0806), length 42: Request who-has 2.0.0.1 tell 2.0.0.10, length 28
+18:16:34.274264 24:1c:04:22:ed:94 > ff:ff:ff:ff:ff:ff, ethertype ARP (0x0806), length 42: Request who-has 2.0.0.2 tell 2.0.0.10, length 28
+18:16:35.302197 24:1c:04:22:ed:94 > ff:ff:ff:ff:ff:ff, ethertype ARP (0x0806), length 42: Request who-has 2.0.0.2 tell 2.0.0.10, length 28
+18:16:35.302216 24:1c:04:22:ed:94 > ff:ff:ff:ff:ff:ff, ethertype ARP (0x0806), length 42: Request who-has 2.0.0.1 tell 2.0.0.10, length 28
+18:16:36.322696 24:1c:04:22:ed:94 > ff:ff:ff:ff:ff:ff, ethertype ARP (0x0806), length 42: Request who-has 2.0.0.1 tell 2.0.0.10, length 28
+18:16:36.322722 24:1c:04:22:ed:94 > ff:ff:ff:ff:ff:ff, ethertype ARP (0x0806), length 42: Request who-has 2.0.0.2 tell 2.0.0.10, length 28
+18:16:37.346183 24:1c:04:22:ed:94 > ff:ff:ff:ff:ff:ff, ethertype ARP (0x0806), length 42: Request who-has 2.0.0.2 tell 2.0.0.10, length 28
+18:16:37.346196 24:1c:04:22:ed:94 > ff:ff:ff:ff:ff:ff, ethertype ARP (0x0806), length 42: Request who-has 2.0.0.1 tell 2.0.0.10, length 28
+18:16:38.374216 24:1c:04:22:ed:94 > ff:ff:ff:ff:ff:ff, ethertype ARP (0x0806), length 42: Request who-has 2.0.0.1 tell 2.0.0.10, length 28
+18:16:38.374241 24:1c:04:22:ed:94 > ff:ff:ff:ff:ff:ff, ethertype ARP (0x0806), length 42: Request who-has 2.0.0.2 tell 2.0.0.10, length 28
+18:16:39.394831 24:1c:04:22:ed:94 > ff:ff:ff:ff:ff:ff, ethertype ARP (0x0806), length 42: Request who-has 2.0.0.1 tell 2.0.0.10, length 28
+18:16:39.394869 24:1c:04:22:ed:94 > ff:ff:ff:ff:ff:ff, ethertype ARP (0x0806), length 42: Request who-has 2.0.0.2 tell 2.0.0.10, length 28
+18:16:39.903796 70:4b:ca:5b:c5:ab > ff:ff:ff:ff:ff:ff, ethertype IPv4 (0x0800), length 350: 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 70:4b:ca:5b:c5:ab, length 308
+18:16:40.418239 24:1c:04:22:ed:94 > ff:ff:ff:ff:ff:ff, ethertype ARP (0x0806), length 42: Request who-has 2.0.0.2 tell 2.0.0.10, length 28
+18:16:40.418259 24:1c:04:22:ed:94 > ff:ff:ff:ff:ff:ff, ethertype ARP (0x0806), length 42: Request who-has 2.0.0.1 tell 2.0.0.10, length 28
+18:16:41.442185 24:1c:04:22:ed:94 > ff:ff:ff:ff:ff:ff, ethertype ARP (0x0806), length 42: Request who-has 2.0.0.1 tell 2.0.0.10, length 28
+18:16:41.442199 24:1c:04:22:ed:94 > ff:ff:ff:ff:ff:ff, ethertype ARP (0x0806), length 42: Request who-has 2.0.0.2 tell 2.0.0.10, length 28
+18:16:42.470784 24:1c:04:22:ed:94 > ff:ff:ff:ff:ff:ff, ethertype ARP (0x0806), length 42: Request who-has 2.0.0.1 tell 2.0.0.10, length 28
+18:16:42.470834 24:1c:04:22:ed:94 > ff:ff:ff:ff:ff:ff, ethertype ARP (0x0806), length 42: Request who-has 2.0.0.2 tell 2.0.0.10, length 28
+18:16:43.490196 24:1c:04:22:ed:94 > ff:ff:ff:ff:ff:ff, ethertype ARP (0x0806), length 42: Request who-has 2.0.0.2 tell 2.0.0.10, length 28
+18:16:43.490203 24:1c:04:22:ed:94 > ff:ff:ff:ff:ff:ff, ethertype ARP (0x0806), length 42: Request who-has 2.0.0.1 tell 2.0.0.10, length 28
+18:16:44.514195 24:1c:04:22:ed:94 > ff:ff:ff:ff:ff:ff, ethertype ARP (0x0806), length 42: Request who-has 2.0.0.1 tell 2.0.0.10, length 28
+18:16:44.514212 24:1c:04:22:ed:94 > ff:ff:ff:ff:ff:ff, ethertype ARP (0x0806), length 42: Request who-has 2.0.0.2 tell 2.0.0.10, length 28
+18:16:45.538836 24:1c:04:22:ed:94 > ff:ff:ff:ff:ff:ff, ethertype ARP (0x0806), length 42: Request who-has 2.0.0.2 tell 2.0.0.10, length 28
+18:16:45.538863 24:1c:04:22:ed:94 > ff:ff:ff:ff:ff:ff, ethertype ARP (0x0806), length 42: Request who-has 2.0.0.1 tell 2.0.0.10, length 28
+18:16:46.566187 24:1c:04:22:ed:94 > ff:ff:ff:ff:ff:ff, ethertype ARP (0x0806), length 42: Request who-has 2.0.0.1 tell 2.0.0.10, length 28
+18:16:46.566203 24:1c:04:22:ed:94 > ff:ff:ff:ff:ff:ff, ethertype ARP (0x0806), length 42: Request who-has 2.0.0.2 tell 2.0.0.10, length 28
+18:16:47.586258 24:1c:04:22:ed:94 > ff:ff:ff:ff:ff:ff, ethertype ARP (0x0806), length 42: Request who-has 2.0.0.2 tell 2.0.0.10, length 28
+18:16:47.586274 24:1c:04:22:ed:94 > ff:ff:ff:ff:ff:ff, ethertype ARP (0x0806), length 42: Request who-has 2.0.0.1 tell 2.0.0.10, length 28
+18:16:48.614535 24:1c:04:22:ed:94 > ff:ff:ff:ff:ff:ff, ethertype ARP (0x0806), length 42: Request who-has 2.0.0.1 tell 2.0.0.10, length 28
+18:16:48.614561 24:1c:04:22:ed:94 > ff:ff:ff:ff:ff:ff, ethertype ARP (0x0806), length 42: Request who-has 2.0.0.2 tell 2.0.0.10, length 28
+
+59 packets captured
+59 packets received by filter
+0 packets dropped by kernel
