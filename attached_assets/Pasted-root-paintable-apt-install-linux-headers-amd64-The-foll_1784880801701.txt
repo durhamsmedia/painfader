@@ -1,0 +1,157 @@
+root@paintable:~# apt install linux-headers-amd64
+The following packages were automatically installed and are no longer required:
+  gyp                                   node-json-schema
+  handlebars                            node-json-schema-traverse
+  libcares2                             node-json-stable-stringify
+  libjs-events                          node-jsonify
+  libjs-inherits                        node-jsonparse
+  libjs-is-typedarray                   node-kind-of
+  libjs-prettify                        node-levn
+  libjs-regenerate                      node-loader-runner
+  libjs-source-map                      node-locate-path
+  libjs-sprintf-js                      node-lodash-packages
+  libjs-typedarray-to-buffer            node-log-driver
+  libnotify-bin                         node-lowercase-keys
+  libssl-dev                            node-lru-cache
+  libuv1-dev                            node-map-visit
+  node-abbrev                           node-memfs
+  node-ampproject-remapping             node-merge-stream
+  node-ansi-escapes                     node-mimic-fn
+  node-ansi-regex                       node-mimic-response
+  node-ansi-styles                      node-minimatch
+  node-aproba                           node-minimist
+  node-are-we-there-yet                 node-minipass
+  node-argparse                         node-mixin-deep
+  node-arrify                           node-mute-stream
+  node-async                            node-n3
+  node-async-each                       node-negotiator
+  node-auto-bind                        node-neo-async
+  node-babel-plugin-add-module-exports  node-npm-run-path
+  node-babel7-runtime                   node-object-inspect
+  node-balanced-match                   node-object-visit
+  node-base64-js                        node-once
+  node-binary-extensions                node-optimist
+  node-brace-expansion                  node-optionator
+  node-camelcase                        node-osenv
+  node-caniuse-lite                     node-p-cancelable
+  node-chownr                           node-p-limit
+  node-chrome-trace-event               node-p-locate
+  node-ci-info                          node-p-map
+  node-cjs-module-lexer                 node-pascalcase
+  node-cli-boxes                        node-path-dirname
+  node-cli-cursor                       node-path-exists
+  node-clone                            node-path-is-absolute
+  node-clone-deep                       node-path-is-inside
+  node-collection-visit                 node-path-type
+  node-color-convert                    node-pify
+  node-color-name                       node-pkg-dir
+  node-colors                           node-postcss-value-parser
+  node-commander                        node-prelude-ls
+  node-commondir                        node-process-nextick-args
+  node-concat-stream                    node-promise-inflight
+  node-console-control-strings          node-promise-retry
+  node-convert-source-map               node-promzard
+  node-core-js                          node-prr
+  node-core-js-pure                     node-punycode
+  node-core-util-is                     node-quick-lru
+  node-data-uri-to-buffer               node-randombytes
+  node-decompress-response              node-read
+  node-deep-is                          node-readable-stream
+  node-defaults                         node-rechoir
+  node-define-property                  node-regenerate
+  node-delegates                        node-regenerate-unicode-properties
+  node-depd                             node-regenerator-runtime
+  node-diff                             node-regenerator-transform
+  node-electron-to-chromium             node-regexpp
+  node-encoding                         node-regjsgen
+  node-err-code                         node-repeat-string
+  node-error-ex                         node-require-directory
+  node-es-module-lexer                  node-require-from-string
+  node-escape-string-regexp             node-resolve
+  node-eslint-utils                     node-resolve-cwd
+  node-eslint-visitor-keys              node-resolve-from
+  node-esquery                          node-restore-cursor
+  node-estraverse                       node-resumer
+  node-esutils                          node-retry
+  node-events                           node-run-queue
+  node-fancy-log                        node-safe-buffer
+  node-fast-deep-equal                  node-sellside-emitter
+  node-fast-levenshtein                 node-serialize-javascript
+  node-fetch                            node-set-blocking
+  node-find-up                          node-set-immediate-shim
+  node-flatted                          node-shebang-command
+  node-for-in                           node-shebang-regex
+  node-for-own                          node-shell-quote
+  node-foreground-child                 node-signal-exit
+  node-fs-readdir-recursive             node-slash
+  node-fs-write-stream-atomic           node-slice-ansi
+  node-fs.realpath                      node-source-list-map
+  node-function-bind                    node-source-map
+  node-functional-red-black-tree        node-spdx-correct
+  node-get-caller-file                  node-spdx-exceptions
+  node-get-stream                       node-spdx-expression-parse
+  node-get-value                        node-spdx-license-ids
+  node-glob                             node-sprintf-js
+  node-globals                          node-ssri
+  node-got                              node-stack-utils
+  node-graceful-fs                      node-string-decoder
+  node-growl                            node-strip-bom
+  node-has-flag                         node-strip-eof
+  node-has-unicode                      node-strip-json-comments
+  node-has-value                        node-supports-color
+  node-has-values                       node-tapable
+  node-hosted-git-info                  node-terser
+  node-iconv-lite                       node-text-table
+  node-ieee754                          node-through
+  node-iferr                            node-time-stamp
+  node-imurmurhash                      node-to-fast-properties
+  node-indent-string                    node-tslib
+  node-inflight                         node-type-check
+  node-inherits                         node-typedarray
+  node-ini                              node-typedarray-to-buffer
+  node-interpret                        node-undici
+  node-ip                               node-unicode-canonical-property-names-ecmascript
+  node-ip-regex                         node-unicode-match-property-value-ecmascript
+  node-is-arrayish                      node-unicode-property-aliases-ecmascript
+  node-is-binary-path                   node-unique-filename
+  node-is-buffer                        node-unset-value
+  node-is-descriptor                    node-uri-js
+  node-is-extendable                    node-util-deprecate
+  node-is-extglob                       node-uuid
+  node-is-path-cwd                      node-v8flags
+  node-is-plain-obj                     node-validate-npm-package-license
+  node-is-plain-object                  node-wcwidth.js
+  node-is-stream                        node-webpack-sources
+  node-is-typedarray                    node-wordwrap
+  node-is-windows                       node-wrappy
+  node-isarray                          node-write-file-atomic
+  node-isexe                            node-xtend
+  node-isobject                         node-y18n
+  node-js-tokens                        node-yallist
+  node-jsesc                            node-yaml
+  node-json-buffer                      python3-packaging
+  node-json-parse-better-errors
+Use 'apt autoremove' to remove them.
+
+Installing:
+  linux-headers-amd64
+
+Summary:
+  Upgrading: 0, Installing: 1, Removing: 0, Not Upgrading: 0
+  Download size: 1,412 B
+  Space needed: 13.3 kB / 105 GB available
+
+Get:1 http://security.debian.org/debian-security trixie-security/main amd64 linux-headers-amd64 amd64 6.12.96-1 [1,412 B]
+Fetched 1,412 B in 0s (32.4 kB/s)               
+Selecting previously unselected package linux-headers-amd64.
+(Reading database ... 184530 files and directories currently installed.)
+Preparing to unpack .../linux-headers-amd64_6.12.96-1_amd64.deb ...
+Unpacking linux-headers-amd64 (6.12.96-1) ...
+Setting up linux-headers-amd64 (6.12.96-1) ...
+root@paintable:~# apt install linux-headers-amd64 2>&1 | tail -5
+  python3-packaging
+Use 'apt autoremove' to remove them.
+
+Summary:
+  Upgrading: 0, Installing: 0, Removing: 0, Not Upgrading: 0
+root@paintable:~# 
