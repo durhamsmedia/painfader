@@ -14,6 +14,7 @@
  */
 
 import { logger } from "./logger";
+import { findSerialPort, CH340_WAVESHARE } from "./find-serial-port";
 
 export interface SerialButtonConfig {
   port: string;       // e.g. "/dev/ttyUSB0"
@@ -42,22 +43,24 @@ export class SerialButtonReader {
   }
 
   private async init() {
+    // Auto-detect Waveshare CH340 by VID/PID; fall back to configured path
+    const port = await findSerialPort(CH340_WAVESHARE, this.cfg.port) ?? this.cfg.port;
     try {
       const { SerialPort } = await import("serialport");
 
       this.serialPort = new SerialPort({
-        path:     this.cfg.port,
+        path:     port,
         baudRate: this.cfg.baudRate,
         autoOpen: false,
       });
 
       this.serialPort.open((err) => {
         if (err) {
-          logger.warn({ err, port: this.cfg.port }, "Serial button: port open failed — button disabled");
+          logger.warn({ err, port }, "Serial button: port open failed — button disabled");
           return;
         }
         this.simulated = false;
-        logger.info({ port: this.cfg.port }, "Serial button: ready");
+        logger.info({ port }, "Serial button: ready");
       });
 
       this.serialPort.on("data", (_data: Buffer) => {

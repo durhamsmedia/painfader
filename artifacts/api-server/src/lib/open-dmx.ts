@@ -12,6 +12,7 @@
  */
 
 import { logger } from "./logger";
+import { findSerialPort, FTDI_OPEN_DMX } from "./find-serial-port";
 
 const DMX_REFRESH_MS = 25; // ~40 Hz
 const BREAK_MS = 2;        // 2 ms break — well above the 92 µs minimum
@@ -28,7 +29,9 @@ export class OpenDmxController {
     this.open(portPath);
   }
 
-  private async open(portPath: string) {
+  private async open(configuredPath: string) {
+    // Auto-detect by VID/PID; fall back to configured path if not found
+    const portPath = await findSerialPort(FTDI_OPEN_DMX, configuredPath) ?? configuredPath;
     try {
       const { SerialPort } = await import("serialport");
       const sp = new SerialPort({
