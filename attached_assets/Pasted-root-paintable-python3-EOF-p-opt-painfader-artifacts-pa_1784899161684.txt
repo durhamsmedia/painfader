@@ -1,0 +1,153 @@
+root@paintable:~# python3 << 'EOF'
+p = '/opt/painfader/artifacts/painfader/src/pages/Dashboard.tsx'
+t = open(p).read()
+# Icon Import
+t = t.replace(
+    'Activity, Settings2, Wind, Lightbulb, Zap, Clock, Cpu, HelpCircle,\n  Monitor, ChevronsUpDown, Radio, Waves,',
+    'Activity, Settings2, Wind, Lightbulb, Zap, Clock, Cpu, HelpCircle,\n  Monitor, ChevronsUpDown, Radio, Waves, PlayCircle,'
+)
+# Start button handler (nach onBlackout)
+t = t.replace(
+    '  // ── Keyboard shortcuts',
+    '''  // ── Start button
+  const [btnFlash, setBtnFlash] = React.useState(false);
+  const onStartButton = async () => {
+    await fetch(`${import.meta.env.BASE_URL}api/dmx/start-button`, { method: 'POST' });
+    queryClient.invalidateQueries({ queryKey: getGetDmxStateQueryKey() });
+    setBtnFlash(true);
+    setTimeout(() => setBtnFlash(false), 600);
+    toast.success('START', { description: 'Button pressed — mode toggled' });
+  };
+  // ── Keyboard shortcuts'''
+)
+# Start Button Card (vor FAN card)
+t = t.replace(
+    '                  {/* FAN */}\n                  <Card className="bg-[#111113] border-zinc-800 rounded-sm">',
+    '''                  {/* START BUTTON */}
+                  <Card className="bg-[#111113] border-zinc-800 rounded-sm">
+                    <CardHeader className="pb-3 border-b border-zinc-800/50 bg-[#161618] flex flex-row items-center justify-between">
+                      <CardTitle className="text-xs font-mono tracking-widest flex items-center gap-2 text-zinc-400 uppercase">
+                        <PlayCircle className="w-4 h-4 text-green-500" /> START BUTTON
+                      </CardTitle>
+                      <div className="flex items-center gap-1.5">
+                        <div className={`w-2 h-2 rounded-full ${dmxState.startButton?.simulated ? 'bg-yellow-500' : 'bg-green-500 animate-pulse'}`} />
+                        <span className={`text-[9px] font-mono ${dmxState.startButton?.simulated ? 'text-yellow-500' : 'text-green-400'}`}>
+                          {dmxState.startButton?.simulated ? 'SIM' : 'HW'}
+                        </span>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="pt-4 space-y-3">
+                      <button onClick={onStartButton}
+                        className={`w-full h-16 rounded-sm border-2 font-black tracking-widest text-sm uppercase transition-all flex items-center justify-center gap-2 select-none ${btnFlash ? 'border-green-400 bg-green-900/60 text-green-300 shadow-[0_0_20px_rgba(74,222,128,0.5)]' : 'border-zinc-700 bg-black text-zinc-300 hover:border-green-600 hover:bg-green-950/30 hover:text-green-300'}`}>
+                        <PlayCircle className={`w-5 h-5 ${btnFlash ? 'text-green-300' : 'text-zinc-500'}`} />
+EOFnt('Dashboard.tsx patched')ate.startButton?.simulated },"abel: 'Start Button', value: dmxState.startB
+Dashboard.tsx patched
+root@paintable:~# cd /opt/painfader && pnpm --filter @workspace/painfader build
+$ vite build --config vite.config.ts
+vite v7.3.6 building client environment for production...
+src/components/ui/tooltip.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+src/components/ui/label.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+✓ 1829 modules transformed.
+dist/public/index.html                   1.50 kB │ gzip:   0.57 kB
+dist/public/assets/index-DqBkbJF-.css  103.06 kB │ gzip:  17.07 kB
+dist/public/assets/index-BZGxbNUn.js   460.82 kB │ gzip: 139.46 kB
+✓ built in 3.39s
+root@paintable:/opt/painfader# cd /opt/painfader/artifacts/api-server && node ./build.mjs
+
+  dist/index.mjs                       1.7mb ⚠️
+  dist/pino-worker.mjs               153.4kb
+  dist/pino-file.mjs                 142.0kb
+  dist/pino-pretty.mjs               114.6kb
+  dist/thread-stream-worker.mjs        7.3kb
+  dist/index.mjs.map                   2.6mb
+  dist/pino-worker.mjs.map           256.9kb
+  dist/pino-file.mjs.map             229.0kb
+  dist/pino-pretty.mjs.map           204.0kb
+  dist/thread-stream-worker.mjs.map   12.0kb
+
+⚡ Done in 139ms
+root@paintable:/opt/painfader/artifacts/api-server# systemctl restart painfader && journalctl -fu painfader -n 6
+Jul 24 15:14:49 paintable node[7836]: {"level":30,"time":1784898889790,"pid":7836,"hostname":"paintable","faderPos":0,"msg":"Start button: idle → experience"}
+Jul 24 15:16:31 paintable systemd[1]: Stopping painfader.service - Painfader DMX Controller...
+Jul 24 15:16:31 paintable systemd[1]: painfader.service: Deactivated successfully.
+Jul 24 15:16:31 paintable systemd[1]: Stopped painfader.service - Painfader DMX Controller.
+Jul 24 15:16:31 paintable systemd[1]: painfader.service: Consumed 28.573s CPU time, 88.9M memory peak.
+Jul 24 15:16:31 paintable systemd[1]: Started painfader.service - Painfader DMX Controller.
+Jul 24 15:16:31 paintable node[8093]: {"level":30,"time":1784898991464,"pid":8093,"hostname":"paintable","frontendDist":"/opt/painfader/artifacts/painfader/dist/public","dirExists":true,"indexExists":true,"msg":"Frontend dist path"}
+Jul 24 15:16:31 paintable node[8093]: {"level":40,"time":1784898991479,"pid":8093,"hostname":"paintable","err":{"type":"Error","message":"Could not locate the bindings file. Tried:\n → /opt/painfader/artifacts/api-server/build/epoll.node\n → /opt/painfader/artifacts/api-server/build/Debug/epoll.node\n → /opt/painfader/artifacts/api-server/build/Release/epoll.node\n → /opt/painfader/artifacts/api-server/out/Debug/epoll.node\n → /opt/painfader/artifacts/api-server/Debug/epoll.node\n → /opt/painfader/artifacts/api-server/out/Release/epoll.node\n → /opt/painfader/artifacts/api-server/Release/epoll.node\n → /opt/painfader/artifacts/api-server/build/default/epoll.node\n → /opt/painfader/artifacts/api-server/compiled/22.23.1/linux/x64/epoll.node\n → /opt/painfader/artifacts/api-server/addon-build/release/install-root/epoll.node\n → /opt/painfader/artifacts/api-server/addon-build/debug/install-root/epoll.node\n → /opt/painfader/artifacts/api-server/addon-build/default/install-root/epoll.node\n → /opt/painfader/artifacts/api-server/lib/binding/node-v127-linux-x64/epoll.node","stack":"Error: Could not locate the bindings file. Tried:\n → /opt/painfader/artifacts/api-server/build/epoll.node\n → /opt/painfader/artifacts/api-server/build/Debug/epoll.node\n → /opt/painfader/artifacts/api-server/build/Release/epoll.node\n → /opt/painfader/artifacts/api-server/out/Debug/epoll.node\n → /opt/painfader/artifacts/api-server/Debug/epoll.node\n → /opt/painfader/artifacts/api-server/out/Release/epoll.node\n → /opt/painfader/artifacts/api-server/Release/epoll.node\n → /opt/painfader/artifacts/api-server/build/default/epoll.node\n → /opt/painfader/artifacts/api-server/compiled/22.23.1/linux/x64/epoll.node\n → /opt/painfader/artifacts/api-server/addon-build/release/install-root/epoll.node\n → /opt/painfader/artifacts/api-server/addon-build/debug/install-root/epoll.node\n → /opt/painfader/artifacts/api-server/addon-build/default/install-root/epoll.node\n → /opt/painfader/artifacts/api-server/lib/binding/node-v127-linux-x64/epoll.node\n    at bindings (/opt/painfader/node_modules/.pnpm/bindings@1.5.0/node_modules/bindings/bindings.js:126:9)\n    at <anonymous> (/opt/painfader/node_modules/.pnpm/epoll@4.0.2/node_modules/epoll/epoll.js:7:12)\n    at ../../node_modules/.pnpm/epoll@4.0.2/node_modules/epoll/epoll.js (/opt/painfader/node_modules/.pnpm/epoll@4.0.2/node_modules/epoll/epoll.js:15:1)\n    at __require2 (file:///opt/painfader/artifacts/api-server/dist/index.mjs:22:50)\n    at ../../node_modules/.pnpm/onoff@6.0.3/node_modules/onoff/onoff.js (/opt/painfader/node_modules/.pnpm/onoff@6.0.3/node_modules/onoff/onoff.js:5:15)\n    at __require2 (file:///opt/painfader/artifacts/api-server/dist/index.mjs:22:50)\n    at <anonymous> (/opt/painfader/artifacts/api-server/src/lib/gpio-reader.ts:60:30)\n    at async GpioReader.init (/opt/painfader/artifacts/api-server/src/lib/gpio-reader.ts:60:24)","tries":["/opt/painfader/artifacts/api-server/build/epoll.node","/opt/painfader/artifacts/api-server/build/Debug/epoll.node","/opt/painfader/artifacts/api-server/build/Release/epoll.node","/opt/painfader/artifacts/api-server/out/Debug/epoll.node","/opt/painfader/artifacts/api-server/Debug/epoll.node","/opt/painfader/artifacts/api-server/out/Release/epoll.node","/opt/painfader/artifacts/api-server/Release/epoll.node","/opt/painfader/artifacts/api-server/build/default/epoll.node","/opt/painfader/artifacts/api-server/compiled/22.23.1/linux/x64/epoll.node","/opt/painfader/artifacts/api-server/addon-build/release/install-root/epoll.node","/opt/painfader/artifacts/api-server/addon-build/debug/install-root/epoll.node","/opt/painfader/artifacts/api-server/addon-build/default/install-root/epoll.node","/opt/painfader/artifacts/api-server/lib/binding/node-v127-linux-x64/epoll.node"]},"msg":"GPIO unavailable — running in simulation mode (UI / keyboard shortcuts still work)"}
+Jul 24 15:16:31 paintable node[8093]: {"level":30,"time":1784898991553,"pid":8093,"hostname":"paintable","g1":"2.0.0.1","g2":"2.0.0.2","msg":"Art-Net pixel socket ready"}
+Jul 24 15:16:31 paintable node[8093]: {"level":30,"time":1784898991554,"pid":8093,"hostname":"paintable","port":8080,"msg":"Server listening"}
+Jul 24 15:16:31 paintable node[8093]: {"level":40,"time":1784898991557,"pid":8093,"hostname":"paintable","port":"/dev/ttyACM0","err":{"type":"Error","message":"Error: No such file or directory, cannot open /dev/ttyACM0","stack":"Error: Error: No such file or directory, cannot open /dev/ttyACM0"},"msg":"Stepper motor unavailable — simulation mode"}
+Jul 24 15:16:31 paintable node[8093]: {"level":30,"time":1784898991686,"pid":8093,"hostname":"paintable","path":"/dev/ttyUSB1","label":"Enttec OpenDMX USB (FT232R A50285BI)","msg":"USB auto-detect: found Enttec OpenDMX USB (FT232R A50285BI)"}
+Jul 24 15:16:31 paintable node[8093]: {"level":30,"time":1784898991691,"pid":8093,"hostname":"paintable","path":"/dev/ttyUSB2","label":"Waveshare USB-TTL (FT232R B0049WIS)","msg":"USB auto-detect: found Waveshare USB-TTL (FT232R B0049WIS)"}
+Jul 24 15:16:31 paintable node[8093]: {"level":30,"time":1784898991692,"pid":8093,"hostname":"paintable","portPath":"/dev/ttyUSB1","msg":"OpenDMX USB port opened"}
+Jul 24 15:16:31 paintable node[8093]: {"level":30,"time":1784898991693,"pid":8093,"hostname":"paintable","port":"/dev/ttyUSB1","msg":"Serial button: ready"}
+Jul 24 15:16:35 paintable node[8093]: {"level":30,"time":1784898995482,"pid":8093,"hostname":"paintable","req":{"id":1,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":200},"responseTime":8,"msg":"request completed"}
+Jul 24 15:16:35 paintable node[8093]: {"level":30,"time":1784898995486,"pid":8093,"hostname":"paintable","req":{"id":2,"method":"GET","url":"/api/dmx/hardware-config"},"res":{"statusCode":304},"responseTime":2,"msg":"request completed"}
+Jul 24 15:16:36 paintable node[8093]: {"level":30,"time":1784898996024,"pid":8093,"hostname":"paintable","req":{"id":3,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":304},"responseTime":2,"msg":"request completed"}
+Jul 24 15:16:36 paintable node[8093]: {"level":30,"time":1784898996534,"pid":8093,"hostname":"paintable","req":{"id":4,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":304},"responseTime":3,"msg":"request completed"}
+Jul 24 15:16:37 paintable node[8093]: {"level":30,"time":1784898997044,"pid":8093,"hostname":"paintable","req":{"id":5,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":304},"responseTime":2,"msg":"request completed"}
+Jul 24 15:16:37 paintable node[8093]: {"level":30,"time":1784898997550,"pid":8093,"hostname":"paintable","req":{"id":6,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":304},"responseTime":0,"msg":"request completed"}
+Jul 24 15:16:38 paintable node[8093]: {"level":30,"time":1784898998055,"pid":8093,"hostname":"paintable","req":{"id":7,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":304},"responseTime":0,"msg":"request completed"}
+Jul 24 15:16:38 paintable node[8093]: {"level":30,"time":1784898998560,"pid":8093,"hostname":"paintable","req":{"id":8,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":304},"responseTime":0,"msg":"request completed"}
+Jul 24 15:16:39 paintable node[8093]: {"level":30,"time":1784898999067,"pid":8093,"hostname":"paintable","req":{"id":9,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":304},"responseTime":1,"msg":"request completed"}
+Jul 24 15:16:39 paintable node[8093]: {"level":30,"time":1784898999572,"pid":8093,"hostname":"paintable","req":{"id":10,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":304},"responseTime":1,"msg":"request completed"}
+Jul 24 15:16:40 paintable node[8093]: {"level":30,"time":1784899000081,"pid":8093,"hostname":"paintable","req":{"id":11,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":304},"responseTime":2,"msg":"request completed"}
+Jul 24 15:16:40 paintable node[8093]: {"level":30,"time":1784899000590,"pid":8093,"hostname":"paintable","req":{"id":12,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":304},"responseTime":1,"msg":"request completed"}
+Jul 24 15:16:41 paintable node[8093]: {"level":30,"time":1784899001128,"pid":8093,"hostname":"paintable","req":{"id":13,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":304},"responseTime":1,"msg":"request completed"}
+Jul 24 15:16:41 paintable node[8093]: {"level":30,"time":1784899001639,"pid":8093,"hostname":"paintable","req":{"id":14,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":304},"responseTime":1,"msg":"request completed"}
+Jul 24 15:16:42 paintable node[8093]: {"level":30,"time":1784899002198,"pid":8093,"hostname":"paintable","req":{"id":15,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":304},"responseTime":1,"msg":"request completed"}
+Jul 24 15:16:42 paintable node[8093]: {"level":30,"time":1784899002703,"pid":8093,"hostname":"paintable","req":{"id":16,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":304},"responseTime":1,"msg":"request completed"}
+Jul 24 15:16:43 paintable node[8093]: {"level":30,"time":1784899003208,"pid":8093,"hostname":"paintable","req":{"id":17,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":304},"responseTime":0,"msg":"request completed"}
+Jul 24 15:16:43 paintable node[8093]: {"level":30,"time":1784899003712,"pid":8093,"hostname":"paintable","req":{"id":18,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":304},"responseTime":0,"msg":"request completed"}
+Jul 24 15:16:44 paintable node[8093]: {"level":30,"time":1784899004217,"pid":8093,"hostname":"paintable","req":{"id":19,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":304},"responseTime":1,"msg":"request completed"}
+Jul 24 15:16:44 paintable node[8093]: {"level":30,"time":1784899004722,"pid":8093,"hostname":"paintable","req":{"id":20,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":304},"responseTime":1,"msg":"request completed"}
+Jul 24 15:16:45 paintable node[8093]: {"level":30,"time":1784899005229,"pid":8093,"hostname":"paintable","req":{"id":21,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":304},"responseTime":2,"msg":"request completed"}
+Jul 24 15:16:45 paintable node[8093]: {"level":30,"time":1784899005737,"pid":8093,"hostname":"paintable","req":{"id":22,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":304},"responseTime":0,"msg":"request completed"}
+Jul 24 15:16:46 paintable node[8093]: {"level":30,"time":1784899006245,"pid":8093,"hostname":"paintable","req":{"id":23,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":304},"responseTime":1,"msg":"request completed"}
+Jul 24 15:16:46 paintable node[8093]: {"level":30,"time":1784899006753,"pid":8093,"hostname":"paintable","req":{"id":24,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":304},"responseTime":1,"msg":"request completed"}
+Jul 24 15:16:47 paintable node[8093]: {"level":30,"time":1784899007132,"pid":8093,"hostname":"paintable","req":{"id":25,"method":"GET","url":"/"},"res":{"statusCode":200},"responseTime":7,"msg":"request completed"}
+Jul 24 15:16:47 paintable node[8093]: {"level":30,"time":1784899007169,"pid":8093,"hostname":"paintable","req":{"id":26,"method":"GET","url":"/painfader/assets/index-BZGxbNUn.js"},"res":{"statusCode":200},"responseTime":3,"msg":"request completed"}
+Jul 24 15:16:47 paintable node[8093]: {"level":30,"time":1784899007172,"pid":8093,"hostname":"paintable","req":{"id":27,"method":"GET","url":"/painfader/assets/index-DqBkbJF-.css"},"res":{"statusCode":200},"responseTime":2,"msg":"request completed"}
+Jul 24 15:16:47 paintable node[8093]: {"level":30,"time":1784899007178,"pid":8093,"hostname":"paintable","req":{"id":28,"method":"GET","url":"/painfader/favicon.svg"},"res":{"statusCode":200},"responseTime":2,"msg":"request completed"}
+Jul 24 15:16:52 paintable node[8093]: {"level":30,"time":1784899012030,"pid":8093,"hostname":"paintable","req":{"id":29,"method":"GET","url":"/"},"res":{"statusCode":200},"responseTime":4,"msg":"request completed"}
+Jul 24 15:16:52 paintable node[8093]: {"level":30,"time":1784899012059,"pid":8093,"hostname":"paintable","req":{"id":30,"method":"GET","url":"/painfader/assets/index-BZGxbNUn.js"},"res":{"statusCode":200},"responseTime":3,"msg":"request completed"}
+Jul 24 15:16:52 paintable node[8093]: {"level":30,"time":1784899012061,"pid":8093,"hostname":"paintable","req":{"id":31,"method":"GET","url":"/painfader/assets/index-DqBkbJF-.css"},"res":{"statusCode":304},"responseTime":1,"msg":"request completed"}
+Jul 24 15:17:00 paintable node[8093]: {"level":30,"time":1784899020816,"pid":8093,"hostname":"paintable","req":{"id":32,"method":"GET","url":"/"},"res":{"statusCode":304},"responseTime":1,"msg":"request completed"}
+Jul 24 15:17:00 paintable node[8093]: {"level":30,"time":1784899020841,"pid":8093,"hostname":"paintable","req":{"id":33,"method":"GET","url":"/painfader/assets/index-BZGxbNUn.js"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 24 15:17:00 paintable node[8093]: {"level":30,"time":1784899020844,"pid":8093,"hostname":"paintable","req":{"id":34,"method":"GET","url":"/painfader/assets/index-DqBkbJF-.css"},"res":{"statusCode":304},"responseTime":1,"msg":"request completed"}
+Jul 24 15:17:02 paintable node[8093]: {"level":30,"time":1784899022645,"pid":8093,"hostname":"paintable","req":{"id":35,"method":"GET","url":"/"},"res":{"statusCode":304},"responseTime":2,"msg":"request completed"}
+Jul 24 15:17:02 paintable node[8093]: {"level":30,"time":1784899022674,"pid":8093,"hostname":"paintable","req":{"id":36,"method":"GET","url":"/painfader/assets/index-BZGxbNUn.js"},"res":{"statusCode":200},"responseTime":4,"msg":"request completed"}
+Jul 24 15:17:02 paintable node[8093]: {"level":30,"time":1784899022675,"pid":8093,"hostname":"paintable","req":{"id":37,"method":"GET","url":"/painfader/assets/index-DqBkbJF-.css"},"res":{"statusCode":304},"responseTime":3,"msg":"request completed"}
+Jul 24 15:17:13 paintable node[8093]: {"level":30,"time":1784899033998,"pid":8093,"hostname":"paintable","req":{"id":38,"method":"GET","url":"/"},"res":{"statusCode":304},"responseTime":1,"msg":"request completed"}
+Jul 24 15:17:14 paintable node[8093]: {"level":30,"time":1784899034029,"pid":8093,"hostname":"paintable","req":{"id":39,"method":"GET","url":"/painfader/assets/index-BZGxbNUn.js"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 24 15:17:14 paintable node[8093]: {"level":30,"time":1784899034033,"pid":8093,"hostname":"paintable","req":{"id":40,"method":"GET","url":"/painfader/assets/index-DqBkbJF-.css"},"res":{"statusCode":304},"responseTime":1,"msg":"request completed"}
+Jul 24 15:17:24 paintable node[8093]: {"level":30,"time":1784899044965,"pid":8093,"hostname":"paintable","req":{"id":41,"method":"GET","url":"/"},"res":{"statusCode":304},"responseTime":1,"msg":"request completed"}
+Jul 24 15:17:25 paintable node[8093]: {"level":30,"time":1784899045009,"pid":8093,"hostname":"paintable","req":{"id":42,"method":"GET","url":"/painfader/assets/index-BZGxbNUn.js"},"res":{"statusCode":200},"responseTime":2,"msg":"request completed"}
+Jul 24 15:17:25 paintable node[8093]: {"level":30,"time":1784899045011,"pid":8093,"hostname":"paintable","req":{"id":43,"method":"GET","url":"/painfader/assets/index-DqBkbJF-.css"},"res":{"statusCode":304},"responseTime":1,"msg":"request completed"}
+systemctl restart painfader && journalctl -fu painfader -n 6
+^C
+root@paintable:/opt/painfader/artifacts/api-server# systemctl restart painfader && journalctl -fu painfader -n 6
+Jul 24 15:17:25 paintable node[8093]: {"level":30,"time":1784899045011,"pid":8093,"hostname":"paintable","req":{"id":43,"method":"GET","url":"/painfader/assets/index-DqBkbJF-.css"},"res":{"statusCode":304},"responseTime":1,"msg":"request completed"}
+Jul 24 15:17:47 paintable systemd[1]: Stopping painfader.service - Painfader DMX Controller...
+Jul 24 15:17:47 paintable systemd[1]: painfader.service: Deactivated successfully.
+Jul 24 15:17:47 paintable systemd[1]: Stopped painfader.service - Painfader DMX Controller.
+Jul 24 15:17:47 paintable systemd[1]: painfader.service: Consumed 5.960s CPU time, 87.6M memory peak.
+Jul 24 15:17:47 paintable systemd[1]: Started painfader.service - Painfader DMX Controller.
+Jul 24 15:17:47 paintable node[8150]: {"level":30,"time":1784899067917,"pid":8150,"hostname":"paintable","frontendDist":"/opt/painfader/artifacts/painfader/dist/public","dirExists":true,"indexExists":true,"msg":"Frontend dist path"}
+Jul 24 15:17:48 paintable node[8150]: {"level":40,"time":1784899067933,"pid":8150,"hostname":"paintable","err":{"type":"Error","message":"Could not locate the bindings file. Tried:\n → /opt/painfader/artifacts/api-server/build/epoll.node\n → /opt/painfader/artifacts/api-server/build/Debug/epoll.node\n → /opt/painfader/artifacts/api-server/build/Release/epoll.node\n → /opt/painfader/artifacts/api-server/out/Debug/epoll.node\n → /opt/painfader/artifacts/api-server/Debug/epoll.node\n → /opt/painfader/artifacts/api-server/out/Release/epoll.node\n → /opt/painfader/artifacts/api-server/Release/epoll.node\n → /opt/painfader/artifacts/api-server/build/default/epoll.node\n → /opt/painfader/artifacts/api-server/compiled/22.23.1/linux/x64/epoll.node\n → /opt/painfader/artifacts/api-server/addon-build/release/install-root/epoll.node\n → /opt/painfader/artifacts/api-server/addon-build/debug/install-root/epoll.node\n → /opt/painfader/artifacts/api-server/addon-build/default/install-root/epoll.node\n → /opt/painfader/artifacts/api-server/lib/binding/node-v127-linux-x64/epoll.node","stack":"Error: Could not locate the bindings file. Tried:\n → /opt/painfader/artifacts/api-server/build/epoll.node\n → /opt/painfader/artifacts/api-server/build/Debug/epoll.node\n → /opt/painfader/artifacts/api-server/build/Release/epoll.node\n → /opt/painfader/artifacts/api-server/out/Debug/epoll.node\n → /opt/painfader/artifacts/api-server/Debug/epoll.node\n → /opt/painfader/artifacts/api-server/out/Release/epoll.node\n → /opt/painfader/artifacts/api-server/Release/epoll.node\n → /opt/painfader/artifacts/api-server/build/default/epoll.node\n → /opt/painfader/artifacts/api-server/compiled/22.23.1/linux/x64/epoll.node\n → /opt/painfader/artifacts/api-server/addon-build/release/install-root/epoll.node\n → /opt/painfader/artifacts/api-server/addon-build/debug/install-root/epoll.node\n → /opt/painfader/artifacts/api-server/addon-build/default/install-root/epoll.node\n → /opt/painfader/artifacts/api-server/lib/binding/node-v127-linux-x64/epoll.node\n    at bindings (/opt/painfader/node_modules/.pnpm/bindings@1.5.0/node_modules/bindings/bindings.js:126:9)\n    at <anonymous> (/opt/painfader/node_modules/.pnpm/epoll@4.0.2/node_modules/epoll/epoll.js:7:12)\n    at ../../node_modules/.pnpm/epoll@4.0.2/node_modules/epoll/epoll.js (/opt/painfader/node_modules/.pnpm/epoll@4.0.2/node_modules/epoll/epoll.js:15:1)\n    at __require2 (file:///opt/painfader/artifacts/api-server/dist/index.mjs:22:50)\n    at ../../node_modules/.pnpm/onoff@6.0.3/node_modules/onoff/onoff.js (/opt/painfader/node_modules/.pnpm/onoff@6.0.3/node_modules/onoff/onoff.js:5:15)\n    at __require2 (file:///opt/painfader/artifacts/api-server/dist/index.mjs:22:50)\n    at <anonymous> (/opt/painfader/artifacts/api-server/src/lib/gpio-reader.ts:60:30)\n    at async GpioReader.init (/opt/painfader/artifacts/api-server/src/lib/gpio-reader.ts:60:24)","tries":["/opt/painfader/artifacts/api-server/build/epoll.node","/opt/painfader/artifacts/api-server/build/Debug/epoll.node","/opt/painfader/artifacts/api-server/build/Release/epoll.node","/opt/painfader/artifacts/api-server/out/Debug/epoll.node","/opt/painfader/artifacts/api-server/Debug/epoll.node","/opt/painfader/artifacts/api-server/out/Release/epoll.node","/opt/painfader/artifacts/api-server/Release/epoll.node","/opt/painfader/artifacts/api-server/build/default/epoll.node","/opt/painfader/artifacts/api-server/compiled/22.23.1/linux/x64/epoll.node","/opt/painfader/artifacts/api-server/addon-build/release/install-root/epoll.node","/opt/painfader/artifacts/api-server/addon-build/debug/install-root/epoll.node","/opt/painfader/artifacts/api-server/addon-build/default/install-root/epoll.node","/opt/painfader/artifacts/api-server/lib/binding/node-v127-linux-x64/epoll.node"]},"msg":"GPIO unavailable — running in simulation mode (UI / keyboard shortcuts still work)"}
+Jul 24 15:17:48 paintable node[8150]: {"level":30,"time":1784899068006,"pid":8150,"hostname":"paintable","g1":"2.0.0.1","g2":"2.0.0.2","msg":"Art-Net pixel socket ready"}
+Jul 24 15:17:48 paintable node[8150]: {"level":30,"time":1784899068007,"pid":8150,"hostname":"paintable","port":8080,"msg":"Server listening"}
+Jul 24 15:17:48 paintable node[8150]: {"level":40,"time":1784899068010,"pid":8150,"hostname":"paintable","port":"/dev/ttyACM0","err":{"type":"Error","message":"Error: No such file or directory, cannot open /dev/ttyACM0","stack":"Error: Error: No such file or directory, cannot open /dev/ttyACM0"},"msg":"Stepper motor unavailable — simulation mode"}
+Jul 24 15:17:48 paintable node[8150]: {"level":30,"time":1784899068154,"pid":8150,"hostname":"paintable","path":"/dev/ttyUSB2","label":"Waveshare USB-TTL (FT232R B0049WIS)","msg":"USB auto-detect: found Waveshare USB-TTL (FT232R B0049WIS)"}
+Jul 24 15:17:48 paintable node[8150]: {"level":30,"time":1784899068156,"pid":8150,"hostname":"paintable","port":"/dev/ttyUSB1","msg":"Serial button: ready"}
+Jul 24 15:17:48 paintable node[8150]: {"level":30,"time":1784899068157,"pid":8150,"hostname":"paintable","path":"/dev/ttyUSB1","label":"Enttec OpenDMX USB (FT232R A50285BI)","msg":"USB auto-detect: found Enttec OpenDMX USB (FT232R A50285BI)"}
+Jul 24 15:17:48 paintable node[8150]: {"level":30,"time":1784899068158,"pid":8150,"hostname":"paintable","portPath":"/dev/ttyUSB1","msg":"OpenDMX USB port opened"}
+Jul 24 15:17:55 paintable node[8150]: {"level":30,"time":1784899075307,"pid":8150,"hostname":"paintable","req":{"id":1,"method":"GET","url":"/"},"res":{"statusCode":304},"responseTime":11,"msg":"request completed"}
+Jul 24 15:17:55 paintable node[8150]: {"level":30,"time":1784899075342,"pid":8150,"hostname":"paintable","req":{"id":2,"method":"GET","url":"/painfader/assets/index-BZGxbNUn.js"},"res":{"statusCode":200},"responseTime":4,"msg":"request completed"}
+Jul 24 15:17:55 paintable node[8150]: {"level":30,"time":1784899075345,"pid":8150,"hostname":"paintable","req":{"id":3,"method":"GET","url":"/painfader/assets/index-DqBkbJF-.css"},"res":{"statusCode":304},"responseTime":1,"msg":"request completed"}
+Jul 24 15:18:10 paintable node[8150]: {"level":30,"time":1784899090016,"pid":8150,"hostname":"paintable","req":{"id":4,"method":"GET","url":"/"},"res":{"statusCode":304},"responseTime":2,"msg":"request completed"}
+Jul 24 15:18:10 paintable node[8150]: {"level":30,"time":1784899090047,"pid":8150,"hostname":"paintable","req":{"id":5,"method":"GET","url":"/painfader/assets/index-BZGxbNUn.js"},"res":{"statusCode":200},"responseTime":2,"msg":"request completed"}
+Jul 24 15:18:10 paintable node[8150]: {"level":30,"time":1784899090049,"pid":8150,"hostname":"paintable","req":{"id":6,"method":"GET","url":"/painfader/assets/index-DqBkbJF-.css"},"res":{"statusCode":304},"responseTime":1,"msg":"request completed"}
+
+
