@@ -49,7 +49,7 @@ export class SerialButtonReader {
       const { SerialPort } = await import("serialport");
 
       this.serialPort = new SerialPort({
-        path:     port,
+        path:     port,      // auto-detected via VID/PID+serial
         baudRate: this.cfg.baudRate,
         autoOpen: false,
       });
