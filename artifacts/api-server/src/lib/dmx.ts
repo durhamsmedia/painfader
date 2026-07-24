@@ -26,6 +26,7 @@ import { ArtNetPixelSender, PixelZones } from "./artnet-pixels";
 import { OpenDmxController } from "./open-dmx";
 import { StepperMotorController, MotorPosition } from "./stepper-motor";
 import { GpioReader, FaderPosition, GpioStatus } from "./gpio-reader";
+import { SerialButtonReader, DEFAULT_SERIAL_BUTTON_CONFIG } from "./serial-button";
 import {
   HardwareConfig,
   DEFAULT_HARDWARE_CONFIG,
@@ -71,6 +72,7 @@ export interface DmxState {
   screen: ScreenState;
   painFader: PainFaderState;
   gpio: GpioStatus;
+  startButton: { simulated: boolean; port: string };
   hardwareConfig: HardwareConfig;
   idleTimer: { enabled: boolean; timerSeconds: number; remaining: number | null; triggered: boolean };
 }
@@ -148,6 +150,7 @@ class DmxController {
   private openDmx: OpenDmxController;
   private motor: StepperMotorController;
   private gpio: GpioReader;
+  private button: SerialButtonReader;
   private hwConfig: HardwareConfig = { ...DEFAULT_HARDWARE_CONFIG };
 
   // ── Live state ──
@@ -160,7 +163,7 @@ class DmxController {
     opiat:   { ...off },
   };
   private motorState: MotorState = { position: "down", speed: 3000, enabled: false, simulated: true };
-  private screen: ScreenState = { videoFile: "idle.mp4", enabled: true };
+  private screen: ScreenState = { videoFile: "idle.mp4", enabled: true, loop: true };
   private faderPos: FaderPosition = 0;
 
   // ── Presets ──
@@ -196,6 +199,11 @@ class DmxController {
         debounceMs:    cfg.gpioDebounceMs,
       },
       (pos) => this.hardwareFaderInput(pos),
+    );
+
+    this.button = new SerialButtonReader(
+      DEFAULT_SERIAL_BUTTON_CONFIG,
+      () => this.startButtonPress(),
     );
 
     // Apply idle preset at startup
@@ -285,6 +293,7 @@ class DmxController {
       screen: { ...this.screen },
       painFader: { position: this.faderPos, channel: 22 },
       gpio: this.gpio.getStatus(),
+      startButton: this.button.getStatus(),
       hardwareConfig: { ...this.hwConfig },
       idleTimer: {
         enabled:      this.idleTimerEnabled,
@@ -305,6 +314,30 @@ class DmxController {
   }
 
   getHardwareConfig(): HardwareConfig { return { ...this.hwConfig }; }
+
+  // ── Start button ──────────────────────────────────────────────────────────
+
+  /** Called when the physical start button is pressed (serial or injected). */
+  private startButtonPress() {
+    if (this.mode === "idle") {
+      // Wake from idle → apply the current fader position preset
+      this.mode = "experience";
+      this.stopIdleTimer();
+      const preset = this.presets[POS_TO_IDX[this.faderPos]] ?? this.presets[1];
+      this.applyPreset(preset);
+      logger.info({ faderPos: this.faderPos }, "Start button: idle → experience");
+    } else {
+      // Already in experience — just restart the idle timer
+      this.startIdleTimer();
+      logger.info("Start button: restarted idle timer");
+    }
+  }
+
+  /** Inject a button press via the API (UI test button). */
+  injectButtonPress(): DmxState {
+    this.button.injectPress();
+    return this.getState();
+  }
 
   // ── Hardware fader input (GPIO or HTTP) ───────────────────────────────────
 
@@ -473,6 +506,7 @@ class DmxController {
     this.openDmx.destroy();
     this.motor.destroy();
     this.gpio.destroy();
+    this.button.destroy();
   }
 }
 

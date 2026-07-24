@@ -1,2 +1,3 @@
 - [TanStack Query v5 queryKey required](tq5-querykey.md) — when passing `{ query: { refetchInterval: N } }` to Orval hooks, must also include `queryKey: getGet*QueryKey()` or typecheck fails TS2741.
 - [GitHub repo and deployment network](github-deployment.md) — repo URL, Giada two-NIC topology (no switch), Gledopto IPs per subnet.
+- [Giada GPIO and start button](giada-gpio-button.md) — IT87 GPIO compiled from kernel source; DI connector needs 12-24V; start button uses Waveshare TTL serial (GND→button→RXD on /dev/ttyUSB0).

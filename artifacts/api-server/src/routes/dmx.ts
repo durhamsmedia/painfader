@@ -140,6 +140,12 @@ router.put("/dmx/preset-timer", (req, res) => {
   res.json(presets);
 });
 
+// ── Start button ──────────────────────────────────────────────────────────────
+
+router.post("/dmx/start-button", (_req, res) => {
+  res.json(dmxController.injectButtonPress());
+});
+
 // ── Apply preset position ─────────────────────────────────────────────────────
 
 router.post("/dmx/presets/:position/apply", (req, res) => {
