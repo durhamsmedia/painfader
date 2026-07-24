@@ -1,0 +1,631 @@
+gpioinfo gpiochip0
+gpiod is already the newest version (2.2.1-2+deb13u1).
+The following packages were automatically installed and are no longer required:
+  gyp
+  handlebars
+  libcares2
+  libjs-events
+  libjs-inherits
+  libjs-is-typedarray
+  libjs-prettify
+  libjs-regenerate
+  libjs-source-map
+  libjs-sprintf-js
+  libjs-typedarray-to-buffer
+  libnotify-bin
+  libssl-dev
+  libuv1-dev
+  node-abbrev
+  node-ampproject-remapping
+  node-ansi-escapes
+  node-ansi-regex
+  node-ansi-styles
+  node-aproba
+  node-are-we-there-yet
+  node-argparse
+  node-arrify
+  node-async
+  node-async-each
+  node-auto-bind
+  node-babel-plugin-add-module-exports
+  node-babel7-runtime
+  node-balanced-match
+  node-base64-js
+  node-binary-extensions
+  node-brace-expansion
+  node-camelcase
+  node-caniuse-lite
+  node-chownr
+  node-chrome-trace-event
+  node-ci-info
+  node-cjs-module-lexer
+  node-cli-boxes
+  node-cli-cursor
+  node-clone
+  node-clone-deep
+  node-collection-visit
+  node-color-convert
+  node-color-name
+  node-colors
+  node-commander
+  node-commondir
+  node-concat-stream
+  node-console-control-strings
+  node-convert-source-map
+  node-core-js
+  node-core-js-pure
+  node-core-util-is
+  node-data-uri-to-buffer
+  node-decompress-response
+  node-deep-is
+  node-defaults
+  node-define-property
+  node-delegates
+  node-depd
+  node-diff
+  node-electron-to-chromium
+  node-encoding
+  node-err-code
+  node-error-ex
+  node-es-module-lexer
+  node-escape-string-regexp
+  node-eslint-utils
+  node-eslint-visitor-keys
+  node-esquery
+  node-estraverse
+  node-esutils
+  node-events
+  node-fancy-log
+  node-fast-deep-equal
+  node-fast-levenshtein
+  node-fetch
+  node-find-up
+  node-flatted
+  node-for-in
+  node-for-own
+  node-foreground-child
+  node-fs-readdir-recursive
+  node-fs-write-stream-atomic
+  node-fs.realpath
+  node-function-bind
+  node-functional-red-black-tree
+  node-get-caller-file
+  node-get-stream
+  node-get-value
+  node-glob
+  node-globals
+  node-got
+  node-graceful-fs
+  node-growl
+  node-has-flag
+  node-has-unicode
+  node-has-value
+  node-has-values
+  node-hosted-git-info
+  node-iconv-lite
+  node-ieee754
+  node-iferr
+  node-imurmurhash
+  node-indent-string
+  node-inflight
+  node-inherits
+  node-ini
+  node-interpret
+  node-ip
+  node-ip-regex
+  node-is-arrayish
+  node-is-binary-path
+  node-is-buffer
+  node-is-descriptor
+  node-is-extendable
+  node-is-extglob
+  node-is-path-cwd
+  node-is-plain-obj
+  node-is-plain-object
+  node-is-stream
+  node-is-typedarray
+  node-is-windows
+  node-isarray
+  node-isexe
+  node-isobject
+  node-js-tokens
+  node-jsesc
+  node-json-buffer
+  node-json-parse-better-errors
+  node-json-schema
+  node-json-schema-traverse
+  node-json-stable-stringify
+  node-jsonify
+  node-jsonparse
+  node-kind-of
+  node-levn
+  node-loader-runner
+  node-locate-path
+  node-lodash-packages
+  node-log-driver
+  node-lowercase-keys
+  node-lru-cache
+  node-map-visit
+  node-memfs
+  node-merge-stream
+  node-mimic-fn
+  node-mimic-response
+  node-minimatch
+  node-minimist
+  node-minipass
+  node-mixin-deep
+  node-mute-stream
+  node-n3
+  node-negotiator
+  node-neo-async
+  node-npm-run-path
+  node-object-inspect
+  node-object-visit
+  node-once
+  node-optimist
+  node-optionator
+  node-osenv
+  node-p-cancelable
+  node-p-limit
+  node-p-locate
+  node-p-map
+  node-pascalcase
+  node-path-dirname
+  node-path-exists
+  node-path-is-absolute
+  node-path-is-inside
+  node-path-type
+  node-pify
+  node-pkg-dir
+  node-postcss-value-parser
+  node-prelude-ls
+  node-process-nextick-args
+  node-promise-inflight
+  node-promise-retry
+  node-promzard
+  node-prr
+  node-punycode
+  node-quick-lru
+  node-randombytes
+  node-read
+  node-readable-stream
+  node-rechoir
+  node-regenerate
+  node-regenerate-unicode-properties
+  node-regenerator-runtime
+  node-regenerator-transform
+  node-regexpp
+  node-regjsgen
+  node-repeat-string
+  node-require-directory
+  node-require-from-string
+  node-resolve
+  node-resolve-cwd
+  node-resolve-from
+  node-restore-cursor
+  node-resumer
+  node-retry
+  node-run-queue
+  node-safe-buffer
+  node-sellside-emitter
+  node-serialize-javascript
+  node-set-blocking
+  node-set-immediate-shim
+  node-shebang-command
+  node-shebang-regex
+  node-shell-quote
+  node-signal-exit
+  node-slash
+  node-slice-ansi
+  node-source-list-map
+  node-source-map
+  node-spdx-correct
+  node-spdx-exceptions
+  node-spdx-expression-parse
+  node-spdx-license-ids
+  node-sprintf-js
+  node-ssri
+  node-stack-utils
+  node-string-decoder
+  node-strip-bom
+  node-strip-eof
+  node-strip-json-comments
+  node-supports-color
+  node-tapable
+  node-terser
+  node-text-table
+  node-through
+  node-time-stamp
+  node-to-fast-properties
+  node-tslib
+  node-type-check
+  node-typedarray
+  node-typedarray-to-buffer
+  node-undici
+  node-unicode-canonical-property-names-ecmascript
+  node-unicode-match-property-value-ecmascript
+  node-unicode-property-aliases-ecmascript
+  node-unique-filename
+  node-unset-value
+  node-uri-js
+  node-util-deprecate
+  node-uuid
+  node-v8flags
+  node-validate-npm-package-license
+  node-wcwidth.js
+  node-webpack-sources
+  node-wordwrap
+  node-wrappy
+  node-write-file-atomic
+  node-xtend
+  node-y18n
+  node-yallist
+  node-yaml
+  python3-packaging
+Use 'apt autoremove' to remove them.
+
+Summary:
+  Upgrading: 0, Installing: 0, Removing: 0, Not Upgrading: 0
+gpioinfo: cannot find line 'gpiochip0'
+root@paintable:~# gpioinfo --chip /dev/gpiochip0
+gpiochip0 - 360 lines:
+	line   0:	unnamed         	input
+	line   1:	unnamed         	input
+	line   2:	unnamed         	input
+	line   3:	unnamed         	output
+	line   4:	unnamed         	output
+	line   5:	unnamed         	input
+	line   6:	unnamed         	input
+	line   7:	unnamed         	input
+	line   8:	unnamed         	input
+	line   9:	unnamed         	input
+	line  10:	unnamed         	input
+	line  11:	unnamed         	input
+	line  12:	unnamed         	input
+	line  13:	unnamed         	input
+	line  14:	unnamed         	input
+	line  15:	unnamed         	input
+	line  16:	unnamed         	output
+	line  17:	unnamed         	input
+	line  18:	unnamed         	output
+	line  19:	unnamed         	input
+	line  20:	unnamed         	input
+	line  21:	unnamed         	input
+	line  22:	unnamed         	input
+	line  23:	unnamed         	output
+	line  24:	unnamed         	input
+	line  25:	unnamed         	input
+	line  26:	unnamed         	input
+	line  27:	unnamed         	input
+	line  28:	unnamed         	input
+	line  29:	unnamed         	input
+	line  30:	unnamed         	input
+	line  31:	unnamed         	input
+	line  32:	unnamed         	input
+	line  33:	unnamed         	input
+	line  34:	unnamed         	input
+	line  35:	unnamed         	input
+	line  36:	unnamed         	input
+	line  37:	unnamed         	input
+	line  38:	unnamed         	input
+	line  39:	unnamed         	input
+	line  40:	unnamed         	input
+	line  41:	unnamed         	input
+	line  42:	unnamed         	input
+	line  43:	unnamed         	input
+	line  44:	unnamed         	input
+	line  45:	unnamed         	input
+	line  46:	unnamed         	input
+	line  47:	unnamed         	input
+	line  48:	unnamed         	input
+	line  49:	unnamed         	input
+	line  50:	unnamed         	input
+	line  51:	unnamed         	input
+	line  52:	unnamed         	input
+	line  53:	unnamed         	input
+	line  54:	unnamed         	input
+	line  55:	unnamed         	input
+	line  56:	unnamed         	input
+	line  57:	unnamed         	input
+	line  58:	unnamed         	input
+	line  59:	unnamed         	input
+	line  60:	unnamed         	input
+	line  61:	unnamed         	input
+	line  62:	unnamed         	input
+	line  63:	unnamed         	input
+	line  64:	unnamed         	input
+	line  65:	unnamed         	input
+	line  66:	unnamed         	input
+	line  67:	unnamed         	input
+	line  68:	unnamed         	input
+	line  69:	unnamed         	input
+	line  70:	unnamed         	input
+	line  71:	unnamed         	output
+	line  72:	unnamed         	output
+	line  73:	unnamed         	input
+	line  74:	unnamed         	input
+	line  75:	unnamed         	output
+	line  76:	unnamed         	input
+	line  77:	unnamed         	output
+	line  78:	unnamed         	output
+	line  79:	unnamed         	output
+	line  80:	unnamed         	output
+	line  81:	unnamed         	input
+	line  82:	unnamed         	input
+	line  83:	unnamed         	input
+	line  84:	unnamed         	input
+	line  85:	unnamed         	output
+	line  86:	unnamed         	output
+	line  87:	unnamed         	input
+	line  88:	unnamed         	input
+	line  89:	unnamed         	input
+	line  90:	unnamed         	input
+	line  91:	unnamed         	input
+	line  92:	unnamed         	input
+	line  93:	unnamed         	input
+	line  94:	unnamed         	input
+	line  95:	unnamed         	input
+	line  96:	unnamed         	input
+	line  97:	unnamed         	input
+	line  98:	unnamed         	input
+	line  99:	unnamed         	input
+	line 100:	unnamed         	input
+	line 101:	unnamed         	input
+	line 102:	unnamed         	input
+	line 103:	unnamed         	input
+	line 104:	unnamed         	input
+	line 105:	unnamed         	input
+	line 106:	unnamed         	input
+	line 107:	unnamed         	input
+	line 108:	unnamed         	input
+	line 109:	unnamed         	input
+	line 110:	unnamed         	input
+	line 111:	unnamed         	input
+	line 112:	unnamed         	input
+	line 113:	unnamed         	input
+	line 114:	unnamed         	input
+	line 115:	unnamed         	input
+	line 116:	unnamed         	input
+	line 117:	unnamed         	input
+	line 118:	unnamed         	input
+	line 119:	unnamed         	input
+	line 120:	unnamed         	input
+	line 121:	unnamed         	input
+	line 122:	unnamed         	input
+	line 123:	unnamed         	input
+	line 124:	unnamed         	input
+	line 125:	unnamed         	input
+	line 126:	unnamed         	input
+	line 127:	unnamed         	input
+	line 128:	unnamed         	input
+	line 129:	unnamed         	input
+	line 130:	unnamed         	input
+	line 131:	unnamed         	input
+	line 132:	unnamed         	input
+	line 133:	unnamed         	input
+	line 134:	unnamed         	input
+	line 135:	unnamed         	input
+	line 136:	unnamed         	input
+	line 137:	unnamed         	input
+	line 138:	unnamed         	input
+	line 139:	unnamed         	input
+	line 140:	unnamed         	input
+	line 141:	unnamed         	input
+	line 142:	unnamed         	input
+	line 143:	unnamed         	input
+	line 144:	unnamed         	input
+	line 145:	unnamed         	input
+	line 146:	unnamed         	input
+	line 147:	unnamed         	input
+	line 148:	unnamed         	input
+	line 149:	unnamed         	input
+	line 150:	unnamed         	input
+	line 151:	unnamed         	input
+	line 152:	unnamed         	input
+	line 153:	unnamed         	input
+	line 154:	unnamed         	input
+	line 155:	unnamed         	input
+	line 156:	unnamed         	input
+	line 157:	unnamed         	input
+	line 158:	unnamed         	input
+	line 159:	unnamed         	input
+	line 160:	unnamed         	output
+	line 161:	unnamed         	output
+	line 162:	unnamed         	output
+	line 163:	unnamed         	input
+	line 164:	unnamed         	input
+	line 165:	unnamed         	input
+	line 166:	unnamed         	input
+	line 167:	unnamed         	input
+	line 168:	unnamed         	input
+	line 169:	unnamed         	input
+	line 170:	unnamed         	input
+	line 171:	unnamed         	input
+	line 172:	unnamed         	input
+	line 173:	unnamed         	input
+	line 174:	unnamed         	input
+	line 175:	unnamed         	input
+	line 176:	unnamed         	input
+	line 177:	unnamed         	input
+	line 178:	unnamed         	input
+	line 179:	unnamed         	input
+	line 180:	unnamed         	input
+	line 181:	unnamed         	input
+	line 182:	unnamed         	input
+	line 183:	unnamed         	input
+	line 184:	unnamed         	input
+	line 185:	unnamed         	input
+	line 186:	unnamed         	input
+	line 187:	unnamed         	input
+	line 188:	unnamed         	input
+	line 189:	unnamed         	input
+	line 190:	unnamed         	input
+	line 191:	unnamed         	input
+	line 192:	unnamed         	input
+	line 193:	unnamed         	output
+	line 194:	unnamed         	output
+	line 195:	unnamed         	output
+	line 196:	unnamed         	input
+	line 197:	unnamed         	input
+	line 198:	unnamed         	input
+	line 199:	unnamed         	input
+	line 200:	unnamed         	input
+	line 201:	unnamed         	output
+	line 202:	unnamed         	output
+	line 203:	unnamed         	output
+	line 204:	unnamed         	output
+	line 205:	unnamed         	output
+	line 206:	unnamed         	output
+	line 207:	unnamed         	output
+	line 208:	unnamed         	output
+	line 209:	unnamed         	input
+	line 210:	unnamed         	input
+	line 211:	unnamed         	input
+	line 212:	unnamed         	input
+	line 213:	unnamed         	input
+	line 214:	unnamed         	input
+	line 215:	unnamed         	input
+	line 216:	unnamed         	input
+	line 217:	unnamed         	input
+	line 218:	unnamed         	input
+	line 219:	unnamed         	input
+	line 220:	unnamed         	input
+	line 221:	unnamed         	input
+	line 222:	unnamed         	input
+	line 223:	unnamed         	input
+	line 224:	unnamed         	output
+	line 225:	unnamed         	input
+	line 226:	unnamed         	output
+	line 227:	unnamed         	input
+	line 228:	unnamed         	input
+	line 229:	unnamed         	input
+	line 230:	unnamed         	input
+	line 231:	unnamed         	input
+	line 232:	unnamed         	input
+	line 233:	unnamed         	input
+	line 234:	unnamed         	input
+	line 235:	unnamed         	input
+	line 236:	unnamed         	input
+	line 237:	unnamed         	input
+	line 238:	unnamed         	input
+	line 239:	unnamed         	input
+	line 240:	unnamed         	input
+	line 241:	unnamed         	input
+	line 242:	unnamed         	input
+	line 243:	unnamed         	input
+	line 244:	unnamed         	input
+	line 245:	unnamed         	input
+	line 246:	unnamed         	input
+	line 247:	unnamed         	input
+	line 248:	unnamed         	input
+	line 249:	unnamed         	input
+	line 250:	unnamed         	input
+	line 251:	unnamed         	output
+	line 252:	unnamed         	output
+	line 253:	unnamed         	input
+	line 254:	unnamed         	input
+	line 255:	unnamed         	input
+	line 256:	unnamed         	input
+	line 257:	unnamed         	input
+	line 258:	unnamed         	output
+	line 259:	unnamed         	input
+	line 260:	unnamed         	input
+	line 261:	unnamed         	output
+	line 262:	unnamed         	input
+	line 263:	unnamed         	input
+	line 264:	unnamed         	input
+	line 265:	unnamed         	input
+	line 266:	unnamed         	input
+	line 267:	unnamed         	input
+	line 268:	unnamed         	input
+	line 269:	unnamed         	input
+	line 270:	unnamed         	input
+	line 271:	unnamed         	input
+	line 272:	unnamed         	input
+	line 273:	unnamed         	input
+	line 274:	unnamed         	input
+	line 275:	unnamed         	input
+	line 276:	unnamed         	input
+	line 277:	unnamed         	input
+	line 278:	unnamed         	input
+	line 279:	unnamed         	input
+	line 280:	unnamed         	input
+	line 281:	unnamed         	input
+	line 282:	unnamed         	input
+	line 283:	unnamed         	input
+	line 284:	unnamed         	input
+	line 285:	unnamed         	input
+	line 286:	unnamed         	input
+	line 287:	unnamed         	input
+	line 288:	unnamed         	input
+	line 289:	unnamed         	input
+	line 290:	unnamed         	input
+	line 291:	unnamed         	input
+	line 292:	unnamed         	input
+	line 293:	unnamed         	input
+	line 294:	unnamed         	input
+	line 295:	unnamed         	output
+	line 296:	unnamed         	input
+	line 297:	unnamed         	input
+	line 298:	unnamed         	output
+	line 299:	unnamed         	output
+	line 300:	unnamed         	output
+	line 301:	unnamed         	output
+	line 302:	unnamed         	output
+	line 303:	unnamed         	output
+	line 304:	unnamed         	output
+	line 305:	unnamed         	input
+	line 306:	unnamed         	input
+	line 307:	unnamed         	input
+	line 308:	unnamed         	input
+	line 309:	unnamed         	input
+	line 310:	unnamed         	input
+	line 311:	unnamed         	input
+	line 312:	unnamed         	input
+	line 313:	unnamed         	input
+	line 314:	unnamed         	input
+	line 315:	unnamed         	input
+	line 316:	unnamed         	input
+	line 317:	unnamed         	input
+	line 318:	unnamed         	input
+	line 319:	unnamed         	input
+	line 320:	unnamed         	output
+	line 321:	unnamed         	output
+	line 322:	unnamed         	output
+	line 323:	unnamed         	output
+	line 324:	unnamed         	input
+	line 325:	unnamed         	input
+	line 326:	unnamed         	input
+	line 327:	unnamed         	output
+	line 328:	unnamed         	input
+	line 329:	unnamed         	input
+	line 330:	unnamed         	input
+	line 331:	unnamed         	input
+	line 332:	unnamed         	input
+	line 333:	unnamed         	input
+	line 334:	unnamed         	input
+	line 335:	unnamed         	input
+	line 336:	unnamed         	input
+	line 337:	unnamed         	input
+	line 338:	unnamed         	input
+	line 339:	unnamed         	input
+	line 340:	unnamed         	input
+	line 341:	unnamed         	input
+	line 342:	unnamed         	input
+	line 343:	unnamed         	output
+	line 344:	unnamed         	input
+	line 345:	unnamed         	input
+	line 346:	unnamed         	input
+	line 347:	unnamed         	input
+	line 348:	unnamed         	input
+	line 349:	unnamed         	input
+	line 350:	unnamed         	input
+	line 351:	unnamed         	input
+	line 352:	unnamed         	input
+	line 353:	unnamed         	input
+	line 354:	unnamed         	input
+	line 355:	unnamed         	input
+	line 356:	unnamed         	input
+	line 357:	unnamed         	input
+	line 358:	unnamed         	input
+	line 359:	unnamed         	input
