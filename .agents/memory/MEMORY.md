@@ -1,3 +1,4 @@
 - [TanStack Query v5 queryKey required](tq5-querykey.md) — when passing `{ query: { refetchInterval: N } }` to Orval hooks, must also include `queryKey: getGet*QueryKey()` or typecheck fails TS2741.
+- [Gledopto WLED Setup](gledopto-wled-setup.md) — GL-C-618WL Ethernet via dnsmasq (MAC 70:4b:ca:5b:c5:ab → 2.0.0.1); WLED 0.15.4 nötig; LED GPIO16 noch nicht konfiguriert.
 - [GitHub repo and deployment network](github-deployment.md) — repo URL, Giada two-NIC topology (no switch), Gledopto IPs per subnet.
 - [Giada GPIO and start button](giada-gpio-button.md) — IT87 GPIO compiled from kernel source; DI connector needs 12-24V; start button uses Waveshare TTL serial (GND→button→RXD on /dev/ttyUSB0).
