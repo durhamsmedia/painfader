@@ -1,0 +1,65 @@
+paintable@paintable:~$ tee /opt/painfader/artifacts/api-server/src/lib/find-serial-port.ts << 'TSEOF'
+import { logger } from "./logger";
+export interface UsbId { vendorId: string; productId: string; label: string; }
+export const FTDI_OPEN_DMX: UsbId   = { vendorId: "0403", productId: "6001", label: "Enttec OpenDMX USB (FTDI FT232R)" };
+export const CH340_WAVESHARE: UsbId = { vendorId: "1a86", productId: "7523", label: "Waveshare USB-to-TTL (CH340)" };
+export async function findSerialPort(id: UsbId, fallback?: string): Promise<string | null> {
+  try {
+    const { SerialPort } = await import("serialport");
+    const ports = await SerialPort.list();
+    const vid = id.vendorId.toLowerCase(); const pid = id.productId.toLowerCase();
+    const match = ports.find(p => p.vendorId?.toLowerCase() === vid && p.productId?.toLowerCase() === pid);
+    if (match) { logger.info({ path: match.path, label: id.label }, `USB auto-detect: found ${id.label}`); return match.path; }
+    const available = ports.map(p => `${p.path} [${p.vendorId}:${p.productId}]`).join(", ");
+    logger.warn({ searched: `${vid}:${pid}`, label: id.label, available: available || "(none)" }, `USB auto-detect: ${id.label} not found`);
+    if (fallback) { logger.info({ fallback, label: id.label }, "USB auto-detect: using configured fallback path"); return fallback; }
+    return null;
+  } catch (err) { logger.warn({ err }, "USB auto-detect: SerialPort.list() failed"); return fallback ?? null; }
+}
+TSEOF
+
+python3 << 'EOF'
+p = '/opt/painfader/artifacts/api-server/src/lib/open-dmx.ts'
+t = open(p).read()
+t = t.replace('import { logger } from "./logger";', 'import { logger } from "./logger";\nimport { findSerialPort, FTDI_OPEN_DMX } from "./find-serial-port";')
+t = t.replace('  private async open(portPath: string) {\n    try {', '  private async open(configuredPath: string) {\n    const portPath = await findSerialPort(FTDI_OPEN_DMX, configuredPath) ?? configuredPath;\n    try {')
+open(p, 'w').write(t)
+print('open-dmx.ts patched')
+
+p = '/opt/painfader/artifacts/api-server/src/lib/serial-button.ts'
+t = open(p).read()
+t = t.replace('import { logger } from "./logger";', 'import { logger } from "./logger";\nimport { findSerialPort, CH340_WAVESHARE } from "./find-serial-port";')
+t = t.replace('  private async init() {\n    try {', '  private async init() {\n    const port = await findSerialPort(CH340_WAVESHARE, this.cfg.port) ?? this.cfg.port;\n    try {')
+t = t.replace('path:     this.cfg.port,\n        baudRate: this.cfg.baudRate,', 'path:     port,\n        baudRate: this.cfg.baudRate,')
+t = t.replace('logger.warn({ err, port: this.cfg.port }, "Serial button: port open failed — button disabled");\n          return;\n        }\n        this.simulated = false;\n        logger.info({ port: this.cfg.port }, "Serial button: ready");', 'logger.warn({ err, port }, "Serial button: port open failed — button disabled");\n          return;\n        }\n        this.simulated = false;\n        logger.info({ port }, "Serial button: ready");')
+open(p, 'w').write(t)
+print('serial-button.ts patched')
+EOF
+
+cd /opt/painfader/artifacts/api-server && node ./build.mjs && systemctl restart painfader && journalctl -fu painfader -n 8
+tee: /opt/painfader/artifacts/api-server/src/lib/find-serial-port.ts: Permission denied
+import { logger } from "./logger";
+export interface UsbId { vendorId: string; productId: string; label: string; }
+export const FTDI_OPEN_DMX: UsbId   = { vendorId: "0403", productId: "6001", label: "Enttec OpenDMX USB (FTDI FT232R)" };
+export const CH340_WAVESHARE: UsbId = { vendorId: "1a86", productId: "7523", label: "Waveshare USB-to-TTL (CH340)" };
+export async function findSerialPort(id: UsbId, fallback?: string): Promise<string | null> {
+  try {
+    const { SerialPort } = await import("serialport");
+    const ports = await SerialPort.list();
+    const vid = id.vendorId.toLowerCase(); const pid = id.productId.toLowerCase();
+    const match = ports.find(p => p.vendorId?.toLowerCase() === vid && p.productId?.toLowerCase() === pid);
+    if (match) { logger.info({ path: match.path, label: id.label }, `USB auto-detect: found ${id.label}`); return match.path; }
+    const available = ports.map(p => `${p.path} [${p.vendorId}:${p.productId}]`).join(", ");
+    logger.warn({ searched: `${vid}:${pid}`, label: id.label, available: available || "(none)" }, `USB auto-detect: ${id.label} not found`);
+    if (fallback) { logger.info({ fallback, label: id.label }, "USB auto-detect: using configured fallback path"); return fallback; }
+    return null;
+  } catch (err) { logger.warn({ err }, "USB auto-detect: SerialPort.list() failed"); return fallback ?? null; }
+}
+Traceback (most recent call last):
+  File "<stdin>", line 5, in <module>
+PermissionError: [Errno 13] Permission denied: '/opt/painfader/artifacts/api-server/src/lib/open-dmx.ts'
+[Error: EACCES: permission denied, rmdir '/opt/painfader/artifacts/api-server/dist'] {
+  errno: -13,
+  code: 'EACCES',
+  syscall: 'rmdir',
+  path: '/opt/painfader/artifacts/api-server/dist'
