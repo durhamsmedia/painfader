@@ -106,11 +106,11 @@ export class OpenDmxController {
 
     try {
       // 1. Assert BREAK
-      await setBreak(this.port, true);
+      await retryOnEintr(() => setBreak(this.port!, true));
       await delay(BREAK_MS);
 
       // 2. Release BREAK → MAB
-      await setBreak(this.port, false);
+      await retryOnEintr(() => setBreak(this.port!, false));
       await delay(MAB_MS);
 
       // 3. Write start code + 512 channels
@@ -118,9 +118,9 @@ export class OpenDmxController {
       frame[0] = 0x00; // DMX start code
       for (let i = 0; i < 512; i++) frame[i + 1] = this.channels[i] ?? 0;
 
-      await new Promise<void>((res, rej) => {
+      await retryOnEintr(() => new Promise<void>((res, rej) => {
         this.port!.write(frame, (err) => (err ? rej(err) : res()));
-      });
+      }));
     } catch (err) {
       logger.warn({ err }, "OpenDMX send frame error");
     } finally {
@@ -133,6 +133,20 @@ export class OpenDmxController {
 
 function setBreak(port: import("serialport").SerialPort, brk: boolean): Promise<void> {
   return new Promise((res, rej) => port.set({ brk }, (err) => (err ? rej(err) : res())));
+}
+
+/** Retry an ioctl/write op up to 3× when the kernel interrupts it (EINTR). */
+async function retryOnEintr(fn: () => Promise<void>, maxRetries = 3): Promise<void> {
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      await fn();
+      return;
+    } catch (err) {
+      const msg = (err as Error).message ?? "";
+      if (attempt < maxRetries && msg.includes("Interrupted")) continue;
+      throw err;
+    }
+  }
 }
 
 function delay(ms: number): Promise<void> {
