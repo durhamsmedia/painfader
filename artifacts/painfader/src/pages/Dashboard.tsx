@@ -24,7 +24,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
   Activity, Settings2, Wind, Lightbulb, Zap, Clock, Cpu, HelpCircle,
-  Monitor, ChevronsUpDown, Radio, Waves,
+  Monitor, ChevronsUpDown, Radio, Waves, PlayCircle,
 } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { toast } from 'sonner';
@@ -225,6 +225,16 @@ export default function Dashboard() {
     blackout.mutate(undefined, {
       onSuccess: () => { inv(); toast.error('BLACKOUT', { description: 'All outputs zeroed' }); },
     });
+
+  // ── Start button (physical or simulated) ──────────────────────────────────
+  const [btnFlash, setBtnFlash] = useState(false);
+  const onStartButton = async () => {
+    await fetch(`${import.meta.env.BASE_URL}api/dmx/start-button`, { method: 'POST' });
+    inv();
+    setBtnFlash(true);
+    setTimeout(() => setBtnFlash(false), 600);
+    toast.success('START', { description: 'Button pressed — mode toggled' });
+  };
 
   // ── Keyboard shortcuts ─────────────────────────────────────────────────────
   const [lastKey, setLastKey] = useState<string | null>(null);
@@ -485,6 +495,42 @@ export default function Dashboard() {
                     </CardContent>
                   </Card>
 
+                  {/* START BUTTON */}
+                  <Card className="bg-[#111113] border-zinc-800 rounded-sm">
+                    <CardHeader className="pb-3 border-b border-zinc-800/50 bg-[#161618] flex flex-row items-center justify-between">
+                      <CardTitle className="text-xs font-mono tracking-widest flex items-center gap-2 text-zinc-400 uppercase">
+                        <PlayCircle className="w-4 h-4 text-green-500" /> START BUTTON
+                      </CardTitle>
+                      <div className="flex items-center gap-1.5">
+                        <div className={`w-2 h-2 rounded-full ${dmxState.startButton?.simulated ? 'bg-yellow-500' : 'bg-green-500 animate-pulse'}`} />
+                        <span className={`text-[9px] font-mono ${dmxState.startButton?.simulated ? 'text-yellow-500' : 'text-green-400'}`}>
+                          {dmxState.startButton?.simulated ? 'SIM' : 'HW'}
+                        </span>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="pt-4 space-y-3">
+                      <button
+                        onClick={onStartButton}
+                        className={`w-full h-16 rounded-sm border-2 font-black tracking-widest text-sm uppercase transition-all flex items-center justify-center gap-2 select-none
+                          ${btnFlash
+                            ? 'border-green-400 bg-green-900/60 text-green-300 shadow-[0_0_20px_rgba(74,222,128,0.5)]'
+                            : 'border-zinc-700 bg-black text-zinc-300 hover:border-green-600 hover:bg-green-950/30 hover:text-green-300'
+                          }`}>
+                        <PlayCircle className={`w-5 h-5 ${btnFlash ? 'text-green-300' : 'text-zinc-500'}`} />
+                        START
+                      </button>
+                      <div className="text-[9px] font-mono text-zinc-700 flex justify-between">
+                        <span>{dmxState.startButton?.port ?? '/dev/ttyUSB2'}</span>
+                        <span>{dmxState.mode === 'idle' ? '→ EXPERIENCE' : '→ restart timer'}</span>
+                      </div>
+                      {!dmxState.startButton?.simulated && (
+                        <div className="text-[9px] font-mono text-green-600 text-center">
+                          Physischer Taster aktiv
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+
                   {/* FAN */}
                   <Card className="bg-[#111113] border-zinc-800 rounded-sm">
                     <CardHeader className="pb-3 border-b border-zinc-800/50 bg-[#161618] flex flex-row items-center justify-between">
@@ -652,6 +698,7 @@ export default function Dashboard() {
                         { label: 'OpenDMX USB', value: dmxState.hardwareConfig.openDmxPort, ok: !dmxState.motor.simulated },
                         { label: 'Motor serial', value: `${dmxState.hardwareConfig.motorPort} (${dmxState.hardwareConfig.motorDriverType})`, ok: !dmxState.motor.simulated },
                         { label: 'GPIO', value: gpio.simulated ? 'simulation' : `/dev/gpiochip${dmxState.hardwareConfig.gpioChip}`, ok: !gpio.simulated },
+                        { label: 'Start Button', value: dmxState.startButton?.port ?? '—', ok: !dmxState.startButton?.simulated },
                       ].map(({ label, value, ok }) => (
                         <div key={label} className="flex items-center justify-between gap-2">
                           <span className="text-[9px] font-mono text-zinc-600 shrink-0">{label}</span>
