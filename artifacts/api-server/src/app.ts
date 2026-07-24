@@ -49,7 +49,10 @@ const indexExists = fs.existsSync(indexHtml);
 logger.info({ frontendDist, dirExists, indexExists }, "Frontend dist path");
 
 if (dirExists) {
+  // Serve static assets at both root and /painfader/ prefix
+  // (Vite builds with BASE_PATH=/painfader for Replit proxy routing)
   app.use(express.static(frontendDist));
+  app.use("/painfader", express.static(frontendDist));
   // SPA fallback — serve index.html for any unmatched route
   app.use((_req, res) => {
     res.type("html").send(fs.readFileSync(indexHtml));
