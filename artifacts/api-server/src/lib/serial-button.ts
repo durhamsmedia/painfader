@@ -14,7 +14,7 @@
  */
 
 import { logger } from "./logger";
-import { findSerialPort, CH340_WAVESHARE } from "./find-serial-port";
+import { findSerialPort, FTDI_WAVESHARE } from "./find-serial-port";
 
 export interface SerialButtonConfig {
   port: string;       // e.g. "/dev/ttyUSB0"
@@ -44,7 +44,7 @@ export class SerialButtonReader {
 
   private async init() {
     // Auto-detect Waveshare CH340 by VID/PID; fall back to configured path
-    const port = await findSerialPort(CH340_WAVESHARE, this.cfg.port) ?? this.cfg.port;
+    const port = await findSerialPort(FTDI_WAVESHARE, this.cfg.port) ?? this.cfg.port;
     try {
       const { SerialPort } = await import("serialport");
 
