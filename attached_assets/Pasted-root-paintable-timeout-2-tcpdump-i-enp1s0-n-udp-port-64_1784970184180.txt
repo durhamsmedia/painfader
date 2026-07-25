@@ -1,0 +1,34 @@
+root@paintable:~# timeout 2 tcpdump -i enp1s0 -n udp port 6454 -c 5 2>&1 | tail -3 ; curl -s http://2.0.0.1/json/state | grep -o '"live":[^,}]*\|"lm":[^,}]*'
+Terminated
+root@paintable:~# systemctl status painfader --no-pager | head -20
+journalctl -u painfader -n 10 --no-pager
+● painfader.service - Painfader DMX Controller
+     Loaded: loaded (/etc/systemd/system/painfader.service; disabled; preset: enabled)
+     Active: active (running) since Sat 2026-07-25 10:59:29 CEST; 3min 16s ago
+ Invocation: b3fea6703b5b4e3295007ee020f5d758
+   Main PID: 5452 (node)
+      Tasks: 11 (limit: 8943)
+     Memory: 162.7M (peak: 175.1M)
+        CPU: 14.929s
+     CGroup: /system.slice/painfader.service
+             └─5452 /usr/bin/node --enable-source-maps ./dist/index.mjs
+
+Jul 25 11:01:47 paintable node[5452]: {"level":30,"time":1784970107811,"pid":5452,"hostname":"paintable","req":{"id":185,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":304},"responseTime":2,"msg":"request completed"}
+Jul 25 11:01:48 paintable node[5452]: {"level":30,"time":1784970108086,"pid":5452,"hostname":"paintable","req":{"id":186,"method":"PUT","url":"/api/dmx/zone/haube"},"res":{"statusCode":200},"responseTime":2,"msg":"request completed"}
+Jul 25 11:01:48 paintable node[5452]: {"level":30,"time":1784970108101,"pid":5452,"hostname":"paintable","req":{"id":187,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 25 11:01:48 paintable node[5452]: {"level":30,"time":1784970108617,"pid":5452,"hostname":"paintable","req":{"id":188,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":304},"responseTime":1,"msg":"request completed"}
+Jul 25 11:01:49 paintable node[5452]: {"level":30,"time":1784970109127,"pid":5452,"hostname":"paintable","req":{"id":189,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":304},"responseTime":2,"msg":"request completed"}
+Jul 25 11:01:49 paintable node[5452]: {"level":30,"time":1784970109635,"pid":5452,"hostname":"paintable","req":{"id":190,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":304},"responseTime":1,"msg":"request completed"}
+Jul 25 11:01:50 paintable node[5452]: {"level":30,"time":1784970110152,"pid":5452,"hostname":"paintable","req":{"id":191,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":304},"responseTime":1,"msg":"request completed"}
+Jul 25 11:01:50 paintable node[5452]: {"level":30,"time":1784970110670,"pid":5452,"hostname":"paintable","req":{"id":192,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":304},"responseTime":1,"msg":"request completed"}
+Jul 25 11:01:51 paintable node[5452]: {"level":30,"time":1784970111198,"pid":5452,"hostname":"paintable","req":{"id":193,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":304},"responseTime":1,"msg":"request completed"}
+Jul 25 11:01:47 paintable node[5452]: {"level":30,"time":1784970107811,"pid":5452,"hostname":"paintable","req":{"id":185,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":304},"responseTime":2,"msg":"request completed"}
+Jul 25 11:01:48 paintable node[5452]: {"level":30,"time":1784970108086,"pid":5452,"hostname":"paintable","req":{"id":186,"method":"PUT","url":"/api/dmx/zone/haube"},"res":{"statusCode":200},"responseTime":2,"msg":"request completed"}
+Jul 25 11:01:48 paintable node[5452]: {"level":30,"time":1784970108101,"pid":5452,"hostname":"paintable","req":{"id":187,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 25 11:01:48 paintable node[5452]: {"level":30,"time":1784970108617,"pid":5452,"hostname":"paintable","req":{"id":188,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":304},"responseTime":1,"msg":"request completed"}
+Jul 25 11:01:49 paintable node[5452]: {"level":30,"time":1784970109127,"pid":5452,"hostname":"paintable","req":{"id":189,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":304},"responseTime":2,"msg":"request completed"}
+Jul 25 11:01:49 paintable node[5452]: {"level":30,"time":1784970109635,"pid":5452,"hostname":"paintable","req":{"id":190,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":304},"responseTime":1,"msg":"request completed"}
+Jul 25 11:01:50 paintable node[5452]: {"level":30,"time":1784970110152,"pid":5452,"hostname":"paintable","req":{"id":191,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":304},"responseTime":1,"msg":"request completed"}
+Jul 25 11:01:50 paintable node[5452]: {"level":30,"time":1784970110670,"pid":5452,"hostname":"paintable","req":{"id":192,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":304},"responseTime":1,"msg":"request completed"}
+Jul 25 11:01:51 paintable node[5452]: {"level":30,"time":1784970111198,"pid":5452,"hostname":"paintable","req":{"id":193,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":304},"responseTime":1,"msg":"request completed"}
+Jul 25 11:01:51 paintable node[5452]: {"level":30,"time":1784970111735,"pid":5452,"hostname":"paintable","req":{"id":194,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":304},"responseTime":0,"msg":"request completed"}
