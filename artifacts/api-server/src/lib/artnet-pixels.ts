@@ -1,11 +1,13 @@
 /**
- * Art-Net pixel sender for Gledopto 2D-EXMU controllers.
+ * Pixel sender for Gledopto 2D-EXMU controllers.
  *
- * Each zone is rendered by the pattern engine into a flat RGB buffer
- * and chunked into Art-Net DMX universes (170 pixels = 510 bytes each),
- * then sent as UDP unicast to each Gledopto unit.
+ * Supports two protocols (selectable via HardwareConfig.pixelProtocol):
  *
- * Universe layout:
+ *  • "artnet"  — Art-Net DMX unicast UDP to each Gledopto's IP (port 6454)
+ *  • "e131"    — sACN / E1.31 DMX multicast UDP (port 5568, 239.255.U.U)
+ *                Works across WiFi-AP / Ethernet simultaneously (IGMP multicast).
+ *
+ * Universe layout (same for both protocols):
  *   Gledopto #1 (haube + schmerz):
  *     universeStart+0 … +ceil(haubePixelCount/170)-1   → haube
  *     universeStart+N … +ceil(schmerzPixelCount/170)-1 → schmerz
@@ -15,11 +17,16 @@
  */
 
 import dgram from "node:dgram";
+import { randomBytes } from "node:crypto";
 import { logger } from "./logger";
 import { ZonePattern, renderPattern } from "./pattern-engine";
 import { HardwareConfig } from "./hardware-config";
 
 const PIXELS_PER_UNIVERSE = 170; // 170 × 3 = 510 bytes ≤ 512 DMX slots
+
+// sACN / E1.31 constants
+const E131_PORT = 5568;
+const E131_MULTICAST_BASE = "239.255"; // base; full = 239.255.(hi).(lo)
 
 export interface PixelZones {
   haube: ZonePattern;
@@ -41,21 +48,35 @@ export class ArtNetPixelSender {
   /** Phase accumulators [0..1) — one per zone, advanced per frame */
   private phases: Record<ZoneName, number> = { haube: 0, schmerz: 0, nsar: 0, opiat: 0 };
 
+  /** sACN sequence number, 1-255 wrapping */
+  private seqNum = 1;
+
+  /** sACN CID — 16 random bytes, fixed for this process lifetime */
+  private readonly cid: Buffer = randomBytes(16);
+
   constructor(config: HardwareConfig, initialZones: PixelZones) {
     this.config = { ...config };
     this.zones  = { ...initialZones };
 
-    this.socket = dgram.createSocket("udp4");
+    this.socket = dgram.createSocket({ type: "udp4", reuseAddr: true });
     this.socket.bind(() => {
       this.socket.setBroadcast(true);
+      // For E1.31 multicast: pin the outgoing NIC so packets leave on the right interface.
+      if (this.config.pixelProtocol === "e131" && this.config.pixelSourceIp) {
+        try {
+          this.socket.setMulticastInterface(this.config.pixelSourceIp);
+        } catch (e) {
+          logger.warn({ err: e }, "setMulticastInterface failed — multicast may use wrong NIC");
+        }
+      }
       this.connected = true;
       logger.info(
-        { g1: config.gledopto1.host, g2: config.gledopto2.host },
-        "Art-Net pixel socket ready",
+        { protocol: this.config.pixelProtocol, g1: config.gledopto1.host, g2: config.gledopto2.host },
+        "Pixel socket ready",
       );
     });
     this.socket.on("error", (err) => {
-      logger.warn({ err }, "Art-Net pixel socket error");
+      logger.warn({ err }, "Pixel socket error");
       this.connected = false;
     });
 
@@ -134,6 +155,9 @@ export class ArtNetPixelSender {
     const opiatUniStart = nsarUniStart + universesNeeded(g2.nsarPixelCount);
     this.sendZone(g2.host, nsarUniStart,  "nsar",  g2.nsarPixelCount);
     this.sendZone(g2.host, opiatUniStart, "opiat", g2.opiatPixelCount);
+
+    // Advance sACN sequence (wraps 1-255, 0 is reserved)
+    this.seqNum = (this.seqNum % 255) + 1;
   }
 
   private sendZone(
@@ -148,12 +172,31 @@ export class ArtNetPixelSender {
 
   private sendPixelBuffer(host: string, universeStart: number, pixels: Buffer) {
     const numU = Math.ceil(pixels.length / (PIXELS_PER_UNIVERSE * 3));
+    const protocol = this.config.pixelProtocol ?? "artnet";
+
     for (let u = 0; u < numU; u++) {
-      const offset = u * PIXELS_PER_UNIVERSE * 3;
-      const slice  = pixels.subarray(offset, offset + PIXELS_PER_UNIVERSE * 3);
-      const pkt    = buildArtDmxPacket(universeStart + u, slice);
-      this.socket.send(pkt, 0, pkt.length, this.config.artnetPort, host, (err) => {
-        if (err) logger.warn({ err, host }, "Art-Net send error (ignored)");
+      const universe = universeStart + u;
+      const offset   = u * PIXELS_PER_UNIVERSE * 3;
+      const slice    = pixels.subarray(offset, offset + PIXELS_PER_UNIVERSE * 3);
+
+      let pkt: Buffer;
+      let destHost: string;
+      let destPort: number;
+
+      if (protocol === "e131") {
+        // E1.31 universes are 1-based (1-63999); add 1 to convert from 0-based Art-Net numbering.
+        const e131Universe = universe + 1;
+        pkt      = buildE131Packet(e131Universe, slice, this.seqNum, this.cid);
+        destHost = e131MulticastAddress(e131Universe);
+        destPort = E131_PORT;
+      } else {
+        pkt      = buildArtDmxPacket(universe, slice);
+        destHost = host;
+        destPort = this.config.artnetPort;
+      }
+
+      this.socket.send(pkt, 0, pkt.length, destPort, destHost, (err) => {
+        if (err) logger.warn({ err, destHost, protocol }, "Pixel send error (ignored)");
       });
     }
   }
@@ -165,6 +208,15 @@ function universesNeeded(pixelCount: number): number {
   return Math.ceil(pixelCount / PIXELS_PER_UNIVERSE);
 }
 
+/** Returns the sACN multicast address for a given universe: 239.255.(hi).(lo) */
+function e131MulticastAddress(universe: number): string {
+  const hi = (universe >> 8) & 0xff;
+  const lo = universe & 0xff;
+  return `${E131_MULTICAST_BASE}.${hi}.${lo}`;
+}
+
+// ── Art-Net ArtDmx packet ─────────────────────────────────────────────────────
+
 function buildArtDmxPacket(universe: number, data: Buffer): Buffer {
   const dmxLen = data.length % 2 === 0 ? data.length : data.length + 1;
   const pkt    = Buffer.alloc(18 + dmxLen, 0);
@@ -175,5 +227,60 @@ function buildArtDmxPacket(universe: number, data: Buffer): Buffer {
   pkt.writeUInt16LE(universe & 0x7fff, 14);
   pkt.writeUInt16BE(dmxLen, 16);
   data.copy(pkt, 18);
+  return pkt;
+}
+
+// ── sACN / E1.31 packet ───────────────────────────────────────────────────────
+//
+// Reference: ANSI E1.31-2018 §6 (Network Data Transmission)
+//
+// Packet layout (big-endian unless noted):
+//   Root Layer       (offset 0):   38 bytes
+//   Framing Layer    (offset 38):  77 bytes
+//   DMP Layer        (offset 115): 11 bytes + data
+//   Total header:                  126 bytes
+//
+function buildE131Packet(universe: number, data: Buffer, seq: number, cid: Buffer): Buffer {
+  // DMX payload: start code (0x00) + data bytes, padded to even length
+  const dmxLen   = data.length % 2 === 0 ? data.length : data.length + 1;
+  const propCount = 1 + dmxLen; // start code byte + data
+  const totalLen  = 126 + dmxLen;
+  const pkt       = Buffer.alloc(totalLen, 0);
+
+  // ── Root Layer ──────────────────────────────────────────────────────────────
+  pkt.writeUInt16BE(0x0010, 0);         // Preamble size
+  pkt.writeUInt16BE(0x0000, 2);         // Postamble size
+  // ACN packet identifier (12 bytes): "ASC-E1.17\0\0\0"
+  // A=41 S=53 C=43 -=2d E=45 1=31 .=2e 1=31 7=37 \0\0\0
+  Buffer.from("4153432d45312e313700000000", "hex").copy(pkt, 4);
+  // Flags + length for Root PDU (from offset 16 to end)
+  const rootLen = totalLen - 16;
+  pkt.writeUInt16BE(0x7000 | rootLen, 16);
+  pkt.writeUInt32BE(0x00000004, 18);    // VECTOR_ROOT_E131_DATA
+  cid.copy(pkt, 22);                    // CID (16 bytes)
+
+  // ── Framing Layer ───────────────────────────────────────────────────────────
+  const framingLen = totalLen - 38;
+  pkt.writeUInt16BE(0x7000 | framingLen, 38);
+  pkt.writeUInt32BE(0x00000002, 40);    // VECTOR_E131_DATA_PACKET
+  // Source name (64 bytes, null-terminated UTF-8)
+  pkt.write("Painfader\0", 44, "utf8");
+  pkt[108] = 100;                        // Priority (default 100)
+  pkt.writeUInt16BE(0, 109);            // Synchronization address (0 = none)
+  pkt[111] = seq & 0xff;                // Sequence number
+  pkt[112] = 0x00;                      // Options (no preview, no stream terminated)
+  pkt.writeUInt16BE(universe & 0xffff, 113); // Universe (1-based in E1.31; WLED also accepts 0-based)
+
+  // ── DMP Layer ───────────────────────────────────────────────────────────────
+  const dmpLen = 11 + dmxLen;
+  pkt.writeUInt16BE(0x7000 | dmpLen, 115);
+  pkt[117] = 0x02;                      // VECTOR_DMP_SET_PROPERTY
+  pkt[118] = 0xa1;                      // Address type: rel, range, octet
+  pkt.writeUInt16BE(0x0000, 119);       // First property address (0 = start code)
+  pkt.writeUInt16BE(0x0001, 121);       // Address increment
+  pkt.writeUInt16BE(propCount, 123);    // Property count (1 start code + data)
+  pkt[125] = 0x00;                      // DMX start code
+  data.copy(pkt, 126);
+
   return pkt;
 }

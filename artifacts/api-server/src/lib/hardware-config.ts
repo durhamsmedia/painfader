@@ -34,6 +34,15 @@ export interface HardwareConfig {
     opiatPixelCount: number;
   };
 
+  /** Pixel streaming protocol: "artnet" (UDP unicast) or "e131" (sACN multicast) */
+  pixelProtocol: "artnet" | "e131";
+  /**
+   * Source IP of the network interface that carries Art-Net / sACN traffic.
+   * For Art-Net: used only for logging.
+   * For E1.31: sets IP_MULTICAST_IF so multicast packets leave on the right NIC.
+   * Example: "2.0.0.10" (enp1s0 on Giada)
+   */
+  pixelSourceIp: string;
   /** Art-Net UDP port (default 6454) */
   artnetPort: number;
   /** Frame rate for the pixel animation loop (Hz) */
@@ -83,6 +92,8 @@ export const DEFAULT_HARDWARE_CONFIG: HardwareConfig = {
     nsarPixelCount: 300,   // adjust to physical strip length
     opiatPixelCount: 300,
   },
+  pixelProtocol: "e131",
+  pixelSourceIp: "2.0.0.10",   // enp1s0 on Giada — multicast leaves on this NIC
   artnetPort: 6454,
   artnetRefreshRate: 30,
 
