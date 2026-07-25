@@ -1,0 +1,26 @@
+root@paintable:~# cat /etc/dnsmasq.d/painfader.conf && echo "---" && journalctl -u dnsmasq -n 20 --no-pager
+interface=enp1s0
+bind-interfaces
+dhcp-range=2.0.0.100,2.0.0.200,255.255.255.0,12h
+dhcp-host=70:4b:ca:5b:c5:ab,2.0.0.1
+---
+Jul 25 10:27:27 paintable dnsmasq-dhcp[2468]: DHCP packet received on enp1s0 which has no address
+Jul 25 10:27:42 paintable dnsmasq-dhcp[2468]: DHCP packet received on enp1s0 which has no address
+Jul 25 10:27:57 paintable dnsmasq-dhcp[2468]: DHCP packet received on enp1s0 which has no address
+Jul 25 10:28:12 paintable dnsmasq-dhcp[2468]: DHCP packet received on enp1s0 which has no address
+Jul 25 10:28:27 paintable dnsmasq-dhcp[2468]: DHCP packet received on enp1s0 which has no address
+Jul 25 10:28:42 paintable dnsmasq-dhcp[2468]: DHCP packet received on enp1s0 which has no address
+Jul 25 10:28:57 paintable dnsmasq-dhcp[2468]: DHCP packet received on enp1s0 which has no address
+Jul 25 10:29:13 paintable dnsmasq-dhcp[2468]: DHCP packet received on enp1s0 which has no address
+Jul 25 10:29:28 paintable dnsmasq-dhcp[2468]: DHCP packet received on enp1s0 which has no address
+Jul 25 10:29:43 paintable dnsmasq-dhcp[2468]: DHCP packet received on enp1s0 which has no address
+Jul 25 10:29:58 paintable dnsmasq-dhcp[2468]: DHCP packet received on enp1s0 which has no address
+Jul 25 10:30:13 paintable dnsmasq-dhcp[2468]: DHCP packet received on enp1s0 which has no address
+Jul 25 10:30:28 paintable dnsmasq-dhcp[2468]: DHCP packet received on enp1s0 which has no address
+Jul 25 10:30:43 paintable dnsmasq-dhcp[2468]: DHCP packet received on enp1s0 which has no address
+Jul 25 10:30:58 paintable dnsmasq-dhcp[2468]: DHCP packet received on enp1s0 which has no address
+Jul 25 10:31:13 paintable dnsmasq-dhcp[2468]: DHCP packet received on enp1s0 which has no address
+Jul 25 10:31:28 paintable dnsmasq-dhcp[2468]: DHCP packet received on enp1s0 which has no address
+Jul 25 10:31:43 paintable dnsmasq-dhcp[2468]: DHCP packet received on enp1s0 which has no address
+Jul 25 10:31:58 paintable dnsmasq-dhcp[2468]: DHCP packet received on enp1s0 which has no address
+Jul 25 10:32:13 paintable dnsmasq-dhcp[2468]: DHCP packet received on enp1s0 which has no address
