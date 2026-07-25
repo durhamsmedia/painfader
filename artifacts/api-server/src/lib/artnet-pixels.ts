@@ -60,9 +60,12 @@ export class ArtNetPixelSender {
 
     this.socket = dgram.createSocket({ type: "udp4", reuseAddr: true });
     // Art-Net spec requires source port 6454; WLED checks remotePort() and drops packets from other ports.
-    this.socket.bind(6454, () => {
+    // Bind to pixelSourceIp (e.g. "2.0.0.10") so broadcasts leave on the correct NIC (enp1s0),
+    // not on the default-route NIC (enp2s0). Without this, 255.255.255.255 goes on the wrong interface.
+    const bindIp = this.config.pixelSourceIp || undefined;
+    this.socket.bind(6454, bindIp, () => {
       this.socket.setBroadcast(true);
-      // For E1.31 multicast: pin the outgoing NIC so packets leave on the right interface.
+      // For E1.31 multicast: also set IP_MULTICAST_IF so multicast packets leave on the right NIC.
       if (this.config.pixelProtocol === "e131" && this.config.pixelSourceIp) {
         try {
           this.socket.setMulticastInterface(this.config.pixelSourceIp);

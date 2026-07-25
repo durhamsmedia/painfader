@@ -38,8 +38,9 @@ export interface HardwareConfig {
   pixelProtocol: "artnet" | "e131";
   /**
    * Source IP of the network interface that carries Art-Net / sACN traffic.
-   * For Art-Net: used only for logging.
-   * For E1.31: sets IP_MULTICAST_IF so multicast packets leave on the right NIC.
+   * For Art-Net: binds the UDP socket to this IP so broadcasts (255.255.255.255) leave on
+   *   the correct NIC. Without this, the OS picks the default-route NIC which may be wrong.
+   * For E1.31: also sets IP_MULTICAST_IF so multicast packets leave on the right NIC.
    * Example: "2.0.0.10" (enp1s0 on Giada)
    */
   pixelSourceIp: string;
