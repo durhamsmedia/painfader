@@ -122,7 +122,10 @@ export function renderPattern(
   if (!pattern.enabled || pixelCount === 0) return buf;
 
   const { primaryColor: pc, secondaryColor: sc, brightness: br, speed } = pattern;
-  const bScale = br / 255;
+  // Gamma 2.2: WS2812b LEDs are linear but the eye is logarithmic.
+  // Without this, values 20–255 all look "full brightness" and only the bottom
+  // 8% of the slider has any perceptible effect.
+  const bScale = Math.pow(br / 255, 2.2);
 
   switch (pattern.type) {
     case "solid": {
@@ -134,8 +137,11 @@ export function renderPattern(
     }
 
     case "pulse": {
-      // Sine breathe from secondaryColor to primaryColor
-      const t = (Math.sin(phase * Math.PI * 2) + 1) / 2; // 0..1
+      // Sine breathe from secondaryColor to primaryColor.
+      // Apply gamma to t so the perceived brightness follows the sine curve linearly —
+      // without this the pulse looks like a brief flicker/blink rather than a smooth breath.
+      const tLinear = (Math.sin(phase * Math.PI * 2) + 1) / 2; // 0..1
+      const t = Math.pow(tLinear, 2.2);
       const r = Math.round(lerp(sc.r, pc.r, t) * bScale);
       const g = Math.round(lerp(sc.g, pc.g, t) * bScale);
       const b = Math.round(lerp(sc.b, pc.b, t) * bScale);
