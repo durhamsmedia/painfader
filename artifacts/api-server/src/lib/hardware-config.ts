@@ -81,18 +81,18 @@ export interface HardwareConfig {
 
 export const DEFAULT_HARDWARE_CONFIG: HardwareConfig = {
   gledopto1: {
-    host: "2.0.0.1",       // Gledopto default Art-Net IP — adjust after network config
+    host: "2.0.0.255",     // Subnet broadcast — WLED only receives broadcasts on this network
     universeStart: 0,
     haubePixelCount: 512,  // 2 × 256
     schmerzPixelCount: 1280, // 5 × 256
   },
   gledopto2: {
-    host: "2.0.0.2",
+    host: "2.0.0.255",     // same subnet broadcast
     universeStart: 16,     // starts after Gledopto #1's 11 universes (with gap)
     nsarPixelCount: 300,   // adjust to physical strip length
     opiatPixelCount: 300,
   },
-  pixelProtocol: "e131",
+  pixelProtocol: "artnet",
   pixelSourceIp: "2.0.0.10",   // enp1s0 on Giada — multicast leaves on this NIC
   artnetPort: 6454,
   artnetRefreshRate: 30,
