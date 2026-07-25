@@ -1,0 +1,56 @@
+root@paintable:/opt/painfader# curl -s -X PUT http://localhost:8080/api/dmx/zone/haube2 \
+  -H "Content-Type: application/json" \
+  -d '{"type":"solid","primaryColor":{"r":255,"g":0,"b":0},"secondaryColor":{"r":0,"g":0,"b":0},"brightness":220,"speed":64,"enabled":true}'
+{"error":"zone must be one of: haube, schmerz, nsar, opiat"}root@paintable:/opt/painfader# cd /opt/painfader &cd /opt/painfader && git pull origin main && \
+pnpm --filter @workspace/api-server run build && \
+systemctl restart painfader && sleep 3 && \
+curl -s -X PUT http://localhost:8080/api/dmx/zone/haube2 \
+  -H "Content-Type: application/json" \
+  -d '{"type":"solid","primaryColor":{"r":255,"g":0,"b":0},"secondaryColor":{"r":0,"g":0,"b":0},"brightness":220,"speed":64,"enabled":true}'
+remote: Enumerating objects: 76, done.
+remote: Counting objects: 100% (76/76), done.
+remote: Compressing objects: 100% (15/15), done.
+remote: Total 41 (delta 26), reused 41 (delta 26), pack-reused 0 (from 0)
+Unpacking objects: 100% (41/41), 21.87 KiB | 678.00 KiB/s, done.
+From https://github.com/durhamsmedia/painfader
+ * branch            main       -> FETCH_HEAD
+   4b13636..33129a1  main       -> origin/main
+Updating 4b13636..33129a1
+Fast-forward
+ artifacts/api-server/src/lib/artnet-pixels.ts      |  24 +-
+ artifacts/api-server/src/lib/dmx.ts                |  17 +-
+ artifacts/api-server/src/lib/hardware-config.ts    |  11 +-
+ .../painfader/src/components/PresetEditor.tsx      |  12 +-
+ artifacts/painfader/src/pages/Dashboard.tsx        |  15 +-
+ ...er-curl-s-X-PUT-http-localhos_1784983463573.txt |  30 +
+ lib/api-client-react/src/generated/api.schemas.ts  |  15 +-
+ lib/api-client-react/src/generated/api.ts          |  14 +-
+ lib/api-spec/openapi.yaml                          |  32 +-
+ lib/api-zod/src/generated/api.ts                   | 984 +++++++++++++++++++-
+ lib/api-zod/src/generated/types/dmxState.ts        |   3 +
+ .../src/generated/types/dmxStateStartButton.ts     |  24 +
+ lib/api-zod/src/generated/types/faderPreset.ts     |   1 +
+ .../src/generated/types/faderPresetInput.ts        |   1 +
+ .../src/generated/types/faderPresetScreen.ts       |   1 +
+ .../src/generated/types/hardwareConfigGledopto1.ts |   3 +-
+ lib/api-zod/src/generated/types/index.ts           |   1 +
+ lib/api-zod/src/generated/types/screenInput.ts     |   1 +
+ lib/api-zod/src/generated/types/screenState.ts     |   1 +
+ 19 files changed, 1112 insertions(+), 78 deletions(-)
+ create mode 100644 attached_assets/Pasted-root-paintable-opt-painfader-curl-s-X-PUT-http-localhos_1784983463573.txt
+ create mode 100644 lib/api-zod/src/generated/types/dmxStateStartButton.ts
+$ node ./build.mjs
+
+  dist/index.mjs                       1.7mb ⚠️
+  dist/pino-worker.mjs               153.4kb
+  dist/pino-file.mjs                 142.0kb
+  dist/pino-pretty.mjs               114.6kb
+  dist/thread-stream-worker.mjs        7.3kb
+  dist/index.mjs.map                   2.7mb
+  dist/pino-worker.mjs.map           256.9kb
+  dist/pino-file.mjs.map             229.0kb
+  dist/pino-pretty.mjs.map           204.0kb
+  dist/thread-stream-worker.mjs.map   12.0kb
+
+⚡ Done in 136ms
+{"error":"zone must be one of: haube, schmerz, nsar, opiat"}root@paintable:/opt/painfader# 
