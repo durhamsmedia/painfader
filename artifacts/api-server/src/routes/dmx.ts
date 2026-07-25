@@ -5,7 +5,7 @@ import { logger } from "../lib/logger";
 const router = Router();
 
 const VALID_POSITIONS = [-1, 0, 1];
-const VALID_ZONES = ["haube", "schmerz", "nsar", "opiat"] as const;
+const VALID_ZONES = ["haube", "haube2", "schmerz", "nsar", "opiat"] as const;
 
 // ── State / config ────────────────────────────────────────────────────────────
 
