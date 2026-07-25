@@ -15,6 +15,8 @@
  *   opiat   = Opiat strip                on Gledopto #2 output 2
  */
 
+import fs from "fs";
+import path from "path";
 import { logger } from "./logger";
 import {
   ZonePattern,
@@ -31,6 +33,38 @@ import {
   HardwareConfig,
   DEFAULT_HARDWARE_CONFIG,
 } from "./hardware-config";
+
+// ─── Preset persistence ───────────────────────────────────────────────────────
+// Stored next to the dist bundle so it survives git pulls (not tracked by git).
+const PRESETS_FILE = path.join(
+  path.dirname(new URL(import.meta.url).pathname),
+  "../../data/presets.json",
+);
+
+interface PersistedPresets {
+  presets: FaderPreset[];
+  idlePreset: FaderPreset;
+  idleTimerSeconds: number;
+  idleTimerEnabled: boolean;
+}
+
+function loadPersistedPresets(): PersistedPresets | null {
+  try {
+    const raw = fs.readFileSync(PRESETS_FILE, "utf8");
+    return JSON.parse(raw) as PersistedPresets;
+  } catch {
+    return null;
+  }
+}
+
+function savePresetsToFile(data: PersistedPresets): void {
+  try {
+    fs.mkdirSync(path.dirname(PRESETS_FILE), { recursive: true });
+    fs.writeFileSync(PRESETS_FILE, JSON.stringify(data, null, 2), "utf8");
+  } catch (err) {
+    logger.warn({ err }, "Failed to persist presets to disk");
+  }
+}
 
 // ─── Preset shape ────────────────────────────────────────────────────────────
 
@@ -167,15 +201,30 @@ class DmxController {
   private faderPos: FaderPosition = 0;
 
   // ── Presets ──
-  private presets: FaderPreset[] = DEFAULT_PRESETS.map((p) => deepClonePreset(p));
-  private idlePreset: FaderPreset = deepClonePreset(DEFAULT_IDLE_PRESET);
-  private idleTimerSeconds = 30;
-  private idleTimerEnabled = true;
+  private presets: FaderPreset[];
+  private idlePreset: FaderPreset;
+  private idleTimerSeconds: number;
+  private idleTimerEnabled: boolean;
   private idleTimerHandle: NodeJS.Timeout | null = null;
   private idleTimerStart: number | null = null;
   private idleTimerTriggered = false;
 
   constructor() {
+    // Load persisted presets from disk, fall back to compiled defaults
+    const saved = loadPersistedPresets();
+    if (saved) {
+      this.presets          = saved.presets.map((p) => deepClonePreset(p));
+      this.idlePreset       = deepClonePreset(saved.idlePreset);
+      this.idleTimerSeconds = saved.idleTimerSeconds ?? 30;
+      this.idleTimerEnabled = saved.idleTimerEnabled ?? true;
+      logger.info({ file: PRESETS_FILE }, "Presets loaded from disk");
+    } else {
+      this.presets          = DEFAULT_PRESETS.map((p) => deepClonePreset(p));
+      this.idlePreset       = deepClonePreset(DEFAULT_IDLE_PRESET);
+      this.idleTimerSeconds = 30;
+      this.idleTimerEnabled = true;
+    }
+
     const cfg = this.hwConfig;
 
     this.artnet = new ArtNetPixelSender(cfg, this.zones);
@@ -419,6 +468,7 @@ class DmxController {
       if (![-1, 0, 1].includes(pos)) return this.getPresets();
       this.presets[POS_TO_IDX[pos]] = merge(this.presets[POS_TO_IDX[pos]]);
     }
+    this.persistPresets();
     return this.getPresets();
   }
 
@@ -432,6 +482,7 @@ class DmxController {
       const idx = POS_TO_IDX[pos];
       this.presets[idx] = { ...snap, name: this.presets[idx]?.name ?? `POS ${pos}` };
     }
+    this.persistPresets();
     return this.getPresets();
   }
 
@@ -452,7 +503,17 @@ class DmxController {
     if (timerSeconds !== undefined) this.idleTimerSeconds = Math.max(1, Math.min(3600, timerSeconds));
     if (enabled      !== undefined) this.idleTimerEnabled = enabled;
     if (!this.idleTimerEnabled) this.stopIdleTimer();
+    this.persistPresets();
     return this.getPresets();
+  }
+
+  private persistPresets(): void {
+    savePresetsToFile({
+      presets:          this.presets.map((p) => deepClonePreset(p)),
+      idlePreset:       deepClonePreset(this.idlePreset),
+      idleTimerSeconds: this.idleTimerSeconds,
+      idleTimerEnabled: this.idleTimerEnabled,
+    });
   }
 
   // ── Scene shortcuts ───────────────────────────────────────────────────────
