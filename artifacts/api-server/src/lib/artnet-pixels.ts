@@ -141,7 +141,7 @@ export class ArtNetPixelSender {
     // Advance per-zone phase accumulators
     const ZONES: ZoneName[] = ["haube", "schmerz", "nsar", "opiat"];
     for (const z of ZONES) {
-      const hz = (this.zones[z].speed / 255) * 2.0; // 0..2 Hz
+      const hz = (this.zones[z].speed / 255) * 6.0; // 0..6 Hz
       this.phases[z] = (this.phases[z] + hz * dt) % 1;
     }
 

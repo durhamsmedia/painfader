@@ -122,7 +122,10 @@ export function renderPattern(
   if (!pattern.enabled || pixelCount === 0) return buf;
 
   const { primaryColor: pc, secondaryColor: sc, brightness: br, speed } = pattern;
-  const bScale = br / 255;
+  // Gamma 2.2: maps linear slider value to perceptually uniform brightness.
+  // Without this, WS2812b LEDs appear identical from ~8% to 100% because the
+  // human eye is logarithmic — all the perceptible range compresses to the bottom.
+  const bScale = Math.pow(br / 255, 2.2);
 
   switch (pattern.type) {
     case "solid": {
