@@ -1,0 +1,22 @@
+root@paintable:~# systemctl status painfader --no-pager | head -20
+journalctl -u painfader -n 20 --no-pager | grep -iE "error|Error|crash|pixel|socket|listen"
+● painfader.service - Painfader DMX Controller
+     Loaded: loaded (/etc/systemd/system/painfader.service; disabled; preset: enabled)
+     Active: active (running) since Sat 2026-07-25 12:46:02 CEST; 4min 17s ago
+ Invocation: 0a144ea5938d4e71bf53e408608146e4
+   Main PID: 8061 (node)
+      Tasks: 11 (limit: 8943)
+     Memory: 69M (peak: 89.2M)
+        CPU: 19.108s
+     CGroup: /system.slice/painfader.service
+             └─8061 /usr/bin/node --enable-source-maps ./dist/index.mjs
+
+Jul 25 12:48:11 paintable node[8061]: {"level":30,"time":1784976491601,"pid":8061,"hostname":"paintable","scene":"nsar","msg":"Scene loaded"}
+Jul 25 12:48:11 paintable node[8061]: {"level":30,"time":1784976491602,"pid":8061,"hostname":"paintable","req":{"id":62,"method":"PUT","url":"/api/dmx/scene"},"res":{"statusCode":200},"responseTime":3,"msg":"request completed"}
+Jul 25 12:48:11 paintable node[8061]: {"level":30,"time":1784976491621,"pid":8061,"hostname":"paintable","req":{"id":63,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 25 12:48:12 paintable node[8061]: {"level":30,"time":1784976492139,"pid":8061,"hostname":"paintable","req":{"id":64,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 25 12:48:12 paintable node[8061]: {"level":30,"time":1784976492652,"pid":8061,"hostname":"paintable","req":{"id":65,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":200},"responseTime":2,"msg":"request completed"}
+Jul 25 12:48:12 paintable node[8061]: {"level":30,"time":1784976492877,"pid":8061,"hostname":"paintable","req":{"id":66,"method":"PUT","url":"/api/dmx/mode"},"res":{"statusCode":200},"responseTime":2,"msg":"request completed"}
+Jul 25 12:48:12 paintable node[8061]: {"level":30,"time":1784976492905,"pid":8061,"hostname":"paintable","req":{"id":67,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 25 12:48:13 paintable node[8061]: {"level":30,"time":1784976493421,"pid":8061,"hostname":"paintable","req":{"id":68,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 25 12:48:37 paintable node[8061]: {"level":30,"time":1784976517933,"pid":8061,"hostname":"paintable","timerSeconds":30,"msg":"Idle timer fired"}
