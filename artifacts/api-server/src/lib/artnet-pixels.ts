@@ -152,7 +152,9 @@ export class ArtNetPixelSender {
       const offset = u * PIXELS_PER_UNIVERSE * 3;
       const slice  = pixels.subarray(offset, offset + PIXELS_PER_UNIVERSE * 3);
       const pkt    = buildArtDmxPacket(universeStart + u, slice);
-      this.socket.send(pkt, 0, pkt.length, this.config.artnetPort, host);
+      this.socket.send(pkt, 0, pkt.length, this.config.artnetPort, host, (err) => {
+        if (err) logger.warn({ err, host }, "Art-Net send error (ignored)");
+      });
     }
   }
 }
