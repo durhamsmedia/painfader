@@ -21,4 +21,5 @@
 export interface ScreenInput {
   videoFile?: string;
   enabled?: boolean;
+  loop?: boolean;
 }

@@ -26,6 +26,7 @@ export interface FaderPreset {
   name: string;
   fan: FaderPresetFan;
   haube: ZonePattern;
+  haube2: ZonePattern;
   schmerz: ZonePattern;
   nsar: ZonePattern;
   opiat: ZonePattern;

@@ -26,6 +26,7 @@ export interface FaderPresetInput {
   name?: string;
   fan?: FaderPresetInputFan;
   haube?: ZonePatternInput;
+  haube2?: ZonePatternInput;
   schmerz?: ZonePatternInput;
   nsar?: ZonePatternInput;
   opiat?: ZonePatternInput;

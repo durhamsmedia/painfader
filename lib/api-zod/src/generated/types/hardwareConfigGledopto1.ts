@@ -21,6 +21,7 @@
 export type HardwareConfigGledopto1 = {
   host: string;
   universeStart: number;
-  haubePixelCount: number;
+  haube1PixelCount: number;
+  haube2PixelCount: number;
   schmerzPixelCount: number;
 };

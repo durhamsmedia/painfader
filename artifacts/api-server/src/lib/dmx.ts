@@ -72,6 +72,7 @@ export interface FaderPreset {
   name: string;
   fan: { speed: number; enabled: boolean };
   haube: ZonePattern;
+  haube2: ZonePattern;
   schmerz: ZonePattern;
   nsar: ZonePattern;
   opiat: ZonePattern;
@@ -99,6 +100,7 @@ export interface DmxState {
   mode: "idle" | "experience";
   fan: FanState;
   haube: ZoneState;
+  haube2: ZoneState;
   schmerz: ZoneState;
   nsar: ZoneState;
   opiat: ZoneState;
@@ -124,6 +126,7 @@ function makePreset(name: string, overrides: Partial<FaderPreset> = {}): FaderPr
     name,
     fan: { speed: 0, enabled: false },
     haube:   { ...off },
+    haube2:  { ...off },
     schmerz: { ...off },
     nsar:    { ...off },
     opiat:   { ...off },
@@ -138,6 +141,7 @@ const DEFAULT_PRESETS: FaderPreset[] = [
   makePreset("N – NSAR", {
     fan:     { speed: 60,  enabled: true },
     haube:   { ...HAUBE_NSAR },
+    haube2:  { ...HAUBE_NSAR },
     schmerz: { ...off },
     nsar:    { ...NSAR_NSAR },
     opiat:   { ...off },
@@ -148,6 +152,7 @@ const DEFAULT_PRESETS: FaderPreset[] = [
   makePreset("SCHMERZ", {
     fan:     { speed: 255, enabled: true },
     haube:   { ...HAUBE_SCHMERZ },
+    haube2:  { ...HAUBE_SCHMERZ },
     schmerz: { ...SCHMERZ_SCHMERZ },
     nsar:    { ...off },
     opiat:   { ...off },
@@ -158,6 +163,7 @@ const DEFAULT_PRESETS: FaderPreset[] = [
   makePreset("O – OPIAT", {
     fan:     { speed: 150, enabled: true },
     haube:   { ...HAUBE_OPIAT },
+    haube2:  { ...HAUBE_OPIAT },
     schmerz: { ...off },
     nsar:    { ...off },
     opiat:   { ...OPIAT_OPIAT },
@@ -169,6 +175,7 @@ const DEFAULT_PRESETS: FaderPreset[] = [
 const DEFAULT_IDLE_PRESET: FaderPreset = makePreset("IDLE", {
   fan:     { speed: 0,  enabled: false },
   haube:   { ...HAUBE_IDLE },
+  haube2:  { ...HAUBE_IDLE },
   schmerz: { ...off },
   nsar:    { ...off },
   opiat:   { ...off },
@@ -192,6 +199,7 @@ class DmxController {
   private fan: FanState   = { speed: 0, enabled: false, dmxChannel: DEFAULT_HARDWARE_CONFIG.fanDmxChannel };
   private zones: PixelZones = {
     haube:   { ...HAUBE_IDLE },
+    haube2:  { ...HAUBE_IDLE },
     schmerz: { ...off },
     nsar:    { ...off },
     opiat:   { ...off },
@@ -265,6 +273,7 @@ class DmxController {
     this.fan = { ...this.fan, speed: preset.fan.speed, enabled: preset.fan.enabled };
     this.zones = {
       haube:   { ...preset.haube },
+      haube2:  { ...(preset.haube2 ?? preset.haube) },
       schmerz: { ...preset.schmerz },
       nsar:    { ...preset.nsar },
       opiat:   { ...preset.opiat },
@@ -329,7 +338,8 @@ class DmxController {
     return {
       mode: this.mode,
       fan: { ...this.fan },
-      haube:   { pattern: { ...this.zones.haube },   pixelCount: this.hwConfig.gledopto1.haubePixelCount },
+      haube:   { pattern: { ...this.zones.haube },   pixelCount: this.hwConfig.gledopto1.haube1PixelCount },
+      haube2:  { pattern: { ...this.zones.haube2 },  pixelCount: this.hwConfig.gledopto1.haube2PixelCount },
       schmerz: { pattern: { ...this.zones.schmerz }, pixelCount: this.hwConfig.gledopto1.schmerzPixelCount },
       nsar:    { pattern: { ...this.zones.nsar },    pixelCount: this.hwConfig.gledopto2.nsarPixelCount },
       opiat:   { pattern: { ...this.zones.opiat },   pixelCount: this.hwConfig.gledopto2.opiatPixelCount },
@@ -455,6 +465,7 @@ class DmxController {
       ...updates,
       fan:    updates.fan    ? { ...existing.fan,    ...updates.fan    } : existing.fan,
       haube:  updates.haube  ? { ...existing.haube,  ...updates.haube  } : existing.haube,
+      haube2: updates.haube2 ? { ...existing.haube2, ...updates.haube2 } : existing.haube2,
       schmerz:updates.schmerz? { ...existing.schmerz,...updates.schmerz} : existing.schmerz,
       nsar:   updates.nsar   ? { ...existing.nsar,   ...updates.nsar   } : existing.nsar,
       opiat:  updates.opiat  ? { ...existing.opiat,  ...updates.opiat  } : existing.opiat,
@@ -491,6 +502,7 @@ class DmxController {
       name: "captured",
       fan:    { speed: this.fan.speed, enabled: this.fan.enabled },
       haube:   { ...this.zones.haube },
+      haube2:  { ...this.zones.haube2 },
       schmerz: { ...this.zones.schmerz },
       nsar:    { ...this.zones.nsar },
       opiat:   { ...this.zones.opiat },
@@ -577,10 +589,13 @@ function clamp(v: number, min: number, max: number) { return Math.max(min, Math.
 function clampPos(p: number): FaderPosition { return Math.max(-1, Math.min(1, Math.round(p))) as FaderPosition; }
 
 function deepClonePreset(p: FaderPreset): FaderPreset {
+  // haube2 may be absent in presets saved before this field was added — fall back to haube
+  const h2 = ((p as any).haube2 ?? p.haube) as ZonePattern;
   return {
     ...p,
     fan:    { ...p.fan },
     haube:  { ...p.haube,   primaryColor: { ...p.haube.primaryColor },   secondaryColor: { ...p.haube.secondaryColor } },
+    haube2: { ...h2,        primaryColor: { ...h2.primaryColor },         secondaryColor: { ...h2.secondaryColor } },
     schmerz:{ ...p.schmerz, primaryColor: { ...p.schmerz.primaryColor }, secondaryColor: { ...p.schmerz.secondaryColor } },
     nsar:   { ...p.nsar,    primaryColor: { ...p.nsar.primaryColor },    secondaryColor: { ...p.nsar.secondaryColor } },
     opiat:  { ...p.opiat,   primaryColor: { ...p.opiat.primaryColor },   secondaryColor: { ...p.opiat.secondaryColor } },

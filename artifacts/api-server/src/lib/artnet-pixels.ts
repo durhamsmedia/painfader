@@ -8,9 +8,10 @@
  *                Works across WiFi-AP / Ethernet simultaneously (IGMP multicast).
  *
  * Universe layout (same for both protocols):
- *   Gledopto #1 (haube + schmerz):
- *     universeStart+0 … +ceil(haubePixelCount/170)-1   → haube
- *     universeStart+N … +ceil(schmerzPixelCount/170)-1 → schmerz
+ *   Gledopto #1 (haube1 + haube2 + schmerz):
+ *     universeStart+0  … → haube  (Matrix 1, GPIO16)
+ *     universeStart+N  … → haube2 (Matrix 2, GPIO12)
+ *     universeStart+M  … → schmerz
  *   Gledopto #2 (nsar + opiat):
  *     universeStart+0 … +ceil(nsarPixelCount/170)-1    → nsar
  *     universeStart+M … +ceil(opiatPixelCount/170)-1   → opiat
@@ -30,6 +31,7 @@ const E131_MULTICAST_BASE = "239.255"; // base; full = 239.255.(hi).(lo)
 
 export interface PixelZones {
   haube: ZonePattern;
+  haube2: ZonePattern;
   schmerz: ZonePattern;
   nsar: ZonePattern;
   opiat: ZonePattern;
@@ -46,7 +48,7 @@ export class ArtNetPixelSender {
   private lastFrameMs = Date.now();
 
   /** Phase accumulators [0..1) — one per zone, advanced per frame */
-  private phases: Record<ZoneName, number> = { haube: 0, schmerz: 0, nsar: 0, opiat: 0 };
+  private phases: Record<ZoneName, number> = { haube: 0, haube2: 0, schmerz: 0, nsar: 0, opiat: 0 };
 
   /** sACN sequence number, 1-255 wrapping */
   private seqNum = 1;
@@ -109,7 +111,7 @@ export class ArtNetPixelSender {
       speed: 0,
       enabled: true,
     };
-    this.zones = { haube: dead, schmerz: dead, nsar: dead, opiat: dead };
+    this.zones = { haube: dead, haube2: dead, schmerz: dead, nsar: dead, opiat: dead };
     this.flush();
   }
 
@@ -139,7 +141,7 @@ export class ArtNetPixelSender {
     this.lastFrameMs = now;
 
     // Advance per-zone phase accumulators
-    const ZONES: ZoneName[] = ["haube", "schmerz", "nsar", "opiat"];
+    const ZONES: ZoneName[] = ["haube", "haube2", "schmerz", "nsar", "opiat"];
     for (const z of ZONES) {
       const hz = (this.zones[z].speed / 255) * 6.0; // 0..6 Hz
       this.phases[z] = (this.phases[z] + hz * dt) % 1;
@@ -148,10 +150,12 @@ export class ArtNetPixelSender {
     const g1 = this.config.gledopto1;
     const g2 = this.config.gledopto2;
 
-    // Gledopto #1: haube then schmerz on consecutive universes
-    const haubeUniStart   = g1.universeStart;
-    const schmerzUniStart = haubeUniStart + universesNeeded(g1.haubePixelCount);
-    this.sendZone(g1.host, haubeUniStart,   "haube",   g1.haubePixelCount);
+    // Gledopto #1: haube (Matrix 1 GPIO16) → haube2 (Matrix 2 GPIO12) → schmerz
+    const haube1UniStart  = g1.universeStart;
+    const haube2UniStart  = haube1UniStart  + universesNeeded(g1.haube1PixelCount);
+    const schmerzUniStart = haube2UniStart  + universesNeeded(g1.haube2PixelCount);
+    this.sendZone(g1.host, haube1UniStart,  "haube",   g1.haube1PixelCount);
+    this.sendZone(g1.host, haube2UniStart,  "haube2",  g1.haube2PixelCount);
     this.sendZone(g1.host, schmerzUniStart, "schmerz", g1.schmerzPixelCount);
 
     // Gledopto #2: nsar then opiat

@@ -19,6 +19,7 @@
  */
 import type { DmxStateIdleTimer } from './dmxStateIdleTimer';
 import type { DmxStateMode } from './dmxStateMode';
+import type { DmxStateStartButton } from './dmxStateStartButton';
 import type { FanState } from './fanState';
 import type { GpioStatus } from './gpioStatus';
 import type { HardwareConfig } from './hardwareConfig';
@@ -31,6 +32,7 @@ export interface DmxState {
   mode: DmxStateMode;
   fan: FanState;
   haube: ZoneState;
+  haube2: ZoneState;
   schmerz: ZoneState;
   nsar: ZoneState;
   opiat: ZoneState;
@@ -38,6 +40,7 @@ export interface DmxState {
   screen: ScreenState;
   painFader: PainFaderState;
   gpio: GpioStatus;
+  startButton: DmxStateStartButton;
   hardwareConfig: HardwareConfig;
   idleTimer: DmxStateIdleTimer;
 }

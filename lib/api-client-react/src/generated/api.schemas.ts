@@ -99,6 +99,11 @@ export const DmxStateMode = {
   experience: 'experience',
 } as const;
 
+export type DmxStateStartButton = {
+  simulated: boolean;
+  port: string;
+};
+
 export type DmxStateIdleTimer = {
   enabled: boolean;
   timerSeconds: number;
@@ -137,6 +142,7 @@ export interface MotorState {
 export interface ScreenState {
   videoFile: string;
   enabled: boolean;
+  loop: boolean;
 }
 
 export interface PainFaderState {
@@ -176,7 +182,8 @@ export const HardwareConfigMotorDriverType = {
 export type HardwareConfigGledopto1 = {
   host: string;
   universeStart: number;
-  haubePixelCount: number;
+  haube1PixelCount: number;
+  haube2PixelCount: number;
   schmerzPixelCount: number;
 };
 
@@ -211,6 +218,7 @@ export interface DmxState {
   mode: DmxStateMode;
   fan: FanState;
   haube: ZoneState;
+  haube2: ZoneState;
   schmerz: ZoneState;
   nsar: ZoneState;
   opiat: ZoneState;
@@ -218,6 +226,7 @@ export interface DmxState {
   screen: ScreenState;
   painFader: PainFaderState;
   gpio: GpioStatus;
+  startButton: DmxStateStartButton;
   hardwareConfig: HardwareConfig;
   idleTimer: DmxStateIdleTimer;
 }
@@ -262,6 +271,7 @@ export interface MotorInput {
 export interface ScreenInput {
   videoFile?: string;
   enabled?: boolean;
+  loop?: boolean;
 }
 
 export interface FaderPositionInput {
@@ -315,12 +325,14 @@ export type FaderPresetMotor = {
 export type FaderPresetScreen = {
   videoFile: string;
   enabled: boolean;
+  loop: boolean;
 };
 
 export interface FaderPreset {
   name: string;
   fan: FaderPresetFan;
   haube: ZonePattern;
+  haube2: ZonePattern;
   schmerz: ZonePattern;
   nsar: ZonePattern;
   opiat: ZonePattern;
@@ -362,6 +374,7 @@ export interface FaderPresetInput {
   name?: string;
   fan?: FaderPresetInputFan;
   haube?: ZonePatternInput;
+  haube2?: ZonePatternInput;
   schmerz?: ZonePatternInput;
   nsar?: ZonePatternInput;
   opiat?: ZonePatternInput;

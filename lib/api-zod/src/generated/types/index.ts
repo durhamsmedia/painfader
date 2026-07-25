@@ -21,6 +21,7 @@
 export * from './dmxState';
 export * from './dmxStateIdleTimer';
 export * from './dmxStateMode';
+export * from './dmxStateStartButton';
 export * from './faderPositionInput';
 export * from './faderPreset';
 export * from './faderPresetFan';

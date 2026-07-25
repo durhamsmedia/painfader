@@ -18,8 +18,7 @@
  * OpenAPI spec version: 0.3.0
  */
 
-export interface ScreenState {
-  videoFile: string;
-  enabled: boolean;
-  loop: boolean;
-}
+export type DmxStateStartButton = {
+  simulated: boolean;
+  port: string;
+};

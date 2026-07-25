@@ -21,4 +21,5 @@
 export type FaderPresetScreen = {
   videoFile: string;
   enabled: boolean;
+  loop: boolean;
 };

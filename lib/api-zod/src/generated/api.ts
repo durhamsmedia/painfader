@@ -58,6 +58,30 @@ export const getDmxStateResponseHaubePatternBrightnessMax = 255;
 export const getDmxStateResponseHaubePatternSpeedMin = 0;
 export const getDmxStateResponseHaubePatternSpeedMax = 255;
 
+export const getDmxStateResponseHaube2PatternPrimaryColorRMin = 0;
+export const getDmxStateResponseHaube2PatternPrimaryColorRMax = 255;
+
+export const getDmxStateResponseHaube2PatternPrimaryColorGMin = 0;
+export const getDmxStateResponseHaube2PatternPrimaryColorGMax = 255;
+
+export const getDmxStateResponseHaube2PatternPrimaryColorBMin = 0;
+export const getDmxStateResponseHaube2PatternPrimaryColorBMax = 255;
+
+export const getDmxStateResponseHaube2PatternSecondaryColorRMin = 0;
+export const getDmxStateResponseHaube2PatternSecondaryColorRMax = 255;
+
+export const getDmxStateResponseHaube2PatternSecondaryColorGMin = 0;
+export const getDmxStateResponseHaube2PatternSecondaryColorGMax = 255;
+
+export const getDmxStateResponseHaube2PatternSecondaryColorBMin = 0;
+export const getDmxStateResponseHaube2PatternSecondaryColorBMax = 255;
+
+export const getDmxStateResponseHaube2PatternBrightnessMin = 0;
+export const getDmxStateResponseHaube2PatternBrightnessMax = 255;
+
+export const getDmxStateResponseHaube2PatternSpeedMin = 0;
+export const getDmxStateResponseHaube2PatternSpeedMax = 255;
+
 export const getDmxStateResponseSchmerzPatternPrimaryColorRMin = 0;
 export const getDmxStateResponseSchmerzPatternPrimaryColorRMax = 255;
 
@@ -166,6 +190,25 @@ export const GetDmxStateResponse = zod.object({
 }),
   "pixelCount": zod.number().describe('Physical pixel count for this zone (from hardware config)')
 }),
+  "haube2": zod.object({
+  "pattern": zod.object({
+  "type": zod.enum(['solid', 'pulse', 'chase', 'wave', 'sparkle']),
+  "primaryColor": zod.object({
+  "r": zod.number().min(getDmxStateResponseHaube2PatternPrimaryColorRMin).max(getDmxStateResponseHaube2PatternPrimaryColorRMax),
+  "g": zod.number().min(getDmxStateResponseHaube2PatternPrimaryColorGMin).max(getDmxStateResponseHaube2PatternPrimaryColorGMax),
+  "b": zod.number().min(getDmxStateResponseHaube2PatternPrimaryColorBMin).max(getDmxStateResponseHaube2PatternPrimaryColorBMax)
+}),
+  "secondaryColor": zod.object({
+  "r": zod.number().min(getDmxStateResponseHaube2PatternSecondaryColorRMin).max(getDmxStateResponseHaube2PatternSecondaryColorRMax),
+  "g": zod.number().min(getDmxStateResponseHaube2PatternSecondaryColorGMin).max(getDmxStateResponseHaube2PatternSecondaryColorGMax),
+  "b": zod.number().min(getDmxStateResponseHaube2PatternSecondaryColorBMin).max(getDmxStateResponseHaube2PatternSecondaryColorBMax)
+}),
+  "brightness": zod.number().min(getDmxStateResponseHaube2PatternBrightnessMin).max(getDmxStateResponseHaube2PatternBrightnessMax),
+  "speed": zod.number().min(getDmxStateResponseHaube2PatternSpeedMin).max(getDmxStateResponseHaube2PatternSpeedMax).describe('Animation speed: 0=static, 255=~2 Hz cycle'),
+  "enabled": zod.boolean()
+}),
+  "pixelCount": zod.number().describe('Physical pixel count for this zone (from hardware config)')
+}),
   "schmerz": zod.object({
   "pattern": zod.object({
   "type": zod.enum(['solid', 'pulse', 'chase', 'wave', 'sparkle']),
@@ -231,7 +274,8 @@ export const GetDmxStateResponse = zod.object({
 }),
   "screen": zod.object({
   "videoFile": zod.string(),
-  "enabled": zod.boolean()
+  "enabled": zod.boolean(),
+  "loop": zod.boolean()
 }),
   "painFader": zod.object({
   "position": zod.number().min(getDmxStateResponsePainFaderPositionMin).max(getDmxStateResponsePainFaderPositionMax),
@@ -246,11 +290,16 @@ export const GetDmxStateResponse = zod.object({
   "opiat": zod.boolean()
 })
 }),
+  "startButton": zod.object({
+  "simulated": zod.boolean(),
+  "port": zod.string()
+}),
   "hardwareConfig": zod.object({
   "gledopto1": zod.object({
   "host": zod.string(),
   "universeStart": zod.number(),
-  "haubePixelCount": zod.number(),
+  "haube1PixelCount": zod.number(),
+  "haube2PixelCount": zod.number(),
   "schmerzPixelCount": zod.number()
 }),
   "gledopto2": zod.object({
@@ -291,7 +340,8 @@ export const GetHardwareConfigResponse = zod.object({
   "gledopto1": zod.object({
   "host": zod.string(),
   "universeStart": zod.number(),
-  "haubePixelCount": zod.number(),
+  "haube1PixelCount": zod.number(),
+  "haube2PixelCount": zod.number(),
   "schmerzPixelCount": zod.number()
 }),
   "gledopto2": zod.object({
@@ -325,7 +375,8 @@ export const UpdateHardwareConfigBody = zod.object({
   "gledopto1": zod.object({
   "host": zod.string(),
   "universeStart": zod.number(),
-  "haubePixelCount": zod.number(),
+  "haube1PixelCount": zod.number(),
+  "haube2PixelCount": zod.number(),
   "schmerzPixelCount": zod.number()
 }),
   "gledopto2": zod.object({
@@ -355,7 +406,8 @@ export const UpdateHardwareConfigResponse = zod.object({
   "gledopto1": zod.object({
   "host": zod.string(),
   "universeStart": zod.number(),
-  "haubePixelCount": zod.number(),
+  "haube1PixelCount": zod.number(),
+  "haube2PixelCount": zod.number(),
   "schmerzPixelCount": zod.number()
 }),
   "gledopto2": zod.object({
@@ -415,6 +467,30 @@ export const setModeResponseHaubePatternBrightnessMax = 255;
 
 export const setModeResponseHaubePatternSpeedMin = 0;
 export const setModeResponseHaubePatternSpeedMax = 255;
+
+export const setModeResponseHaube2PatternPrimaryColorRMin = 0;
+export const setModeResponseHaube2PatternPrimaryColorRMax = 255;
+
+export const setModeResponseHaube2PatternPrimaryColorGMin = 0;
+export const setModeResponseHaube2PatternPrimaryColorGMax = 255;
+
+export const setModeResponseHaube2PatternPrimaryColorBMin = 0;
+export const setModeResponseHaube2PatternPrimaryColorBMax = 255;
+
+export const setModeResponseHaube2PatternSecondaryColorRMin = 0;
+export const setModeResponseHaube2PatternSecondaryColorRMax = 255;
+
+export const setModeResponseHaube2PatternSecondaryColorGMin = 0;
+export const setModeResponseHaube2PatternSecondaryColorGMax = 255;
+
+export const setModeResponseHaube2PatternSecondaryColorBMin = 0;
+export const setModeResponseHaube2PatternSecondaryColorBMax = 255;
+
+export const setModeResponseHaube2PatternBrightnessMin = 0;
+export const setModeResponseHaube2PatternBrightnessMax = 255;
+
+export const setModeResponseHaube2PatternSpeedMin = 0;
+export const setModeResponseHaube2PatternSpeedMax = 255;
 
 export const setModeResponseSchmerzPatternPrimaryColorRMin = 0;
 export const setModeResponseSchmerzPatternPrimaryColorRMax = 255;
@@ -524,6 +600,25 @@ export const SetModeResponse = zod.object({
 }),
   "pixelCount": zod.number().describe('Physical pixel count for this zone (from hardware config)')
 }),
+  "haube2": zod.object({
+  "pattern": zod.object({
+  "type": zod.enum(['solid', 'pulse', 'chase', 'wave', 'sparkle']),
+  "primaryColor": zod.object({
+  "r": zod.number().min(setModeResponseHaube2PatternPrimaryColorRMin).max(setModeResponseHaube2PatternPrimaryColorRMax),
+  "g": zod.number().min(setModeResponseHaube2PatternPrimaryColorGMin).max(setModeResponseHaube2PatternPrimaryColorGMax),
+  "b": zod.number().min(setModeResponseHaube2PatternPrimaryColorBMin).max(setModeResponseHaube2PatternPrimaryColorBMax)
+}),
+  "secondaryColor": zod.object({
+  "r": zod.number().min(setModeResponseHaube2PatternSecondaryColorRMin).max(setModeResponseHaube2PatternSecondaryColorRMax),
+  "g": zod.number().min(setModeResponseHaube2PatternSecondaryColorGMin).max(setModeResponseHaube2PatternSecondaryColorGMax),
+  "b": zod.number().min(setModeResponseHaube2PatternSecondaryColorBMin).max(setModeResponseHaube2PatternSecondaryColorBMax)
+}),
+  "brightness": zod.number().min(setModeResponseHaube2PatternBrightnessMin).max(setModeResponseHaube2PatternBrightnessMax),
+  "speed": zod.number().min(setModeResponseHaube2PatternSpeedMin).max(setModeResponseHaube2PatternSpeedMax).describe('Animation speed: 0=static, 255=~2 Hz cycle'),
+  "enabled": zod.boolean()
+}),
+  "pixelCount": zod.number().describe('Physical pixel count for this zone (from hardware config)')
+}),
   "schmerz": zod.object({
   "pattern": zod.object({
   "type": zod.enum(['solid', 'pulse', 'chase', 'wave', 'sparkle']),
@@ -589,7 +684,8 @@ export const SetModeResponse = zod.object({
 }),
   "screen": zod.object({
   "videoFile": zod.string(),
-  "enabled": zod.boolean()
+  "enabled": zod.boolean(),
+  "loop": zod.boolean()
 }),
   "painFader": zod.object({
   "position": zod.number().min(setModeResponsePainFaderPositionMin).max(setModeResponsePainFaderPositionMax),
@@ -604,11 +700,16 @@ export const SetModeResponse = zod.object({
   "opiat": zod.boolean()
 })
 }),
+  "startButton": zod.object({
+  "simulated": zod.boolean(),
+  "port": zod.string()
+}),
   "hardwareConfig": zod.object({
   "gledopto1": zod.object({
   "host": zod.string(),
   "universeStart": zod.number(),
-  "haubePixelCount": zod.number(),
+  "haube1PixelCount": zod.number(),
+  "haube2PixelCount": zod.number(),
   "schmerzPixelCount": zod.number()
 }),
   "gledopto2": zod.object({
@@ -681,6 +782,30 @@ export const setFanResponseHaubePatternBrightnessMax = 255;
 
 export const setFanResponseHaubePatternSpeedMin = 0;
 export const setFanResponseHaubePatternSpeedMax = 255;
+
+export const setFanResponseHaube2PatternPrimaryColorRMin = 0;
+export const setFanResponseHaube2PatternPrimaryColorRMax = 255;
+
+export const setFanResponseHaube2PatternPrimaryColorGMin = 0;
+export const setFanResponseHaube2PatternPrimaryColorGMax = 255;
+
+export const setFanResponseHaube2PatternPrimaryColorBMin = 0;
+export const setFanResponseHaube2PatternPrimaryColorBMax = 255;
+
+export const setFanResponseHaube2PatternSecondaryColorRMin = 0;
+export const setFanResponseHaube2PatternSecondaryColorRMax = 255;
+
+export const setFanResponseHaube2PatternSecondaryColorGMin = 0;
+export const setFanResponseHaube2PatternSecondaryColorGMax = 255;
+
+export const setFanResponseHaube2PatternSecondaryColorBMin = 0;
+export const setFanResponseHaube2PatternSecondaryColorBMax = 255;
+
+export const setFanResponseHaube2PatternBrightnessMin = 0;
+export const setFanResponseHaube2PatternBrightnessMax = 255;
+
+export const setFanResponseHaube2PatternSpeedMin = 0;
+export const setFanResponseHaube2PatternSpeedMax = 255;
 
 export const setFanResponseSchmerzPatternPrimaryColorRMin = 0;
 export const setFanResponseSchmerzPatternPrimaryColorRMax = 255;
@@ -790,6 +915,25 @@ export const SetFanResponse = zod.object({
 }),
   "pixelCount": zod.number().describe('Physical pixel count for this zone (from hardware config)')
 }),
+  "haube2": zod.object({
+  "pattern": zod.object({
+  "type": zod.enum(['solid', 'pulse', 'chase', 'wave', 'sparkle']),
+  "primaryColor": zod.object({
+  "r": zod.number().min(setFanResponseHaube2PatternPrimaryColorRMin).max(setFanResponseHaube2PatternPrimaryColorRMax),
+  "g": zod.number().min(setFanResponseHaube2PatternPrimaryColorGMin).max(setFanResponseHaube2PatternPrimaryColorGMax),
+  "b": zod.number().min(setFanResponseHaube2PatternPrimaryColorBMin).max(setFanResponseHaube2PatternPrimaryColorBMax)
+}),
+  "secondaryColor": zod.object({
+  "r": zod.number().min(setFanResponseHaube2PatternSecondaryColorRMin).max(setFanResponseHaube2PatternSecondaryColorRMax),
+  "g": zod.number().min(setFanResponseHaube2PatternSecondaryColorGMin).max(setFanResponseHaube2PatternSecondaryColorGMax),
+  "b": zod.number().min(setFanResponseHaube2PatternSecondaryColorBMin).max(setFanResponseHaube2PatternSecondaryColorBMax)
+}),
+  "brightness": zod.number().min(setFanResponseHaube2PatternBrightnessMin).max(setFanResponseHaube2PatternBrightnessMax),
+  "speed": zod.number().min(setFanResponseHaube2PatternSpeedMin).max(setFanResponseHaube2PatternSpeedMax).describe('Animation speed: 0=static, 255=~2 Hz cycle'),
+  "enabled": zod.boolean()
+}),
+  "pixelCount": zod.number().describe('Physical pixel count for this zone (from hardware config)')
+}),
   "schmerz": zod.object({
   "pattern": zod.object({
   "type": zod.enum(['solid', 'pulse', 'chase', 'wave', 'sparkle']),
@@ -855,7 +999,8 @@ export const SetFanResponse = zod.object({
 }),
   "screen": zod.object({
   "videoFile": zod.string(),
-  "enabled": zod.boolean()
+  "enabled": zod.boolean(),
+  "loop": zod.boolean()
 }),
   "painFader": zod.object({
   "position": zod.number().min(setFanResponsePainFaderPositionMin).max(setFanResponsePainFaderPositionMax),
@@ -870,11 +1015,16 @@ export const SetFanResponse = zod.object({
   "opiat": zod.boolean()
 })
 }),
+  "startButton": zod.object({
+  "simulated": zod.boolean(),
+  "port": zod.string()
+}),
   "hardwareConfig": zod.object({
   "gledopto1": zod.object({
   "host": zod.string(),
   "universeStart": zod.number(),
-  "haubePixelCount": zod.number(),
+  "haube1PixelCount": zod.number(),
+  "haube2PixelCount": zod.number(),
   "schmerzPixelCount": zod.number()
 }),
   "gledopto2": zod.object({
@@ -912,7 +1062,7 @@ export const SetFanResponse = zod.object({
  * @summary Update LED zone pattern (Art-Net pixel)
  */
 export const SetZoneParams = zod.object({
-  "name": zod.enum(['haube', 'schmerz', 'nsar', 'opiat']).describe('LED zone: haube | schmerz | nsar | opiat')
+  "name": zod.enum(['haube', 'haube2', 'schmerz', 'nsar', 'opiat']).describe('LED zone: haube | haube2 | schmerz | nsar | opiat')
 })
 
 export const setZoneBodyPrimaryColorRMin = 0;
@@ -984,6 +1134,30 @@ export const setZoneResponseHaubePatternBrightnessMax = 255;
 
 export const setZoneResponseHaubePatternSpeedMin = 0;
 export const setZoneResponseHaubePatternSpeedMax = 255;
+
+export const setZoneResponseHaube2PatternPrimaryColorRMin = 0;
+export const setZoneResponseHaube2PatternPrimaryColorRMax = 255;
+
+export const setZoneResponseHaube2PatternPrimaryColorGMin = 0;
+export const setZoneResponseHaube2PatternPrimaryColorGMax = 255;
+
+export const setZoneResponseHaube2PatternPrimaryColorBMin = 0;
+export const setZoneResponseHaube2PatternPrimaryColorBMax = 255;
+
+export const setZoneResponseHaube2PatternSecondaryColorRMin = 0;
+export const setZoneResponseHaube2PatternSecondaryColorRMax = 255;
+
+export const setZoneResponseHaube2PatternSecondaryColorGMin = 0;
+export const setZoneResponseHaube2PatternSecondaryColorGMax = 255;
+
+export const setZoneResponseHaube2PatternSecondaryColorBMin = 0;
+export const setZoneResponseHaube2PatternSecondaryColorBMax = 255;
+
+export const setZoneResponseHaube2PatternBrightnessMin = 0;
+export const setZoneResponseHaube2PatternBrightnessMax = 255;
+
+export const setZoneResponseHaube2PatternSpeedMin = 0;
+export const setZoneResponseHaube2PatternSpeedMax = 255;
 
 export const setZoneResponseSchmerzPatternPrimaryColorRMin = 0;
 export const setZoneResponseSchmerzPatternPrimaryColorRMax = 255;
@@ -1093,6 +1267,25 @@ export const SetZoneResponse = zod.object({
 }),
   "pixelCount": zod.number().describe('Physical pixel count for this zone (from hardware config)')
 }),
+  "haube2": zod.object({
+  "pattern": zod.object({
+  "type": zod.enum(['solid', 'pulse', 'chase', 'wave', 'sparkle']),
+  "primaryColor": zod.object({
+  "r": zod.number().min(setZoneResponseHaube2PatternPrimaryColorRMin).max(setZoneResponseHaube2PatternPrimaryColorRMax),
+  "g": zod.number().min(setZoneResponseHaube2PatternPrimaryColorGMin).max(setZoneResponseHaube2PatternPrimaryColorGMax),
+  "b": zod.number().min(setZoneResponseHaube2PatternPrimaryColorBMin).max(setZoneResponseHaube2PatternPrimaryColorBMax)
+}),
+  "secondaryColor": zod.object({
+  "r": zod.number().min(setZoneResponseHaube2PatternSecondaryColorRMin).max(setZoneResponseHaube2PatternSecondaryColorRMax),
+  "g": zod.number().min(setZoneResponseHaube2PatternSecondaryColorGMin).max(setZoneResponseHaube2PatternSecondaryColorGMax),
+  "b": zod.number().min(setZoneResponseHaube2PatternSecondaryColorBMin).max(setZoneResponseHaube2PatternSecondaryColorBMax)
+}),
+  "brightness": zod.number().min(setZoneResponseHaube2PatternBrightnessMin).max(setZoneResponseHaube2PatternBrightnessMax),
+  "speed": zod.number().min(setZoneResponseHaube2PatternSpeedMin).max(setZoneResponseHaube2PatternSpeedMax).describe('Animation speed: 0=static, 255=~2 Hz cycle'),
+  "enabled": zod.boolean()
+}),
+  "pixelCount": zod.number().describe('Physical pixel count for this zone (from hardware config)')
+}),
   "schmerz": zod.object({
   "pattern": zod.object({
   "type": zod.enum(['solid', 'pulse', 'chase', 'wave', 'sparkle']),
@@ -1158,7 +1351,8 @@ export const SetZoneResponse = zod.object({
 }),
   "screen": zod.object({
   "videoFile": zod.string(),
-  "enabled": zod.boolean()
+  "enabled": zod.boolean(),
+  "loop": zod.boolean()
 }),
   "painFader": zod.object({
   "position": zod.number().min(setZoneResponsePainFaderPositionMin).max(setZoneResponsePainFaderPositionMax),
@@ -1173,11 +1367,16 @@ export const SetZoneResponse = zod.object({
   "opiat": zod.boolean()
 })
 }),
+  "startButton": zod.object({
+  "simulated": zod.boolean(),
+  "port": zod.string()
+}),
   "hardwareConfig": zod.object({
   "gledopto1": zod.object({
   "host": zod.string(),
   "universeStart": zod.number(),
-  "haubePixelCount": zod.number(),
+  "haube1PixelCount": zod.number(),
+  "haube2PixelCount": zod.number(),
   "schmerzPixelCount": zod.number()
 }),
   "gledopto2": zod.object({
@@ -1250,6 +1449,30 @@ export const setMotorResponseHaubePatternBrightnessMax = 255;
 
 export const setMotorResponseHaubePatternSpeedMin = 0;
 export const setMotorResponseHaubePatternSpeedMax = 255;
+
+export const setMotorResponseHaube2PatternPrimaryColorRMin = 0;
+export const setMotorResponseHaube2PatternPrimaryColorRMax = 255;
+
+export const setMotorResponseHaube2PatternPrimaryColorGMin = 0;
+export const setMotorResponseHaube2PatternPrimaryColorGMax = 255;
+
+export const setMotorResponseHaube2PatternPrimaryColorBMin = 0;
+export const setMotorResponseHaube2PatternPrimaryColorBMax = 255;
+
+export const setMotorResponseHaube2PatternSecondaryColorRMin = 0;
+export const setMotorResponseHaube2PatternSecondaryColorRMax = 255;
+
+export const setMotorResponseHaube2PatternSecondaryColorGMin = 0;
+export const setMotorResponseHaube2PatternSecondaryColorGMax = 255;
+
+export const setMotorResponseHaube2PatternSecondaryColorBMin = 0;
+export const setMotorResponseHaube2PatternSecondaryColorBMax = 255;
+
+export const setMotorResponseHaube2PatternBrightnessMin = 0;
+export const setMotorResponseHaube2PatternBrightnessMax = 255;
+
+export const setMotorResponseHaube2PatternSpeedMin = 0;
+export const setMotorResponseHaube2PatternSpeedMax = 255;
 
 export const setMotorResponseSchmerzPatternPrimaryColorRMin = 0;
 export const setMotorResponseSchmerzPatternPrimaryColorRMax = 255;
@@ -1359,6 +1582,25 @@ export const SetMotorResponse = zod.object({
 }),
   "pixelCount": zod.number().describe('Physical pixel count for this zone (from hardware config)')
 }),
+  "haube2": zod.object({
+  "pattern": zod.object({
+  "type": zod.enum(['solid', 'pulse', 'chase', 'wave', 'sparkle']),
+  "primaryColor": zod.object({
+  "r": zod.number().min(setMotorResponseHaube2PatternPrimaryColorRMin).max(setMotorResponseHaube2PatternPrimaryColorRMax),
+  "g": zod.number().min(setMotorResponseHaube2PatternPrimaryColorGMin).max(setMotorResponseHaube2PatternPrimaryColorGMax),
+  "b": zod.number().min(setMotorResponseHaube2PatternPrimaryColorBMin).max(setMotorResponseHaube2PatternPrimaryColorBMax)
+}),
+  "secondaryColor": zod.object({
+  "r": zod.number().min(setMotorResponseHaube2PatternSecondaryColorRMin).max(setMotorResponseHaube2PatternSecondaryColorRMax),
+  "g": zod.number().min(setMotorResponseHaube2PatternSecondaryColorGMin).max(setMotorResponseHaube2PatternSecondaryColorGMax),
+  "b": zod.number().min(setMotorResponseHaube2PatternSecondaryColorBMin).max(setMotorResponseHaube2PatternSecondaryColorBMax)
+}),
+  "brightness": zod.number().min(setMotorResponseHaube2PatternBrightnessMin).max(setMotorResponseHaube2PatternBrightnessMax),
+  "speed": zod.number().min(setMotorResponseHaube2PatternSpeedMin).max(setMotorResponseHaube2PatternSpeedMax).describe('Animation speed: 0=static, 255=~2 Hz cycle'),
+  "enabled": zod.boolean()
+}),
+  "pixelCount": zod.number().describe('Physical pixel count for this zone (from hardware config)')
+}),
   "schmerz": zod.object({
   "pattern": zod.object({
   "type": zod.enum(['solid', 'pulse', 'chase', 'wave', 'sparkle']),
@@ -1424,7 +1666,8 @@ export const SetMotorResponse = zod.object({
 }),
   "screen": zod.object({
   "videoFile": zod.string(),
-  "enabled": zod.boolean()
+  "enabled": zod.boolean(),
+  "loop": zod.boolean()
 }),
   "painFader": zod.object({
   "position": zod.number().min(setMotorResponsePainFaderPositionMin).max(setMotorResponsePainFaderPositionMax),
@@ -1439,11 +1682,16 @@ export const SetMotorResponse = zod.object({
   "opiat": zod.boolean()
 })
 }),
+  "startButton": zod.object({
+  "simulated": zod.boolean(),
+  "port": zod.string()
+}),
   "hardwareConfig": zod.object({
   "gledopto1": zod.object({
   "host": zod.string(),
   "universeStart": zod.number(),
-  "haubePixelCount": zod.number(),
+  "haube1PixelCount": zod.number(),
+  "haube2PixelCount": zod.number(),
   "schmerzPixelCount": zod.number()
 }),
   "gledopto2": zod.object({
@@ -1482,7 +1730,8 @@ export const SetMotorResponse = zod.object({
  */
 export const GetScreenResponse = zod.object({
   "videoFile": zod.string(),
-  "enabled": zod.boolean()
+  "enabled": zod.boolean(),
+  "loop": zod.boolean()
 })
 
 
@@ -1491,7 +1740,8 @@ export const GetScreenResponse = zod.object({
  */
 export const SetScreenBody = zod.object({
   "videoFile": zod.string().optional(),
-  "enabled": zod.boolean().optional()
+  "enabled": zod.boolean().optional(),
+  "loop": zod.boolean().optional()
 })
 
 export const setScreenResponseFanSpeedMin = 0;
@@ -1520,6 +1770,30 @@ export const setScreenResponseHaubePatternBrightnessMax = 255;
 
 export const setScreenResponseHaubePatternSpeedMin = 0;
 export const setScreenResponseHaubePatternSpeedMax = 255;
+
+export const setScreenResponseHaube2PatternPrimaryColorRMin = 0;
+export const setScreenResponseHaube2PatternPrimaryColorRMax = 255;
+
+export const setScreenResponseHaube2PatternPrimaryColorGMin = 0;
+export const setScreenResponseHaube2PatternPrimaryColorGMax = 255;
+
+export const setScreenResponseHaube2PatternPrimaryColorBMin = 0;
+export const setScreenResponseHaube2PatternPrimaryColorBMax = 255;
+
+export const setScreenResponseHaube2PatternSecondaryColorRMin = 0;
+export const setScreenResponseHaube2PatternSecondaryColorRMax = 255;
+
+export const setScreenResponseHaube2PatternSecondaryColorGMin = 0;
+export const setScreenResponseHaube2PatternSecondaryColorGMax = 255;
+
+export const setScreenResponseHaube2PatternSecondaryColorBMin = 0;
+export const setScreenResponseHaube2PatternSecondaryColorBMax = 255;
+
+export const setScreenResponseHaube2PatternBrightnessMin = 0;
+export const setScreenResponseHaube2PatternBrightnessMax = 255;
+
+export const setScreenResponseHaube2PatternSpeedMin = 0;
+export const setScreenResponseHaube2PatternSpeedMax = 255;
 
 export const setScreenResponseSchmerzPatternPrimaryColorRMin = 0;
 export const setScreenResponseSchmerzPatternPrimaryColorRMax = 255;
@@ -1629,6 +1903,25 @@ export const SetScreenResponse = zod.object({
 }),
   "pixelCount": zod.number().describe('Physical pixel count for this zone (from hardware config)')
 }),
+  "haube2": zod.object({
+  "pattern": zod.object({
+  "type": zod.enum(['solid', 'pulse', 'chase', 'wave', 'sparkle']),
+  "primaryColor": zod.object({
+  "r": zod.number().min(setScreenResponseHaube2PatternPrimaryColorRMin).max(setScreenResponseHaube2PatternPrimaryColorRMax),
+  "g": zod.number().min(setScreenResponseHaube2PatternPrimaryColorGMin).max(setScreenResponseHaube2PatternPrimaryColorGMax),
+  "b": zod.number().min(setScreenResponseHaube2PatternPrimaryColorBMin).max(setScreenResponseHaube2PatternPrimaryColorBMax)
+}),
+  "secondaryColor": zod.object({
+  "r": zod.number().min(setScreenResponseHaube2PatternSecondaryColorRMin).max(setScreenResponseHaube2PatternSecondaryColorRMax),
+  "g": zod.number().min(setScreenResponseHaube2PatternSecondaryColorGMin).max(setScreenResponseHaube2PatternSecondaryColorGMax),
+  "b": zod.number().min(setScreenResponseHaube2PatternSecondaryColorBMin).max(setScreenResponseHaube2PatternSecondaryColorBMax)
+}),
+  "brightness": zod.number().min(setScreenResponseHaube2PatternBrightnessMin).max(setScreenResponseHaube2PatternBrightnessMax),
+  "speed": zod.number().min(setScreenResponseHaube2PatternSpeedMin).max(setScreenResponseHaube2PatternSpeedMax).describe('Animation speed: 0=static, 255=~2 Hz cycle'),
+  "enabled": zod.boolean()
+}),
+  "pixelCount": zod.number().describe('Physical pixel count for this zone (from hardware config)')
+}),
   "schmerz": zod.object({
   "pattern": zod.object({
   "type": zod.enum(['solid', 'pulse', 'chase', 'wave', 'sparkle']),
@@ -1694,7 +1987,8 @@ export const SetScreenResponse = zod.object({
 }),
   "screen": zod.object({
   "videoFile": zod.string(),
-  "enabled": zod.boolean()
+  "enabled": zod.boolean(),
+  "loop": zod.boolean()
 }),
   "painFader": zod.object({
   "position": zod.number().min(setScreenResponsePainFaderPositionMin).max(setScreenResponsePainFaderPositionMax),
@@ -1709,11 +2003,16 @@ export const SetScreenResponse = zod.object({
   "opiat": zod.boolean()
 })
 }),
+  "startButton": zod.object({
+  "simulated": zod.boolean(),
+  "port": zod.string()
+}),
   "hardwareConfig": zod.object({
   "gledopto1": zod.object({
   "host": zod.string(),
   "universeStart": zod.number(),
-  "haubePixelCount": zod.number(),
+  "haube1PixelCount": zod.number(),
+  "haube2PixelCount": zod.number(),
   "schmerzPixelCount": zod.number()
 }),
   "gledopto2": zod.object({
@@ -1785,6 +2084,30 @@ export const setPainFaderResponseHaubePatternBrightnessMax = 255;
 
 export const setPainFaderResponseHaubePatternSpeedMin = 0;
 export const setPainFaderResponseHaubePatternSpeedMax = 255;
+
+export const setPainFaderResponseHaube2PatternPrimaryColorRMin = 0;
+export const setPainFaderResponseHaube2PatternPrimaryColorRMax = 255;
+
+export const setPainFaderResponseHaube2PatternPrimaryColorGMin = 0;
+export const setPainFaderResponseHaube2PatternPrimaryColorGMax = 255;
+
+export const setPainFaderResponseHaube2PatternPrimaryColorBMin = 0;
+export const setPainFaderResponseHaube2PatternPrimaryColorBMax = 255;
+
+export const setPainFaderResponseHaube2PatternSecondaryColorRMin = 0;
+export const setPainFaderResponseHaube2PatternSecondaryColorRMax = 255;
+
+export const setPainFaderResponseHaube2PatternSecondaryColorGMin = 0;
+export const setPainFaderResponseHaube2PatternSecondaryColorGMax = 255;
+
+export const setPainFaderResponseHaube2PatternSecondaryColorBMin = 0;
+export const setPainFaderResponseHaube2PatternSecondaryColorBMax = 255;
+
+export const setPainFaderResponseHaube2PatternBrightnessMin = 0;
+export const setPainFaderResponseHaube2PatternBrightnessMax = 255;
+
+export const setPainFaderResponseHaube2PatternSpeedMin = 0;
+export const setPainFaderResponseHaube2PatternSpeedMax = 255;
 
 export const setPainFaderResponseSchmerzPatternPrimaryColorRMin = 0;
 export const setPainFaderResponseSchmerzPatternPrimaryColorRMax = 255;
@@ -1894,6 +2217,25 @@ export const SetPainFaderResponse = zod.object({
 }),
   "pixelCount": zod.number().describe('Physical pixel count for this zone (from hardware config)')
 }),
+  "haube2": zod.object({
+  "pattern": zod.object({
+  "type": zod.enum(['solid', 'pulse', 'chase', 'wave', 'sparkle']),
+  "primaryColor": zod.object({
+  "r": zod.number().min(setPainFaderResponseHaube2PatternPrimaryColorRMin).max(setPainFaderResponseHaube2PatternPrimaryColorRMax),
+  "g": zod.number().min(setPainFaderResponseHaube2PatternPrimaryColorGMin).max(setPainFaderResponseHaube2PatternPrimaryColorGMax),
+  "b": zod.number().min(setPainFaderResponseHaube2PatternPrimaryColorBMin).max(setPainFaderResponseHaube2PatternPrimaryColorBMax)
+}),
+  "secondaryColor": zod.object({
+  "r": zod.number().min(setPainFaderResponseHaube2PatternSecondaryColorRMin).max(setPainFaderResponseHaube2PatternSecondaryColorRMax),
+  "g": zod.number().min(setPainFaderResponseHaube2PatternSecondaryColorGMin).max(setPainFaderResponseHaube2PatternSecondaryColorGMax),
+  "b": zod.number().min(setPainFaderResponseHaube2PatternSecondaryColorBMin).max(setPainFaderResponseHaube2PatternSecondaryColorBMax)
+}),
+  "brightness": zod.number().min(setPainFaderResponseHaube2PatternBrightnessMin).max(setPainFaderResponseHaube2PatternBrightnessMax),
+  "speed": zod.number().min(setPainFaderResponseHaube2PatternSpeedMin).max(setPainFaderResponseHaube2PatternSpeedMax).describe('Animation speed: 0=static, 255=~2 Hz cycle'),
+  "enabled": zod.boolean()
+}),
+  "pixelCount": zod.number().describe('Physical pixel count for this zone (from hardware config)')
+}),
   "schmerz": zod.object({
   "pattern": zod.object({
   "type": zod.enum(['solid', 'pulse', 'chase', 'wave', 'sparkle']),
@@ -1959,7 +2301,8 @@ export const SetPainFaderResponse = zod.object({
 }),
   "screen": zod.object({
   "videoFile": zod.string(),
-  "enabled": zod.boolean()
+  "enabled": zod.boolean(),
+  "loop": zod.boolean()
 }),
   "painFader": zod.object({
   "position": zod.number().min(setPainFaderResponsePainFaderPositionMin).max(setPainFaderResponsePainFaderPositionMax),
@@ -1974,11 +2317,16 @@ export const SetPainFaderResponse = zod.object({
   "opiat": zod.boolean()
 })
 }),
+  "startButton": zod.object({
+  "simulated": zod.boolean(),
+  "port": zod.string()
+}),
   "hardwareConfig": zod.object({
   "gledopto1": zod.object({
   "host": zod.string(),
   "universeStart": zod.number(),
-  "haubePixelCount": zod.number(),
+  "haube1PixelCount": zod.number(),
+  "haube2PixelCount": zod.number(),
   "schmerzPixelCount": zod.number()
 }),
   "gledopto2": zod.object({
@@ -2045,6 +2393,30 @@ export const loadSceneResponseHaubePatternBrightnessMax = 255;
 
 export const loadSceneResponseHaubePatternSpeedMin = 0;
 export const loadSceneResponseHaubePatternSpeedMax = 255;
+
+export const loadSceneResponseHaube2PatternPrimaryColorRMin = 0;
+export const loadSceneResponseHaube2PatternPrimaryColorRMax = 255;
+
+export const loadSceneResponseHaube2PatternPrimaryColorGMin = 0;
+export const loadSceneResponseHaube2PatternPrimaryColorGMax = 255;
+
+export const loadSceneResponseHaube2PatternPrimaryColorBMin = 0;
+export const loadSceneResponseHaube2PatternPrimaryColorBMax = 255;
+
+export const loadSceneResponseHaube2PatternSecondaryColorRMin = 0;
+export const loadSceneResponseHaube2PatternSecondaryColorRMax = 255;
+
+export const loadSceneResponseHaube2PatternSecondaryColorGMin = 0;
+export const loadSceneResponseHaube2PatternSecondaryColorGMax = 255;
+
+export const loadSceneResponseHaube2PatternSecondaryColorBMin = 0;
+export const loadSceneResponseHaube2PatternSecondaryColorBMax = 255;
+
+export const loadSceneResponseHaube2PatternBrightnessMin = 0;
+export const loadSceneResponseHaube2PatternBrightnessMax = 255;
+
+export const loadSceneResponseHaube2PatternSpeedMin = 0;
+export const loadSceneResponseHaube2PatternSpeedMax = 255;
 
 export const loadSceneResponseSchmerzPatternPrimaryColorRMin = 0;
 export const loadSceneResponseSchmerzPatternPrimaryColorRMax = 255;
@@ -2154,6 +2526,25 @@ export const LoadSceneResponse = zod.object({
 }),
   "pixelCount": zod.number().describe('Physical pixel count for this zone (from hardware config)')
 }),
+  "haube2": zod.object({
+  "pattern": zod.object({
+  "type": zod.enum(['solid', 'pulse', 'chase', 'wave', 'sparkle']),
+  "primaryColor": zod.object({
+  "r": zod.number().min(loadSceneResponseHaube2PatternPrimaryColorRMin).max(loadSceneResponseHaube2PatternPrimaryColorRMax),
+  "g": zod.number().min(loadSceneResponseHaube2PatternPrimaryColorGMin).max(loadSceneResponseHaube2PatternPrimaryColorGMax),
+  "b": zod.number().min(loadSceneResponseHaube2PatternPrimaryColorBMin).max(loadSceneResponseHaube2PatternPrimaryColorBMax)
+}),
+  "secondaryColor": zod.object({
+  "r": zod.number().min(loadSceneResponseHaube2PatternSecondaryColorRMin).max(loadSceneResponseHaube2PatternSecondaryColorRMax),
+  "g": zod.number().min(loadSceneResponseHaube2PatternSecondaryColorGMin).max(loadSceneResponseHaube2PatternSecondaryColorGMax),
+  "b": zod.number().min(loadSceneResponseHaube2PatternSecondaryColorBMin).max(loadSceneResponseHaube2PatternSecondaryColorBMax)
+}),
+  "brightness": zod.number().min(loadSceneResponseHaube2PatternBrightnessMin).max(loadSceneResponseHaube2PatternBrightnessMax),
+  "speed": zod.number().min(loadSceneResponseHaube2PatternSpeedMin).max(loadSceneResponseHaube2PatternSpeedMax).describe('Animation speed: 0=static, 255=~2 Hz cycle'),
+  "enabled": zod.boolean()
+}),
+  "pixelCount": zod.number().describe('Physical pixel count for this zone (from hardware config)')
+}),
   "schmerz": zod.object({
   "pattern": zod.object({
   "type": zod.enum(['solid', 'pulse', 'chase', 'wave', 'sparkle']),
@@ -2219,7 +2610,8 @@ export const LoadSceneResponse = zod.object({
 }),
   "screen": zod.object({
   "videoFile": zod.string(),
-  "enabled": zod.boolean()
+  "enabled": zod.boolean(),
+  "loop": zod.boolean()
 }),
   "painFader": zod.object({
   "position": zod.number().min(loadSceneResponsePainFaderPositionMin).max(loadSceneResponsePainFaderPositionMax),
@@ -2234,11 +2626,16 @@ export const LoadSceneResponse = zod.object({
   "opiat": zod.boolean()
 })
 }),
+  "startButton": zod.object({
+  "simulated": zod.boolean(),
+  "port": zod.string()
+}),
   "hardwareConfig": zod.object({
   "gledopto1": zod.object({
   "host": zod.string(),
   "universeStart": zod.number(),
-  "haubePixelCount": zod.number(),
+  "haube1PixelCount": zod.number(),
+  "haube2PixelCount": zod.number(),
   "schmerzPixelCount": zod.number()
 }),
   "gledopto2": zod.object({
@@ -2301,6 +2698,30 @@ export const blackoutResponseHaubePatternBrightnessMax = 255;
 
 export const blackoutResponseHaubePatternSpeedMin = 0;
 export const blackoutResponseHaubePatternSpeedMax = 255;
+
+export const blackoutResponseHaube2PatternPrimaryColorRMin = 0;
+export const blackoutResponseHaube2PatternPrimaryColorRMax = 255;
+
+export const blackoutResponseHaube2PatternPrimaryColorGMin = 0;
+export const blackoutResponseHaube2PatternPrimaryColorGMax = 255;
+
+export const blackoutResponseHaube2PatternPrimaryColorBMin = 0;
+export const blackoutResponseHaube2PatternPrimaryColorBMax = 255;
+
+export const blackoutResponseHaube2PatternSecondaryColorRMin = 0;
+export const blackoutResponseHaube2PatternSecondaryColorRMax = 255;
+
+export const blackoutResponseHaube2PatternSecondaryColorGMin = 0;
+export const blackoutResponseHaube2PatternSecondaryColorGMax = 255;
+
+export const blackoutResponseHaube2PatternSecondaryColorBMin = 0;
+export const blackoutResponseHaube2PatternSecondaryColorBMax = 255;
+
+export const blackoutResponseHaube2PatternBrightnessMin = 0;
+export const blackoutResponseHaube2PatternBrightnessMax = 255;
+
+export const blackoutResponseHaube2PatternSpeedMin = 0;
+export const blackoutResponseHaube2PatternSpeedMax = 255;
 
 export const blackoutResponseSchmerzPatternPrimaryColorRMin = 0;
 export const blackoutResponseSchmerzPatternPrimaryColorRMax = 255;
@@ -2410,6 +2831,25 @@ export const BlackoutResponse = zod.object({
 }),
   "pixelCount": zod.number().describe('Physical pixel count for this zone (from hardware config)')
 }),
+  "haube2": zod.object({
+  "pattern": zod.object({
+  "type": zod.enum(['solid', 'pulse', 'chase', 'wave', 'sparkle']),
+  "primaryColor": zod.object({
+  "r": zod.number().min(blackoutResponseHaube2PatternPrimaryColorRMin).max(blackoutResponseHaube2PatternPrimaryColorRMax),
+  "g": zod.number().min(blackoutResponseHaube2PatternPrimaryColorGMin).max(blackoutResponseHaube2PatternPrimaryColorGMax),
+  "b": zod.number().min(blackoutResponseHaube2PatternPrimaryColorBMin).max(blackoutResponseHaube2PatternPrimaryColorBMax)
+}),
+  "secondaryColor": zod.object({
+  "r": zod.number().min(blackoutResponseHaube2PatternSecondaryColorRMin).max(blackoutResponseHaube2PatternSecondaryColorRMax),
+  "g": zod.number().min(blackoutResponseHaube2PatternSecondaryColorGMin).max(blackoutResponseHaube2PatternSecondaryColorGMax),
+  "b": zod.number().min(blackoutResponseHaube2PatternSecondaryColorBMin).max(blackoutResponseHaube2PatternSecondaryColorBMax)
+}),
+  "brightness": zod.number().min(blackoutResponseHaube2PatternBrightnessMin).max(blackoutResponseHaube2PatternBrightnessMax),
+  "speed": zod.number().min(blackoutResponseHaube2PatternSpeedMin).max(blackoutResponseHaube2PatternSpeedMax).describe('Animation speed: 0=static, 255=~2 Hz cycle'),
+  "enabled": zod.boolean()
+}),
+  "pixelCount": zod.number().describe('Physical pixel count for this zone (from hardware config)')
+}),
   "schmerz": zod.object({
   "pattern": zod.object({
   "type": zod.enum(['solid', 'pulse', 'chase', 'wave', 'sparkle']),
@@ -2475,7 +2915,8 @@ export const BlackoutResponse = zod.object({
 }),
   "screen": zod.object({
   "videoFile": zod.string(),
-  "enabled": zod.boolean()
+  "enabled": zod.boolean(),
+  "loop": zod.boolean()
 }),
   "painFader": zod.object({
   "position": zod.number().min(blackoutResponsePainFaderPositionMin).max(blackoutResponsePainFaderPositionMax),
@@ -2490,11 +2931,16 @@ export const BlackoutResponse = zod.object({
   "opiat": zod.boolean()
 })
 }),
+  "startButton": zod.object({
+  "simulated": zod.boolean(),
+  "port": zod.string()
+}),
   "hardwareConfig": zod.object({
   "gledopto1": zod.object({
   "host": zod.string(),
   "universeStart": zod.number(),
-  "haubePixelCount": zod.number(),
+  "haube1PixelCount": zod.number(),
+  "haube2PixelCount": zod.number(),
   "schmerzPixelCount": zod.number()
 }),
   "gledopto2": zod.object({
@@ -2566,6 +3012,30 @@ export const hardwareFaderInputResponseHaubePatternBrightnessMax = 255;
 
 export const hardwareFaderInputResponseHaubePatternSpeedMin = 0;
 export const hardwareFaderInputResponseHaubePatternSpeedMax = 255;
+
+export const hardwareFaderInputResponseHaube2PatternPrimaryColorRMin = 0;
+export const hardwareFaderInputResponseHaube2PatternPrimaryColorRMax = 255;
+
+export const hardwareFaderInputResponseHaube2PatternPrimaryColorGMin = 0;
+export const hardwareFaderInputResponseHaube2PatternPrimaryColorGMax = 255;
+
+export const hardwareFaderInputResponseHaube2PatternPrimaryColorBMin = 0;
+export const hardwareFaderInputResponseHaube2PatternPrimaryColorBMax = 255;
+
+export const hardwareFaderInputResponseHaube2PatternSecondaryColorRMin = 0;
+export const hardwareFaderInputResponseHaube2PatternSecondaryColorRMax = 255;
+
+export const hardwareFaderInputResponseHaube2PatternSecondaryColorGMin = 0;
+export const hardwareFaderInputResponseHaube2PatternSecondaryColorGMax = 255;
+
+export const hardwareFaderInputResponseHaube2PatternSecondaryColorBMin = 0;
+export const hardwareFaderInputResponseHaube2PatternSecondaryColorBMax = 255;
+
+export const hardwareFaderInputResponseHaube2PatternBrightnessMin = 0;
+export const hardwareFaderInputResponseHaube2PatternBrightnessMax = 255;
+
+export const hardwareFaderInputResponseHaube2PatternSpeedMin = 0;
+export const hardwareFaderInputResponseHaube2PatternSpeedMax = 255;
 
 export const hardwareFaderInputResponseSchmerzPatternPrimaryColorRMin = 0;
 export const hardwareFaderInputResponseSchmerzPatternPrimaryColorRMax = 255;
@@ -2675,6 +3145,25 @@ export const HardwareFaderInputResponse = zod.object({
 }),
   "pixelCount": zod.number().describe('Physical pixel count for this zone (from hardware config)')
 }),
+  "haube2": zod.object({
+  "pattern": zod.object({
+  "type": zod.enum(['solid', 'pulse', 'chase', 'wave', 'sparkle']),
+  "primaryColor": zod.object({
+  "r": zod.number().min(hardwareFaderInputResponseHaube2PatternPrimaryColorRMin).max(hardwareFaderInputResponseHaube2PatternPrimaryColorRMax),
+  "g": zod.number().min(hardwareFaderInputResponseHaube2PatternPrimaryColorGMin).max(hardwareFaderInputResponseHaube2PatternPrimaryColorGMax),
+  "b": zod.number().min(hardwareFaderInputResponseHaube2PatternPrimaryColorBMin).max(hardwareFaderInputResponseHaube2PatternPrimaryColorBMax)
+}),
+  "secondaryColor": zod.object({
+  "r": zod.number().min(hardwareFaderInputResponseHaube2PatternSecondaryColorRMin).max(hardwareFaderInputResponseHaube2PatternSecondaryColorRMax),
+  "g": zod.number().min(hardwareFaderInputResponseHaube2PatternSecondaryColorGMin).max(hardwareFaderInputResponseHaube2PatternSecondaryColorGMax),
+  "b": zod.number().min(hardwareFaderInputResponseHaube2PatternSecondaryColorBMin).max(hardwareFaderInputResponseHaube2PatternSecondaryColorBMax)
+}),
+  "brightness": zod.number().min(hardwareFaderInputResponseHaube2PatternBrightnessMin).max(hardwareFaderInputResponseHaube2PatternBrightnessMax),
+  "speed": zod.number().min(hardwareFaderInputResponseHaube2PatternSpeedMin).max(hardwareFaderInputResponseHaube2PatternSpeedMax).describe('Animation speed: 0=static, 255=~2 Hz cycle'),
+  "enabled": zod.boolean()
+}),
+  "pixelCount": zod.number().describe('Physical pixel count for this zone (from hardware config)')
+}),
   "schmerz": zod.object({
   "pattern": zod.object({
   "type": zod.enum(['solid', 'pulse', 'chase', 'wave', 'sparkle']),
@@ -2740,7 +3229,8 @@ export const HardwareFaderInputResponse = zod.object({
 }),
   "screen": zod.object({
   "videoFile": zod.string(),
-  "enabled": zod.boolean()
+  "enabled": zod.boolean(),
+  "loop": zod.boolean()
 }),
   "painFader": zod.object({
   "position": zod.number().min(hardwareFaderInputResponsePainFaderPositionMin).max(hardwareFaderInputResponsePainFaderPositionMax),
@@ -2755,11 +3245,16 @@ export const HardwareFaderInputResponse = zod.object({
   "opiat": zod.boolean()
 })
 }),
+  "startButton": zod.object({
+  "simulated": zod.boolean(),
+  "port": zod.string()
+}),
   "hardwareConfig": zod.object({
   "gledopto1": zod.object({
   "host": zod.string(),
   "universeStart": zod.number(),
-  "haubePixelCount": zod.number(),
+  "haube1PixelCount": zod.number(),
+  "haube2PixelCount": zod.number(),
   "schmerzPixelCount": zod.number()
 }),
   "gledopto2": zod.object({
@@ -2822,6 +3317,30 @@ export const getPresetsResponsePositionsItemHaubeBrightnessMax = 255;
 
 export const getPresetsResponsePositionsItemHaubeSpeedMin = 0;
 export const getPresetsResponsePositionsItemHaubeSpeedMax = 255;
+
+export const getPresetsResponsePositionsItemHaube2PrimaryColorRMin = 0;
+export const getPresetsResponsePositionsItemHaube2PrimaryColorRMax = 255;
+
+export const getPresetsResponsePositionsItemHaube2PrimaryColorGMin = 0;
+export const getPresetsResponsePositionsItemHaube2PrimaryColorGMax = 255;
+
+export const getPresetsResponsePositionsItemHaube2PrimaryColorBMin = 0;
+export const getPresetsResponsePositionsItemHaube2PrimaryColorBMax = 255;
+
+export const getPresetsResponsePositionsItemHaube2SecondaryColorRMin = 0;
+export const getPresetsResponsePositionsItemHaube2SecondaryColorRMax = 255;
+
+export const getPresetsResponsePositionsItemHaube2SecondaryColorGMin = 0;
+export const getPresetsResponsePositionsItemHaube2SecondaryColorGMax = 255;
+
+export const getPresetsResponsePositionsItemHaube2SecondaryColorBMin = 0;
+export const getPresetsResponsePositionsItemHaube2SecondaryColorBMax = 255;
+
+export const getPresetsResponsePositionsItemHaube2BrightnessMin = 0;
+export const getPresetsResponsePositionsItemHaube2BrightnessMax = 255;
+
+export const getPresetsResponsePositionsItemHaube2SpeedMin = 0;
+export const getPresetsResponsePositionsItemHaube2SpeedMax = 255;
 
 export const getPresetsResponsePositionsItemSchmerzPrimaryColorRMin = 0;
 export const getPresetsResponsePositionsItemSchmerzPrimaryColorRMax = 255;
@@ -2924,6 +3443,30 @@ export const getPresetsResponseIdlePresetHaubeBrightnessMax = 255;
 export const getPresetsResponseIdlePresetHaubeSpeedMin = 0;
 export const getPresetsResponseIdlePresetHaubeSpeedMax = 255;
 
+export const getPresetsResponseIdlePresetHaube2PrimaryColorRMin = 0;
+export const getPresetsResponseIdlePresetHaube2PrimaryColorRMax = 255;
+
+export const getPresetsResponseIdlePresetHaube2PrimaryColorGMin = 0;
+export const getPresetsResponseIdlePresetHaube2PrimaryColorGMax = 255;
+
+export const getPresetsResponseIdlePresetHaube2PrimaryColorBMin = 0;
+export const getPresetsResponseIdlePresetHaube2PrimaryColorBMax = 255;
+
+export const getPresetsResponseIdlePresetHaube2SecondaryColorRMin = 0;
+export const getPresetsResponseIdlePresetHaube2SecondaryColorRMax = 255;
+
+export const getPresetsResponseIdlePresetHaube2SecondaryColorGMin = 0;
+export const getPresetsResponseIdlePresetHaube2SecondaryColorGMax = 255;
+
+export const getPresetsResponseIdlePresetHaube2SecondaryColorBMin = 0;
+export const getPresetsResponseIdlePresetHaube2SecondaryColorBMax = 255;
+
+export const getPresetsResponseIdlePresetHaube2BrightnessMin = 0;
+export const getPresetsResponseIdlePresetHaube2BrightnessMax = 255;
+
+export const getPresetsResponseIdlePresetHaube2SpeedMin = 0;
+export const getPresetsResponseIdlePresetHaube2SpeedMax = 255;
+
 export const getPresetsResponseIdlePresetSchmerzPrimaryColorRMin = 0;
 export const getPresetsResponseIdlePresetSchmerzPrimaryColorRMax = 255;
 
@@ -3023,6 +3566,22 @@ export const GetPresetsResponse = zod.object({
   "speed": zod.number().min(getPresetsResponsePositionsItemHaubeSpeedMin).max(getPresetsResponsePositionsItemHaubeSpeedMax).describe('Animation speed: 0=static, 255=~2 Hz cycle'),
   "enabled": zod.boolean()
 }),
+  "haube2": zod.object({
+  "type": zod.enum(['solid', 'pulse', 'chase', 'wave', 'sparkle']),
+  "primaryColor": zod.object({
+  "r": zod.number().min(getPresetsResponsePositionsItemHaube2PrimaryColorRMin).max(getPresetsResponsePositionsItemHaube2PrimaryColorRMax),
+  "g": zod.number().min(getPresetsResponsePositionsItemHaube2PrimaryColorGMin).max(getPresetsResponsePositionsItemHaube2PrimaryColorGMax),
+  "b": zod.number().min(getPresetsResponsePositionsItemHaube2PrimaryColorBMin).max(getPresetsResponsePositionsItemHaube2PrimaryColorBMax)
+}),
+  "secondaryColor": zod.object({
+  "r": zod.number().min(getPresetsResponsePositionsItemHaube2SecondaryColorRMin).max(getPresetsResponsePositionsItemHaube2SecondaryColorRMax),
+  "g": zod.number().min(getPresetsResponsePositionsItemHaube2SecondaryColorGMin).max(getPresetsResponsePositionsItemHaube2SecondaryColorGMax),
+  "b": zod.number().min(getPresetsResponsePositionsItemHaube2SecondaryColorBMin).max(getPresetsResponsePositionsItemHaube2SecondaryColorBMax)
+}),
+  "brightness": zod.number().min(getPresetsResponsePositionsItemHaube2BrightnessMin).max(getPresetsResponsePositionsItemHaube2BrightnessMax),
+  "speed": zod.number().min(getPresetsResponsePositionsItemHaube2SpeedMin).max(getPresetsResponsePositionsItemHaube2SpeedMax).describe('Animation speed: 0=static, 255=~2 Hz cycle'),
+  "enabled": zod.boolean()
+}),
   "schmerz": zod.object({
   "type": zod.enum(['solid', 'pulse', 'chase', 'wave', 'sparkle']),
   "primaryColor": zod.object({
@@ -3078,7 +3637,8 @@ export const GetPresetsResponse = zod.object({
 }),
   "screen": zod.object({
   "videoFile": zod.string(),
-  "enabled": zod.boolean()
+  "enabled": zod.boolean(),
+  "loop": zod.boolean()
 })
 })).describe('[0]=NSAR(-1)  [1]=SCHMERZ(0)  [2]=OPIAT(1)'),
   "idlePreset": zod.object({
@@ -3101,6 +3661,22 @@ export const GetPresetsResponse = zod.object({
 }),
   "brightness": zod.number().min(getPresetsResponseIdlePresetHaubeBrightnessMin).max(getPresetsResponseIdlePresetHaubeBrightnessMax),
   "speed": zod.number().min(getPresetsResponseIdlePresetHaubeSpeedMin).max(getPresetsResponseIdlePresetHaubeSpeedMax).describe('Animation speed: 0=static, 255=~2 Hz cycle'),
+  "enabled": zod.boolean()
+}),
+  "haube2": zod.object({
+  "type": zod.enum(['solid', 'pulse', 'chase', 'wave', 'sparkle']),
+  "primaryColor": zod.object({
+  "r": zod.number().min(getPresetsResponseIdlePresetHaube2PrimaryColorRMin).max(getPresetsResponseIdlePresetHaube2PrimaryColorRMax),
+  "g": zod.number().min(getPresetsResponseIdlePresetHaube2PrimaryColorGMin).max(getPresetsResponseIdlePresetHaube2PrimaryColorGMax),
+  "b": zod.number().min(getPresetsResponseIdlePresetHaube2PrimaryColorBMin).max(getPresetsResponseIdlePresetHaube2PrimaryColorBMax)
+}),
+  "secondaryColor": zod.object({
+  "r": zod.number().min(getPresetsResponseIdlePresetHaube2SecondaryColorRMin).max(getPresetsResponseIdlePresetHaube2SecondaryColorRMax),
+  "g": zod.number().min(getPresetsResponseIdlePresetHaube2SecondaryColorGMin).max(getPresetsResponseIdlePresetHaube2SecondaryColorGMax),
+  "b": zod.number().min(getPresetsResponseIdlePresetHaube2SecondaryColorBMin).max(getPresetsResponseIdlePresetHaube2SecondaryColorBMax)
+}),
+  "brightness": zod.number().min(getPresetsResponseIdlePresetHaube2BrightnessMin).max(getPresetsResponseIdlePresetHaube2BrightnessMax),
+  "speed": zod.number().min(getPresetsResponseIdlePresetHaube2SpeedMin).max(getPresetsResponseIdlePresetHaube2SpeedMax).describe('Animation speed: 0=static, 255=~2 Hz cycle'),
   "enabled": zod.boolean()
 }),
   "schmerz": zod.object({
@@ -3158,7 +3734,8 @@ export const GetPresetsResponse = zod.object({
 }),
   "screen": zod.object({
   "videoFile": zod.string(),
-  "enabled": zod.boolean()
+  "enabled": zod.boolean(),
+  "loop": zod.boolean()
 })
 }),
   "idleTimerSeconds": zod.number(),
@@ -3199,6 +3776,30 @@ export const updatePresetBodyHaubeBrightnessMax = 255;
 
 export const updatePresetBodyHaubeSpeedMin = 0;
 export const updatePresetBodyHaubeSpeedMax = 255;
+
+export const updatePresetBodyHaube2PrimaryColorRMin = 0;
+export const updatePresetBodyHaube2PrimaryColorRMax = 255;
+
+export const updatePresetBodyHaube2PrimaryColorGMin = 0;
+export const updatePresetBodyHaube2PrimaryColorGMax = 255;
+
+export const updatePresetBodyHaube2PrimaryColorBMin = 0;
+export const updatePresetBodyHaube2PrimaryColorBMax = 255;
+
+export const updatePresetBodyHaube2SecondaryColorRMin = 0;
+export const updatePresetBodyHaube2SecondaryColorRMax = 255;
+
+export const updatePresetBodyHaube2SecondaryColorGMin = 0;
+export const updatePresetBodyHaube2SecondaryColorGMax = 255;
+
+export const updatePresetBodyHaube2SecondaryColorBMin = 0;
+export const updatePresetBodyHaube2SecondaryColorBMax = 255;
+
+export const updatePresetBodyHaube2BrightnessMin = 0;
+export const updatePresetBodyHaube2BrightnessMax = 255;
+
+export const updatePresetBodyHaube2SpeedMin = 0;
+export const updatePresetBodyHaube2SpeedMax = 255;
 
 export const updatePresetBodySchmerzPrimaryColorRMin = 0;
 export const updatePresetBodySchmerzPrimaryColorRMax = 255;
@@ -3298,6 +3899,22 @@ export const UpdatePresetBody = zod.object({
   "speed": zod.number().min(updatePresetBodyHaubeSpeedMin).max(updatePresetBodyHaubeSpeedMax).optional(),
   "enabled": zod.boolean().optional()
 }).optional(),
+  "haube2": zod.object({
+  "type": zod.enum(['solid', 'pulse', 'chase', 'wave', 'sparkle']).optional(),
+  "primaryColor": zod.object({
+  "r": zod.number().min(updatePresetBodyHaube2PrimaryColorRMin).max(updatePresetBodyHaube2PrimaryColorRMax),
+  "g": zod.number().min(updatePresetBodyHaube2PrimaryColorGMin).max(updatePresetBodyHaube2PrimaryColorGMax),
+  "b": zod.number().min(updatePresetBodyHaube2PrimaryColorBMin).max(updatePresetBodyHaube2PrimaryColorBMax)
+}).optional(),
+  "secondaryColor": zod.object({
+  "r": zod.number().min(updatePresetBodyHaube2SecondaryColorRMin).max(updatePresetBodyHaube2SecondaryColorRMax),
+  "g": zod.number().min(updatePresetBodyHaube2SecondaryColorGMin).max(updatePresetBodyHaube2SecondaryColorGMax),
+  "b": zod.number().min(updatePresetBodyHaube2SecondaryColorBMin).max(updatePresetBodyHaube2SecondaryColorBMax)
+}).optional(),
+  "brightness": zod.number().min(updatePresetBodyHaube2BrightnessMin).max(updatePresetBodyHaube2BrightnessMax).optional(),
+  "speed": zod.number().min(updatePresetBodyHaube2SpeedMin).max(updatePresetBodyHaube2SpeedMax).optional(),
+  "enabled": zod.boolean().optional()
+}).optional(),
   "schmerz": zod.object({
   "type": zod.enum(['solid', 'pulse', 'chase', 'wave', 'sparkle']).optional(),
   "primaryColor": zod.object({
@@ -3383,6 +4000,30 @@ export const updatePresetResponsePositionsItemHaubeBrightnessMax = 255;
 
 export const updatePresetResponsePositionsItemHaubeSpeedMin = 0;
 export const updatePresetResponsePositionsItemHaubeSpeedMax = 255;
+
+export const updatePresetResponsePositionsItemHaube2PrimaryColorRMin = 0;
+export const updatePresetResponsePositionsItemHaube2PrimaryColorRMax = 255;
+
+export const updatePresetResponsePositionsItemHaube2PrimaryColorGMin = 0;
+export const updatePresetResponsePositionsItemHaube2PrimaryColorGMax = 255;
+
+export const updatePresetResponsePositionsItemHaube2PrimaryColorBMin = 0;
+export const updatePresetResponsePositionsItemHaube2PrimaryColorBMax = 255;
+
+export const updatePresetResponsePositionsItemHaube2SecondaryColorRMin = 0;
+export const updatePresetResponsePositionsItemHaube2SecondaryColorRMax = 255;
+
+export const updatePresetResponsePositionsItemHaube2SecondaryColorGMin = 0;
+export const updatePresetResponsePositionsItemHaube2SecondaryColorGMax = 255;
+
+export const updatePresetResponsePositionsItemHaube2SecondaryColorBMin = 0;
+export const updatePresetResponsePositionsItemHaube2SecondaryColorBMax = 255;
+
+export const updatePresetResponsePositionsItemHaube2BrightnessMin = 0;
+export const updatePresetResponsePositionsItemHaube2BrightnessMax = 255;
+
+export const updatePresetResponsePositionsItemHaube2SpeedMin = 0;
+export const updatePresetResponsePositionsItemHaube2SpeedMax = 255;
 
 export const updatePresetResponsePositionsItemSchmerzPrimaryColorRMin = 0;
 export const updatePresetResponsePositionsItemSchmerzPrimaryColorRMax = 255;
@@ -3485,6 +4126,30 @@ export const updatePresetResponseIdlePresetHaubeBrightnessMax = 255;
 export const updatePresetResponseIdlePresetHaubeSpeedMin = 0;
 export const updatePresetResponseIdlePresetHaubeSpeedMax = 255;
 
+export const updatePresetResponseIdlePresetHaube2PrimaryColorRMin = 0;
+export const updatePresetResponseIdlePresetHaube2PrimaryColorRMax = 255;
+
+export const updatePresetResponseIdlePresetHaube2PrimaryColorGMin = 0;
+export const updatePresetResponseIdlePresetHaube2PrimaryColorGMax = 255;
+
+export const updatePresetResponseIdlePresetHaube2PrimaryColorBMin = 0;
+export const updatePresetResponseIdlePresetHaube2PrimaryColorBMax = 255;
+
+export const updatePresetResponseIdlePresetHaube2SecondaryColorRMin = 0;
+export const updatePresetResponseIdlePresetHaube2SecondaryColorRMax = 255;
+
+export const updatePresetResponseIdlePresetHaube2SecondaryColorGMin = 0;
+export const updatePresetResponseIdlePresetHaube2SecondaryColorGMax = 255;
+
+export const updatePresetResponseIdlePresetHaube2SecondaryColorBMin = 0;
+export const updatePresetResponseIdlePresetHaube2SecondaryColorBMax = 255;
+
+export const updatePresetResponseIdlePresetHaube2BrightnessMin = 0;
+export const updatePresetResponseIdlePresetHaube2BrightnessMax = 255;
+
+export const updatePresetResponseIdlePresetHaube2SpeedMin = 0;
+export const updatePresetResponseIdlePresetHaube2SpeedMax = 255;
+
 export const updatePresetResponseIdlePresetSchmerzPrimaryColorRMin = 0;
 export const updatePresetResponseIdlePresetSchmerzPrimaryColorRMax = 255;
 
@@ -3584,6 +4249,22 @@ export const UpdatePresetResponse = zod.object({
   "speed": zod.number().min(updatePresetResponsePositionsItemHaubeSpeedMin).max(updatePresetResponsePositionsItemHaubeSpeedMax).describe('Animation speed: 0=static, 255=~2 Hz cycle'),
   "enabled": zod.boolean()
 }),
+  "haube2": zod.object({
+  "type": zod.enum(['solid', 'pulse', 'chase', 'wave', 'sparkle']),
+  "primaryColor": zod.object({
+  "r": zod.number().min(updatePresetResponsePositionsItemHaube2PrimaryColorRMin).max(updatePresetResponsePositionsItemHaube2PrimaryColorRMax),
+  "g": zod.number().min(updatePresetResponsePositionsItemHaube2PrimaryColorGMin).max(updatePresetResponsePositionsItemHaube2PrimaryColorGMax),
+  "b": zod.number().min(updatePresetResponsePositionsItemHaube2PrimaryColorBMin).max(updatePresetResponsePositionsItemHaube2PrimaryColorBMax)
+}),
+  "secondaryColor": zod.object({
+  "r": zod.number().min(updatePresetResponsePositionsItemHaube2SecondaryColorRMin).max(updatePresetResponsePositionsItemHaube2SecondaryColorRMax),
+  "g": zod.number().min(updatePresetResponsePositionsItemHaube2SecondaryColorGMin).max(updatePresetResponsePositionsItemHaube2SecondaryColorGMax),
+  "b": zod.number().min(updatePresetResponsePositionsItemHaube2SecondaryColorBMin).max(updatePresetResponsePositionsItemHaube2SecondaryColorBMax)
+}),
+  "brightness": zod.number().min(updatePresetResponsePositionsItemHaube2BrightnessMin).max(updatePresetResponsePositionsItemHaube2BrightnessMax),
+  "speed": zod.number().min(updatePresetResponsePositionsItemHaube2SpeedMin).max(updatePresetResponsePositionsItemHaube2SpeedMax).describe('Animation speed: 0=static, 255=~2 Hz cycle'),
+  "enabled": zod.boolean()
+}),
   "schmerz": zod.object({
   "type": zod.enum(['solid', 'pulse', 'chase', 'wave', 'sparkle']),
   "primaryColor": zod.object({
@@ -3639,7 +4320,8 @@ export const UpdatePresetResponse = zod.object({
 }),
   "screen": zod.object({
   "videoFile": zod.string(),
-  "enabled": zod.boolean()
+  "enabled": zod.boolean(),
+  "loop": zod.boolean()
 })
 })).describe('[0]=NSAR(-1)  [1]=SCHMERZ(0)  [2]=OPIAT(1)'),
   "idlePreset": zod.object({
@@ -3662,6 +4344,22 @@ export const UpdatePresetResponse = zod.object({
 }),
   "brightness": zod.number().min(updatePresetResponseIdlePresetHaubeBrightnessMin).max(updatePresetResponseIdlePresetHaubeBrightnessMax),
   "speed": zod.number().min(updatePresetResponseIdlePresetHaubeSpeedMin).max(updatePresetResponseIdlePresetHaubeSpeedMax).describe('Animation speed: 0=static, 255=~2 Hz cycle'),
+  "enabled": zod.boolean()
+}),
+  "haube2": zod.object({
+  "type": zod.enum(['solid', 'pulse', 'chase', 'wave', 'sparkle']),
+  "primaryColor": zod.object({
+  "r": zod.number().min(updatePresetResponseIdlePresetHaube2PrimaryColorRMin).max(updatePresetResponseIdlePresetHaube2PrimaryColorRMax),
+  "g": zod.number().min(updatePresetResponseIdlePresetHaube2PrimaryColorGMin).max(updatePresetResponseIdlePresetHaube2PrimaryColorGMax),
+  "b": zod.number().min(updatePresetResponseIdlePresetHaube2PrimaryColorBMin).max(updatePresetResponseIdlePresetHaube2PrimaryColorBMax)
+}),
+  "secondaryColor": zod.object({
+  "r": zod.number().min(updatePresetResponseIdlePresetHaube2SecondaryColorRMin).max(updatePresetResponseIdlePresetHaube2SecondaryColorRMax),
+  "g": zod.number().min(updatePresetResponseIdlePresetHaube2SecondaryColorGMin).max(updatePresetResponseIdlePresetHaube2SecondaryColorGMax),
+  "b": zod.number().min(updatePresetResponseIdlePresetHaube2SecondaryColorBMin).max(updatePresetResponseIdlePresetHaube2SecondaryColorBMax)
+}),
+  "brightness": zod.number().min(updatePresetResponseIdlePresetHaube2BrightnessMin).max(updatePresetResponseIdlePresetHaube2BrightnessMax),
+  "speed": zod.number().min(updatePresetResponseIdlePresetHaube2SpeedMin).max(updatePresetResponseIdlePresetHaube2SpeedMax).describe('Animation speed: 0=static, 255=~2 Hz cycle'),
   "enabled": zod.boolean()
 }),
   "schmerz": zod.object({
@@ -3719,7 +4417,8 @@ export const UpdatePresetResponse = zod.object({
 }),
   "screen": zod.object({
   "videoFile": zod.string(),
-  "enabled": zod.boolean()
+  "enabled": zod.boolean(),
+  "loop": zod.boolean()
 })
 }),
   "idleTimerSeconds": zod.number(),
@@ -3760,6 +4459,30 @@ export const capturePresetResponsePositionsItemHaubeBrightnessMax = 255;
 
 export const capturePresetResponsePositionsItemHaubeSpeedMin = 0;
 export const capturePresetResponsePositionsItemHaubeSpeedMax = 255;
+
+export const capturePresetResponsePositionsItemHaube2PrimaryColorRMin = 0;
+export const capturePresetResponsePositionsItemHaube2PrimaryColorRMax = 255;
+
+export const capturePresetResponsePositionsItemHaube2PrimaryColorGMin = 0;
+export const capturePresetResponsePositionsItemHaube2PrimaryColorGMax = 255;
+
+export const capturePresetResponsePositionsItemHaube2PrimaryColorBMin = 0;
+export const capturePresetResponsePositionsItemHaube2PrimaryColorBMax = 255;
+
+export const capturePresetResponsePositionsItemHaube2SecondaryColorRMin = 0;
+export const capturePresetResponsePositionsItemHaube2SecondaryColorRMax = 255;
+
+export const capturePresetResponsePositionsItemHaube2SecondaryColorGMin = 0;
+export const capturePresetResponsePositionsItemHaube2SecondaryColorGMax = 255;
+
+export const capturePresetResponsePositionsItemHaube2SecondaryColorBMin = 0;
+export const capturePresetResponsePositionsItemHaube2SecondaryColorBMax = 255;
+
+export const capturePresetResponsePositionsItemHaube2BrightnessMin = 0;
+export const capturePresetResponsePositionsItemHaube2BrightnessMax = 255;
+
+export const capturePresetResponsePositionsItemHaube2SpeedMin = 0;
+export const capturePresetResponsePositionsItemHaube2SpeedMax = 255;
 
 export const capturePresetResponsePositionsItemSchmerzPrimaryColorRMin = 0;
 export const capturePresetResponsePositionsItemSchmerzPrimaryColorRMax = 255;
@@ -3862,6 +4585,30 @@ export const capturePresetResponseIdlePresetHaubeBrightnessMax = 255;
 export const capturePresetResponseIdlePresetHaubeSpeedMin = 0;
 export const capturePresetResponseIdlePresetHaubeSpeedMax = 255;
 
+export const capturePresetResponseIdlePresetHaube2PrimaryColorRMin = 0;
+export const capturePresetResponseIdlePresetHaube2PrimaryColorRMax = 255;
+
+export const capturePresetResponseIdlePresetHaube2PrimaryColorGMin = 0;
+export const capturePresetResponseIdlePresetHaube2PrimaryColorGMax = 255;
+
+export const capturePresetResponseIdlePresetHaube2PrimaryColorBMin = 0;
+export const capturePresetResponseIdlePresetHaube2PrimaryColorBMax = 255;
+
+export const capturePresetResponseIdlePresetHaube2SecondaryColorRMin = 0;
+export const capturePresetResponseIdlePresetHaube2SecondaryColorRMax = 255;
+
+export const capturePresetResponseIdlePresetHaube2SecondaryColorGMin = 0;
+export const capturePresetResponseIdlePresetHaube2SecondaryColorGMax = 255;
+
+export const capturePresetResponseIdlePresetHaube2SecondaryColorBMin = 0;
+export const capturePresetResponseIdlePresetHaube2SecondaryColorBMax = 255;
+
+export const capturePresetResponseIdlePresetHaube2BrightnessMin = 0;
+export const capturePresetResponseIdlePresetHaube2BrightnessMax = 255;
+
+export const capturePresetResponseIdlePresetHaube2SpeedMin = 0;
+export const capturePresetResponseIdlePresetHaube2SpeedMax = 255;
+
 export const capturePresetResponseIdlePresetSchmerzPrimaryColorRMin = 0;
 export const capturePresetResponseIdlePresetSchmerzPrimaryColorRMax = 255;
 
@@ -3961,6 +4708,22 @@ export const CapturePresetResponse = zod.object({
   "speed": zod.number().min(capturePresetResponsePositionsItemHaubeSpeedMin).max(capturePresetResponsePositionsItemHaubeSpeedMax).describe('Animation speed: 0=static, 255=~2 Hz cycle'),
   "enabled": zod.boolean()
 }),
+  "haube2": zod.object({
+  "type": zod.enum(['solid', 'pulse', 'chase', 'wave', 'sparkle']),
+  "primaryColor": zod.object({
+  "r": zod.number().min(capturePresetResponsePositionsItemHaube2PrimaryColorRMin).max(capturePresetResponsePositionsItemHaube2PrimaryColorRMax),
+  "g": zod.number().min(capturePresetResponsePositionsItemHaube2PrimaryColorGMin).max(capturePresetResponsePositionsItemHaube2PrimaryColorGMax),
+  "b": zod.number().min(capturePresetResponsePositionsItemHaube2PrimaryColorBMin).max(capturePresetResponsePositionsItemHaube2PrimaryColorBMax)
+}),
+  "secondaryColor": zod.object({
+  "r": zod.number().min(capturePresetResponsePositionsItemHaube2SecondaryColorRMin).max(capturePresetResponsePositionsItemHaube2SecondaryColorRMax),
+  "g": zod.number().min(capturePresetResponsePositionsItemHaube2SecondaryColorGMin).max(capturePresetResponsePositionsItemHaube2SecondaryColorGMax),
+  "b": zod.number().min(capturePresetResponsePositionsItemHaube2SecondaryColorBMin).max(capturePresetResponsePositionsItemHaube2SecondaryColorBMax)
+}),
+  "brightness": zod.number().min(capturePresetResponsePositionsItemHaube2BrightnessMin).max(capturePresetResponsePositionsItemHaube2BrightnessMax),
+  "speed": zod.number().min(capturePresetResponsePositionsItemHaube2SpeedMin).max(capturePresetResponsePositionsItemHaube2SpeedMax).describe('Animation speed: 0=static, 255=~2 Hz cycle'),
+  "enabled": zod.boolean()
+}),
   "schmerz": zod.object({
   "type": zod.enum(['solid', 'pulse', 'chase', 'wave', 'sparkle']),
   "primaryColor": zod.object({
@@ -4016,7 +4779,8 @@ export const CapturePresetResponse = zod.object({
 }),
   "screen": zod.object({
   "videoFile": zod.string(),
-  "enabled": zod.boolean()
+  "enabled": zod.boolean(),
+  "loop": zod.boolean()
 })
 })).describe('[0]=NSAR(-1)  [1]=SCHMERZ(0)  [2]=OPIAT(1)'),
   "idlePreset": zod.object({
@@ -4039,6 +4803,22 @@ export const CapturePresetResponse = zod.object({
 }),
   "brightness": zod.number().min(capturePresetResponseIdlePresetHaubeBrightnessMin).max(capturePresetResponseIdlePresetHaubeBrightnessMax),
   "speed": zod.number().min(capturePresetResponseIdlePresetHaubeSpeedMin).max(capturePresetResponseIdlePresetHaubeSpeedMax).describe('Animation speed: 0=static, 255=~2 Hz cycle'),
+  "enabled": zod.boolean()
+}),
+  "haube2": zod.object({
+  "type": zod.enum(['solid', 'pulse', 'chase', 'wave', 'sparkle']),
+  "primaryColor": zod.object({
+  "r": zod.number().min(capturePresetResponseIdlePresetHaube2PrimaryColorRMin).max(capturePresetResponseIdlePresetHaube2PrimaryColorRMax),
+  "g": zod.number().min(capturePresetResponseIdlePresetHaube2PrimaryColorGMin).max(capturePresetResponseIdlePresetHaube2PrimaryColorGMax),
+  "b": zod.number().min(capturePresetResponseIdlePresetHaube2PrimaryColorBMin).max(capturePresetResponseIdlePresetHaube2PrimaryColorBMax)
+}),
+  "secondaryColor": zod.object({
+  "r": zod.number().min(capturePresetResponseIdlePresetHaube2SecondaryColorRMin).max(capturePresetResponseIdlePresetHaube2SecondaryColorRMax),
+  "g": zod.number().min(capturePresetResponseIdlePresetHaube2SecondaryColorGMin).max(capturePresetResponseIdlePresetHaube2SecondaryColorGMax),
+  "b": zod.number().min(capturePresetResponseIdlePresetHaube2SecondaryColorBMin).max(capturePresetResponseIdlePresetHaube2SecondaryColorBMax)
+}),
+  "brightness": zod.number().min(capturePresetResponseIdlePresetHaube2BrightnessMin).max(capturePresetResponseIdlePresetHaube2BrightnessMax),
+  "speed": zod.number().min(capturePresetResponseIdlePresetHaube2SpeedMin).max(capturePresetResponseIdlePresetHaube2SpeedMax).describe('Animation speed: 0=static, 255=~2 Hz cycle'),
   "enabled": zod.boolean()
 }),
   "schmerz": zod.object({
@@ -4096,7 +4876,8 @@ export const CapturePresetResponse = zod.object({
 }),
   "screen": zod.object({
   "videoFile": zod.string(),
-  "enabled": zod.boolean()
+  "enabled": zod.boolean(),
+  "loop": zod.boolean()
 })
 }),
   "idleTimerSeconds": zod.number(),
@@ -4137,6 +4918,30 @@ export const applyPresetResponseHaubePatternBrightnessMax = 255;
 
 export const applyPresetResponseHaubePatternSpeedMin = 0;
 export const applyPresetResponseHaubePatternSpeedMax = 255;
+
+export const applyPresetResponseHaube2PatternPrimaryColorRMin = 0;
+export const applyPresetResponseHaube2PatternPrimaryColorRMax = 255;
+
+export const applyPresetResponseHaube2PatternPrimaryColorGMin = 0;
+export const applyPresetResponseHaube2PatternPrimaryColorGMax = 255;
+
+export const applyPresetResponseHaube2PatternPrimaryColorBMin = 0;
+export const applyPresetResponseHaube2PatternPrimaryColorBMax = 255;
+
+export const applyPresetResponseHaube2PatternSecondaryColorRMin = 0;
+export const applyPresetResponseHaube2PatternSecondaryColorRMax = 255;
+
+export const applyPresetResponseHaube2PatternSecondaryColorGMin = 0;
+export const applyPresetResponseHaube2PatternSecondaryColorGMax = 255;
+
+export const applyPresetResponseHaube2PatternSecondaryColorBMin = 0;
+export const applyPresetResponseHaube2PatternSecondaryColorBMax = 255;
+
+export const applyPresetResponseHaube2PatternBrightnessMin = 0;
+export const applyPresetResponseHaube2PatternBrightnessMax = 255;
+
+export const applyPresetResponseHaube2PatternSpeedMin = 0;
+export const applyPresetResponseHaube2PatternSpeedMax = 255;
 
 export const applyPresetResponseSchmerzPatternPrimaryColorRMin = 0;
 export const applyPresetResponseSchmerzPatternPrimaryColorRMax = 255;
@@ -4246,6 +5051,25 @@ export const ApplyPresetResponse = zod.object({
 }),
   "pixelCount": zod.number().describe('Physical pixel count for this zone (from hardware config)')
 }),
+  "haube2": zod.object({
+  "pattern": zod.object({
+  "type": zod.enum(['solid', 'pulse', 'chase', 'wave', 'sparkle']),
+  "primaryColor": zod.object({
+  "r": zod.number().min(applyPresetResponseHaube2PatternPrimaryColorRMin).max(applyPresetResponseHaube2PatternPrimaryColorRMax),
+  "g": zod.number().min(applyPresetResponseHaube2PatternPrimaryColorGMin).max(applyPresetResponseHaube2PatternPrimaryColorGMax),
+  "b": zod.number().min(applyPresetResponseHaube2PatternPrimaryColorBMin).max(applyPresetResponseHaube2PatternPrimaryColorBMax)
+}),
+  "secondaryColor": zod.object({
+  "r": zod.number().min(applyPresetResponseHaube2PatternSecondaryColorRMin).max(applyPresetResponseHaube2PatternSecondaryColorRMax),
+  "g": zod.number().min(applyPresetResponseHaube2PatternSecondaryColorGMin).max(applyPresetResponseHaube2PatternSecondaryColorGMax),
+  "b": zod.number().min(applyPresetResponseHaube2PatternSecondaryColorBMin).max(applyPresetResponseHaube2PatternSecondaryColorBMax)
+}),
+  "brightness": zod.number().min(applyPresetResponseHaube2PatternBrightnessMin).max(applyPresetResponseHaube2PatternBrightnessMax),
+  "speed": zod.number().min(applyPresetResponseHaube2PatternSpeedMin).max(applyPresetResponseHaube2PatternSpeedMax).describe('Animation speed: 0=static, 255=~2 Hz cycle'),
+  "enabled": zod.boolean()
+}),
+  "pixelCount": zod.number().describe('Physical pixel count for this zone (from hardware config)')
+}),
   "schmerz": zod.object({
   "pattern": zod.object({
   "type": zod.enum(['solid', 'pulse', 'chase', 'wave', 'sparkle']),
@@ -4311,7 +5135,8 @@ export const ApplyPresetResponse = zod.object({
 }),
   "screen": zod.object({
   "videoFile": zod.string(),
-  "enabled": zod.boolean()
+  "enabled": zod.boolean(),
+  "loop": zod.boolean()
 }),
   "painFader": zod.object({
   "position": zod.number().min(applyPresetResponsePainFaderPositionMin).max(applyPresetResponsePainFaderPositionMax),
@@ -4326,11 +5151,16 @@ export const ApplyPresetResponse = zod.object({
   "opiat": zod.boolean()
 })
 }),
+  "startButton": zod.object({
+  "simulated": zod.boolean(),
+  "port": zod.string()
+}),
   "hardwareConfig": zod.object({
   "gledopto1": zod.object({
   "host": zod.string(),
   "universeStart": zod.number(),
-  "haubePixelCount": zod.number(),
+  "haube1PixelCount": zod.number(),
+  "haube2PixelCount": zod.number(),
   "schmerzPixelCount": zod.number()
 }),
   "gledopto2": zod.object({
@@ -4402,6 +5232,30 @@ export const updatePresetTimerResponsePositionsItemHaubeBrightnessMax = 255;
 
 export const updatePresetTimerResponsePositionsItemHaubeSpeedMin = 0;
 export const updatePresetTimerResponsePositionsItemHaubeSpeedMax = 255;
+
+export const updatePresetTimerResponsePositionsItemHaube2PrimaryColorRMin = 0;
+export const updatePresetTimerResponsePositionsItemHaube2PrimaryColorRMax = 255;
+
+export const updatePresetTimerResponsePositionsItemHaube2PrimaryColorGMin = 0;
+export const updatePresetTimerResponsePositionsItemHaube2PrimaryColorGMax = 255;
+
+export const updatePresetTimerResponsePositionsItemHaube2PrimaryColorBMin = 0;
+export const updatePresetTimerResponsePositionsItemHaube2PrimaryColorBMax = 255;
+
+export const updatePresetTimerResponsePositionsItemHaube2SecondaryColorRMin = 0;
+export const updatePresetTimerResponsePositionsItemHaube2SecondaryColorRMax = 255;
+
+export const updatePresetTimerResponsePositionsItemHaube2SecondaryColorGMin = 0;
+export const updatePresetTimerResponsePositionsItemHaube2SecondaryColorGMax = 255;
+
+export const updatePresetTimerResponsePositionsItemHaube2SecondaryColorBMin = 0;
+export const updatePresetTimerResponsePositionsItemHaube2SecondaryColorBMax = 255;
+
+export const updatePresetTimerResponsePositionsItemHaube2BrightnessMin = 0;
+export const updatePresetTimerResponsePositionsItemHaube2BrightnessMax = 255;
+
+export const updatePresetTimerResponsePositionsItemHaube2SpeedMin = 0;
+export const updatePresetTimerResponsePositionsItemHaube2SpeedMax = 255;
 
 export const updatePresetTimerResponsePositionsItemSchmerzPrimaryColorRMin = 0;
 export const updatePresetTimerResponsePositionsItemSchmerzPrimaryColorRMax = 255;
@@ -4504,6 +5358,30 @@ export const updatePresetTimerResponseIdlePresetHaubeBrightnessMax = 255;
 export const updatePresetTimerResponseIdlePresetHaubeSpeedMin = 0;
 export const updatePresetTimerResponseIdlePresetHaubeSpeedMax = 255;
 
+export const updatePresetTimerResponseIdlePresetHaube2PrimaryColorRMin = 0;
+export const updatePresetTimerResponseIdlePresetHaube2PrimaryColorRMax = 255;
+
+export const updatePresetTimerResponseIdlePresetHaube2PrimaryColorGMin = 0;
+export const updatePresetTimerResponseIdlePresetHaube2PrimaryColorGMax = 255;
+
+export const updatePresetTimerResponseIdlePresetHaube2PrimaryColorBMin = 0;
+export const updatePresetTimerResponseIdlePresetHaube2PrimaryColorBMax = 255;
+
+export const updatePresetTimerResponseIdlePresetHaube2SecondaryColorRMin = 0;
+export const updatePresetTimerResponseIdlePresetHaube2SecondaryColorRMax = 255;
+
+export const updatePresetTimerResponseIdlePresetHaube2SecondaryColorGMin = 0;
+export const updatePresetTimerResponseIdlePresetHaube2SecondaryColorGMax = 255;
+
+export const updatePresetTimerResponseIdlePresetHaube2SecondaryColorBMin = 0;
+export const updatePresetTimerResponseIdlePresetHaube2SecondaryColorBMax = 255;
+
+export const updatePresetTimerResponseIdlePresetHaube2BrightnessMin = 0;
+export const updatePresetTimerResponseIdlePresetHaube2BrightnessMax = 255;
+
+export const updatePresetTimerResponseIdlePresetHaube2SpeedMin = 0;
+export const updatePresetTimerResponseIdlePresetHaube2SpeedMax = 255;
+
 export const updatePresetTimerResponseIdlePresetSchmerzPrimaryColorRMin = 0;
 export const updatePresetTimerResponseIdlePresetSchmerzPrimaryColorRMax = 255;
 
@@ -4603,6 +5481,22 @@ export const UpdatePresetTimerResponse = zod.object({
   "speed": zod.number().min(updatePresetTimerResponsePositionsItemHaubeSpeedMin).max(updatePresetTimerResponsePositionsItemHaubeSpeedMax).describe('Animation speed: 0=static, 255=~2 Hz cycle'),
   "enabled": zod.boolean()
 }),
+  "haube2": zod.object({
+  "type": zod.enum(['solid', 'pulse', 'chase', 'wave', 'sparkle']),
+  "primaryColor": zod.object({
+  "r": zod.number().min(updatePresetTimerResponsePositionsItemHaube2PrimaryColorRMin).max(updatePresetTimerResponsePositionsItemHaube2PrimaryColorRMax),
+  "g": zod.number().min(updatePresetTimerResponsePositionsItemHaube2PrimaryColorGMin).max(updatePresetTimerResponsePositionsItemHaube2PrimaryColorGMax),
+  "b": zod.number().min(updatePresetTimerResponsePositionsItemHaube2PrimaryColorBMin).max(updatePresetTimerResponsePositionsItemHaube2PrimaryColorBMax)
+}),
+  "secondaryColor": zod.object({
+  "r": zod.number().min(updatePresetTimerResponsePositionsItemHaube2SecondaryColorRMin).max(updatePresetTimerResponsePositionsItemHaube2SecondaryColorRMax),
+  "g": zod.number().min(updatePresetTimerResponsePositionsItemHaube2SecondaryColorGMin).max(updatePresetTimerResponsePositionsItemHaube2SecondaryColorGMax),
+  "b": zod.number().min(updatePresetTimerResponsePositionsItemHaube2SecondaryColorBMin).max(updatePresetTimerResponsePositionsItemHaube2SecondaryColorBMax)
+}),
+  "brightness": zod.number().min(updatePresetTimerResponsePositionsItemHaube2BrightnessMin).max(updatePresetTimerResponsePositionsItemHaube2BrightnessMax),
+  "speed": zod.number().min(updatePresetTimerResponsePositionsItemHaube2SpeedMin).max(updatePresetTimerResponsePositionsItemHaube2SpeedMax).describe('Animation speed: 0=static, 255=~2 Hz cycle'),
+  "enabled": zod.boolean()
+}),
   "schmerz": zod.object({
   "type": zod.enum(['solid', 'pulse', 'chase', 'wave', 'sparkle']),
   "primaryColor": zod.object({
@@ -4658,7 +5552,8 @@ export const UpdatePresetTimerResponse = zod.object({
 }),
   "screen": zod.object({
   "videoFile": zod.string(),
-  "enabled": zod.boolean()
+  "enabled": zod.boolean(),
+  "loop": zod.boolean()
 })
 })).describe('[0]=NSAR(-1)  [1]=SCHMERZ(0)  [2]=OPIAT(1)'),
   "idlePreset": zod.object({
@@ -4681,6 +5576,22 @@ export const UpdatePresetTimerResponse = zod.object({
 }),
   "brightness": zod.number().min(updatePresetTimerResponseIdlePresetHaubeBrightnessMin).max(updatePresetTimerResponseIdlePresetHaubeBrightnessMax),
   "speed": zod.number().min(updatePresetTimerResponseIdlePresetHaubeSpeedMin).max(updatePresetTimerResponseIdlePresetHaubeSpeedMax).describe('Animation speed: 0=static, 255=~2 Hz cycle'),
+  "enabled": zod.boolean()
+}),
+  "haube2": zod.object({
+  "type": zod.enum(['solid', 'pulse', 'chase', 'wave', 'sparkle']),
+  "primaryColor": zod.object({
+  "r": zod.number().min(updatePresetTimerResponseIdlePresetHaube2PrimaryColorRMin).max(updatePresetTimerResponseIdlePresetHaube2PrimaryColorRMax),
+  "g": zod.number().min(updatePresetTimerResponseIdlePresetHaube2PrimaryColorGMin).max(updatePresetTimerResponseIdlePresetHaube2PrimaryColorGMax),
+  "b": zod.number().min(updatePresetTimerResponseIdlePresetHaube2PrimaryColorBMin).max(updatePresetTimerResponseIdlePresetHaube2PrimaryColorBMax)
+}),
+  "secondaryColor": zod.object({
+  "r": zod.number().min(updatePresetTimerResponseIdlePresetHaube2SecondaryColorRMin).max(updatePresetTimerResponseIdlePresetHaube2SecondaryColorRMax),
+  "g": zod.number().min(updatePresetTimerResponseIdlePresetHaube2SecondaryColorGMin).max(updatePresetTimerResponseIdlePresetHaube2SecondaryColorGMax),
+  "b": zod.number().min(updatePresetTimerResponseIdlePresetHaube2SecondaryColorBMin).max(updatePresetTimerResponseIdlePresetHaube2SecondaryColorBMax)
+}),
+  "brightness": zod.number().min(updatePresetTimerResponseIdlePresetHaube2BrightnessMin).max(updatePresetTimerResponseIdlePresetHaube2BrightnessMax),
+  "speed": zod.number().min(updatePresetTimerResponseIdlePresetHaube2SpeedMin).max(updatePresetTimerResponseIdlePresetHaube2SpeedMax).describe('Animation speed: 0=static, 255=~2 Hz cycle'),
   "enabled": zod.boolean()
 }),
   "schmerz": zod.object({
@@ -4738,7 +5649,8 @@ export const UpdatePresetTimerResponse = zod.object({
 }),
   "screen": zod.object({
   "videoFile": zod.string(),
-  "enabled": zod.boolean()
+  "enabled": zod.boolean(),
+  "loop": zod.boolean()
 })
 }),
   "idleTimerSeconds": zod.number(),

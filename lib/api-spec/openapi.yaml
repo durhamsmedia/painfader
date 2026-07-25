@@ -131,8 +131,8 @@ paths:
           required: true
           schema:
             type: string
-            enum: [haube, schmerz, nsar, opiat]
-          description: "LED zone: haube | schmerz | nsar | opiat"
+            enum: [haube, haube2, schmerz, nsar, opiat]
+          description: "LED zone: haube | haube2 | schmerz | nsar | opiat"
       requestBody:
         required: true
         content:
@@ -440,7 +440,7 @@ components:
 
     DmxState:
       type: object
-      required: [mode, fan, haube, schmerz, nsar, opiat, motor, screen, painFader, gpio, hardwareConfig, idleTimer]
+      required: [mode, fan, haube, haube2, schmerz, nsar, opiat, motor, screen, painFader, gpio, startButton, hardwareConfig, idleTimer]
       properties:
         mode:
           type: string
@@ -448,6 +448,8 @@ components:
         fan:
           $ref: "#/components/schemas/FanState"
         haube:
+          $ref: "#/components/schemas/ZoneState"
+        haube2:
           $ref: "#/components/schemas/ZoneState"
         schmerz:
           $ref: "#/components/schemas/ZoneState"
@@ -463,6 +465,12 @@ components:
           $ref: "#/components/schemas/PainFaderState"
         gpio:
           $ref: "#/components/schemas/GpioStatus"
+        startButton:
+          type: object
+          required: [simulated, port]
+          properties:
+            simulated: { type: boolean }
+            port: { type: string }
         hardwareConfig:
           $ref: "#/components/schemas/HardwareConfig"
         idleTimer:
@@ -501,10 +509,11 @@ components:
 
     ScreenState:
       type: object
-      required: [videoFile, enabled]
+      required: [videoFile, enabled, loop]
       properties:
         videoFile: { type: string }
         enabled: { type: boolean }
+        loop: { type: boolean }
 
     PainFaderState:
       type: object
@@ -542,11 +551,12 @@ components:
       properties:
         gledopto1:
           type: object
-          required: [host, universeStart, haubePixelCount, schmerzPixelCount]
+          required: [host, universeStart, haube1PixelCount, haube2PixelCount, schmerzPixelCount]
           properties:
             host: { type: string }
             universeStart: { type: integer }
-            haubePixelCount: { type: integer }
+            haube1PixelCount: { type: integer }
+            haube2PixelCount: { type: integer }
             schmerzPixelCount: { type: integer }
         gledopto2:
           type: object
@@ -604,6 +614,7 @@ components:
       properties:
         videoFile: { type: string }
         enabled: { type: boolean }
+        loop: { type: boolean }
 
     FaderPositionInput:
       type: object
@@ -626,7 +637,7 @@ components:
 
     FaderPreset:
       type: object
-      required: [name, fan, haube, schmerz, nsar, opiat, motor, screen]
+      required: [name, fan, haube, haube2, schmerz, nsar, opiat, motor, screen]
       properties:
         name: { type: string }
         fan:
@@ -636,6 +647,8 @@ components:
             speed: { type: integer, minimum: 0, maximum: 255 }
             enabled: { type: boolean }
         haube:
+          $ref: "#/components/schemas/ZonePattern"
+        haube2:
           $ref: "#/components/schemas/ZonePattern"
         schmerz:
           $ref: "#/components/schemas/ZonePattern"
@@ -652,10 +665,11 @@ components:
             enabled: { type: boolean }
         screen:
           type: object
-          required: [videoFile, enabled]
+          required: [videoFile, enabled, loop]
           properties:
             videoFile: { type: string }
             enabled: { type: boolean }
+            loop: { type: boolean }
 
     FaderPresetInput:
       type: object
@@ -667,6 +681,8 @@ components:
             speed: { type: integer, minimum: 0, maximum: 255 }
             enabled: { type: boolean }
         haube:
+          $ref: "#/components/schemas/ZonePatternInput"
+        haube2:
           $ref: "#/components/schemas/ZonePatternInput"
         schmerz:
           $ref: "#/components/schemas/ZonePatternInput"

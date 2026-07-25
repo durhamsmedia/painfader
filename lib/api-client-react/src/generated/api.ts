@@ -519,7 +519,7 @@ export const useSetFan = <TError = ErrorType<unknown>,
       return useMutation(getSetFanMutationOptions(options));
     }
 
-export const getSetZoneUrl = (name: 'haube' | 'schmerz' | 'nsar' | 'opiat',) => {
+export const getSetZoneUrl = (name: 'haube' | 'haube2' | 'schmerz' | 'nsar' | 'opiat',) => {
 
 
 
@@ -530,7 +530,7 @@ export const getSetZoneUrl = (name: 'haube' | 'schmerz' | 'nsar' | 'opiat',) => 
 /**
  * @summary Update LED zone pattern (Art-Net pixel)
  */
-export const setZone = async (name: 'haube' | 'schmerz' | 'nsar' | 'opiat',
+export const setZone = async (name: 'haube' | 'haube2' | 'schmerz' | 'nsar' | 'opiat',
     zonePatternInput: ZonePatternInput, options?: RequestInit): Promise<DmxState> => {
 
   return customFetch<DmxState>(getSetZoneUrl(name),
@@ -547,8 +547,8 @@ export const setZone = async (name: 'haube' | 'schmerz' | 'nsar' | 'opiat',
 
 
 export const getSetZoneMutationOptions = <TError = ErrorType<unknown>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof setZone>>, TError,{name: 'haube' | 'schmerz' | 'nsar' | 'opiat';data: BodyType<ZonePatternInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
-): UseMutationOptions<Awaited<ReturnType<typeof setZone>>, TError,{name: 'haube' | 'schmerz' | 'nsar' | 'opiat';data: BodyType<ZonePatternInput>}, TContext> => {
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof setZone>>, TError,{name: 'haube' | 'haube2' | 'schmerz' | 'nsar' | 'opiat';data: BodyType<ZonePatternInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof setZone>>, TError,{name: 'haube' | 'haube2' | 'schmerz' | 'nsar' | 'opiat';data: BodyType<ZonePatternInput>}, TContext> => {
 
 const mutationKey = ['setZone'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
@@ -560,7 +560,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof setZone>>, {name: 'haube' | 'schmerz' | 'nsar' | 'opiat';data: BodyType<ZonePatternInput>}> = (props) => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof setZone>>, {name: 'haube' | 'haube2' | 'schmerz' | 'nsar' | 'opiat';data: BodyType<ZonePatternInput>}> = (props) => {
           const {name,data} = props ?? {};
 
           return  setZone(name,data,requestOptions)
@@ -581,11 +581,11 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  * @summary Update LED zone pattern (Art-Net pixel)
  */
 export const useSetZone = <TError = ErrorType<unknown>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof setZone>>, TError,{name: 'haube' | 'schmerz' | 'nsar' | 'opiat';data: BodyType<ZonePatternInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof setZone>>, TError,{name: 'haube' | 'haube2' | 'schmerz' | 'nsar' | 'opiat';data: BodyType<ZonePatternInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
  ): UseMutationResult<
         Awaited<ReturnType<typeof setZone>>,
         TError,
-        {name: 'haube' | 'schmerz' | 'nsar' | 'opiat';data: BodyType<ZonePatternInput>},
+        {name: 'haube' | 'haube2' | 'schmerz' | 'nsar' | 'opiat';data: BodyType<ZonePatternInput>},
         TContext
       > => {
       return useMutation(getSetZoneMutationOptions(options));

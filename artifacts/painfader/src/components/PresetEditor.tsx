@@ -43,17 +43,18 @@ const PATTERN_ICONS: Record<string, React.ReactNode> = {
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-type ZoneName = 'haube' | 'schmerz' | 'nsar' | 'opiat';
+type ZoneName = 'haube' | 'haube2' | 'schmerz' | 'nsar' | 'opiat';
 
 interface PresetValues {
   name: string;
   fan: { speed: number; enabled: boolean };
   haube:   ZonePattern;
+  haube2:  ZonePattern;
   schmerz: ZonePattern;
   nsar:    ZonePattern;
   opiat:   ZonePattern;
   motor: { position: 'up' | 'down' | 'stop'; speed: number; enabled: boolean };
-  screen: { videoFile: string; enabled: boolean };
+  screen: { videoFile: string; enabled: boolean; loop: boolean };
 }
 
 const DEFAULT_ZONE: ZonePattern = {
@@ -69,11 +70,12 @@ const DEFAULT_PRESET: PresetValues = {
   name: '',
   fan:    { speed: 0, enabled: false },
   haube:   { ...DEFAULT_ZONE },
+  haube2:  { ...DEFAULT_ZONE },
   schmerz: { ...DEFAULT_ZONE },
   nsar:    { ...DEFAULT_ZONE },
   opiat:   { ...DEFAULT_ZONE },
   motor:  { position: 'stop', speed: 3000, enabled: false },
-  screen: { videoFile: 'idle.mp4', enabled: false },
+  screen: { videoFile: 'idle.mp4', enabled: false, loop: true },
 };
 
 function mergePreset(raw: unknown): PresetValues {
@@ -82,6 +84,7 @@ function mergePreset(raw: unknown): PresetValues {
     ...DEFAULT_PRESET,
     ...p,
     haube:   { ...DEFAULT_ZONE, ...(p.haube   ?? {}) },
+    haube2:  { ...DEFAULT_ZONE, ...(p.haube2  ?? {}) },
     schmerz: { ...DEFAULT_ZONE, ...(p.schmerz ?? {}) },
     nsar:    { ...DEFAULT_ZONE, ...(p.nsar    ?? {}) },
     opiat:   { ...DEFAULT_ZONE, ...(p.opiat   ?? {}) },
@@ -232,7 +235,8 @@ function PresetCard({
   const updZone   = (zone: ZoneName, pattern: ZonePattern) => setLocal((p) => ({ ...p, [zone]: pattern }));
 
   const zones: { key: ZoneName; label: string }[] = [
-    { key: 'haube',   label: 'HAUBE (Gledopto #1 OUT1)' },
+    { key: 'haube',   label: 'HAUBE 1 — Matrix 1 (GPIO16)' },
+    { key: 'haube2',  label: 'HAUBE 2 — Matrix 2 (GPIO12)' },
     { key: 'schmerz', label: 'SCHMERZ-BAND (Gledopto #1 OUT2)' },
     { key: 'nsar',    label: 'NSAR-BAND (Gledopto #2 OUT1)' },
     { key: 'opiat',   label: 'OPIAT-BAND (Gledopto #2 OUT2)' },

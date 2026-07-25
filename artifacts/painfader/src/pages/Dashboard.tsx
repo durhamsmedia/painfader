@@ -43,7 +43,7 @@ const POS_ACTIVE_STYLE: Record<number, string> = {
 };
 const POS_INACTIVE = 'border-zinc-700 bg-transparent text-zinc-400 hover:bg-zinc-800 hover:text-white';
 
-type ZoneName = 'haube' | 'schmerz' | 'nsar' | 'opiat';
+type ZoneName = 'haube' | 'haube2' | 'schmerz' | 'nsar' | 'opiat';
 
 const PATTERN_TYPES: PatternType[] = ['solid', 'pulse', 'chase', 'wave', 'sparkle'];
 const PATTERN_ICONS: Record<string, React.ReactNode> = {
@@ -290,7 +290,7 @@ export default function Dashboard() {
   }, []);
 
   // ── Guard — wait for new API shape ────────────────────────────────────────
-  if (!dmxState || !dmxState.haube || !dmxState.schmerz || !dmxState.nsar || !dmxState.opiat) {
+  if (!dmxState || !dmxState.haube || !dmxState.haube2 || !dmxState.schmerz || !dmxState.nsar || !dmxState.opiat) {
     return (
       <div className="min-h-screen flex items-center justify-center font-mono text-zinc-600 text-sm uppercase tracking-widest bg-[#050505]">
         INITIALIZING CONTROLLER...
@@ -305,7 +305,8 @@ export default function Dashboard() {
   const gpio    = dmxState.gpio;
 
   const ZONES: { key: ZoneName; label: string; sublabel: string }[] = [
-    { key: 'haube',   label: 'HAUBE',        sublabel: '2 × 16×16 Matrix' },
+    { key: 'haube',   label: 'HAUBE 1',      sublabel: 'Matrix 1 · GPIO16' },
+    { key: 'haube2',  label: 'HAUBE 2',      sublabel: 'Matrix 2 · GPIO12' },
     { key: 'schmerz', label: 'SCHMERZ-BAND', sublabel: '5 × 16×16 Matrix' },
     { key: 'nsar',    label: 'NSAR-BAND',    sublabel: 'WS2812b Strip' },
     { key: 'opiat',   label: 'OPIAT-BAND',   sublabel: 'WS2812b Strip' },
@@ -722,7 +723,8 @@ export default function Dashboard() {
                       <div className="space-y-1.5">
                         <div className="flex justify-between"><span className="text-zinc-600">Gledopto #1 IP</span><span>{dmxState.hardwareConfig.gledopto1.host}</span></div>
                         <div className="flex justify-between"><span className="text-zinc-600">Universe start #1</span><span>{dmxState.hardwareConfig.gledopto1.universeStart}</span></div>
-                        <div className="flex justify-between"><span className="text-zinc-600">Haube pixels</span><span>{dmxState.hardwareConfig.gledopto1.haubePixelCount}</span></div>
+                        <div className="flex justify-between"><span className="text-zinc-600">Haube 1 pixels</span><span>{dmxState.hardwareConfig.gledopto1.haube1PixelCount}</span></div>
+                        <div className="flex justify-between"><span className="text-zinc-600">Haube 2 pixels</span><span>{dmxState.hardwareConfig.gledopto1.haube2PixelCount}</span></div>
                         <div className="flex justify-between"><span className="text-zinc-600">Schmerz pixels</span><span>{dmxState.hardwareConfig.gledopto1.schmerzPixelCount}</span></div>
                       </div>
                       <div className="border-t border-zinc-800 pt-2 space-y-1.5">
@@ -821,7 +823,7 @@ export default function Dashboard() {
                       const n = (k: string) => Number(f.get(k));
                       updateHwConfig.mutate({ data: {
                         ...hwConfig,
-                        gledopto1: { ...hwConfig.gledopto1, host: g('g1host'), universeStart: n('g1uni'), haubePixelCount: n('haubePixels'), schmerzPixelCount: n('schmerzPixels') },
+                        gledopto1: { ...hwConfig.gledopto1, host: g('g1host'), universeStart: n('g1uni'), haube1PixelCount: n('haube1Pixels'), haube2PixelCount: n('haube2Pixels'), schmerzPixelCount: n('schmerzPixels') },
                         gledopto2: { ...hwConfig.gledopto2, host: g('g2host'), universeStart: n('g2uni'), nsarPixelCount: n('nsarPixels'), opiatPixelCount: n('opiatPixels') },
                         artnetRefreshRate: n('fps'),
                         openDmxPort: g('openDmxPort'),
@@ -843,7 +845,8 @@ export default function Dashboard() {
                       <div className="grid grid-cols-2 gap-3">
                         <div className="space-y-1"><Label className="text-[10px] font-mono text-zinc-600">IP Gledopto #1</Label><Input name="g1host" defaultValue={hwConfig.gledopto1.host} className="h-7 font-mono text-xs bg-black border-zinc-800 rounded-sm" /></div>
                         <div className="space-y-1"><Label className="text-[10px] font-mono text-zinc-600">Universe start #1</Label><Input name="g1uni" type="number" defaultValue={hwConfig.gledopto1.universeStart} className="h-7 font-mono text-xs bg-black border-zinc-800 rounded-sm" /></div>
-                        <div className="space-y-1"><Label className="text-[10px] font-mono text-zinc-600">Haube pixels</Label><Input name="haubePixels" type="number" defaultValue={hwConfig.gledopto1.haubePixelCount} className="h-7 font-mono text-xs bg-black border-zinc-800 rounded-sm" /></div>
+                        <div className="space-y-1"><Label className="text-[10px] font-mono text-zinc-600">Haube 1 pixels</Label><Input name="haube1Pixels" type="number" defaultValue={hwConfig.gledopto1.haube1PixelCount} className="h-7 font-mono text-xs bg-black border-zinc-800 rounded-sm" /></div>
+                        <div className="space-y-1"><Label className="text-[10px] font-mono text-zinc-600">Haube 2 pixels</Label><Input name="haube2Pixels" type="number" defaultValue={hwConfig.gledopto1.haube2PixelCount} className="h-7 font-mono text-xs bg-black border-zinc-800 rounded-sm" /></div>
                         <div className="space-y-1"><Label className="text-[10px] font-mono text-zinc-600">Schmerz pixels</Label><Input name="schmerzPixels" type="number" defaultValue={hwConfig.gledopto1.schmerzPixelCount} className="h-7 font-mono text-xs bg-black border-zinc-800 rounded-sm" /></div>
                       </div>
 

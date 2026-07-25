@@ -20,8 +20,10 @@ export interface GledoptoConfig {
 export interface HardwareConfig {
   // ── Gledopto #1 (Haube + Schmerz) ───────────────────────────────────────
   gledopto1: GledoptoConfig & {
-    /** Haube: 2 matrices × 16×16 = 512 pixels */
-    haubePixelCount: number;
+    /** Haube Matrix 1 (GPIO16): 1 × 16×16 = 256 pixels */
+    haube1PixelCount: number;
+    /** Haube Matrix 2 (GPIO12): 1 × 16×16 = 256 pixels — independently controlled */
+    haube2PixelCount: number;
     /** Schmerz-Band: 5 matrices × 16×16 = 1280 pixels */
     schmerzPixelCount: number;
   };
@@ -82,9 +84,10 @@ export interface HardwareConfig {
 
 export const DEFAULT_HARDWARE_CONFIG: HardwareConfig = {
   gledopto1: {
-    host: "2.0.0.255",     // Subnet broadcast — WLED only receives broadcasts on this network
+    host: "2.0.0.255",       // Subnet broadcast — WLED only receives broadcasts on this network
     universeStart: 0,
-    haubePixelCount: 512,  // 2 × 256
+    haube1PixelCount: 256,   // Matrix 1 (GPIO16) — Haube NSAR side
+    haube2PixelCount: 256,   // Matrix 2 (GPIO12) — Haube Schmerz side
     schmerzPixelCount: 1280, // 5 × 256
   },
   gledopto2: {
