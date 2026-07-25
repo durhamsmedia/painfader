@@ -150,12 +150,17 @@ export class ArtNetPixelSender {
     const g1 = this.config.gledopto1;
     const g2 = this.config.gledopto2;
 
-    // Gledopto #1: haube (Matrix 1 GPIO16) → haube2 (Matrix 2 GPIO12) → schmerz
-    const haube1UniStart  = g1.universeStart;
-    const haube2UniStart  = haube1UniStart  + universesNeeded(g1.haube1PixelCount);
-    const schmerzUniStart = haube2UniStart  + universesNeeded(g1.haube2PixelCount);
-    this.sendZone(g1.host, haube1UniStart,  "haube",   g1.haube1PixelCount);
-    this.sendZone(g1.host, haube2UniStart,  "haube2",  g1.haube2PixelCount);
+    // Gledopto #1: haube1 + haube2 as ONE combined pixel buffer so WLED's
+    // 170-pixel-per-universe mapping aligns across the GPIO16→GPIO12 boundary.
+    // Universe N → WLED combined pixels N×170..(N+1)×170-1, so we must NOT
+    // start haube2 at a new universe; instead concatenate both renders.
+    const haubeBuf = Buffer.concat([
+      renderPattern(this.zones.haube,  g1.haube1PixelCount, this.phases.haube),
+      renderPattern(this.zones.haube2, g1.haube2PixelCount, this.phases.haube2),
+    ]);
+    const haubeUniStart   = g1.universeStart;
+    const schmerzUniStart = haubeUniStart + universesNeeded(g1.haube1PixelCount + g1.haube2PixelCount);
+    this.sendPixelBuffer(g1.host, haubeUniStart, haubeBuf);
     this.sendZone(g1.host, schmerzUniStart, "schmerz", g1.schmerzPixelCount);
 
     // Gledopto #2: nsar then opiat
