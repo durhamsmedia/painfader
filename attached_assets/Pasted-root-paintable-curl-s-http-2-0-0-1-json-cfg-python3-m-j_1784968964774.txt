@@ -1,0 +1,86 @@
+root@paintable:~# curl -s http://2.0.0.1/json/cfg | python3 -m json.tool 2>/dev/null | grep -A 30 '"if"'
+        "if": {
+            "i2c-pin": [
+                -1,
+                -1
+            ],
+            "spi-pin": [
+                -1,
+                -1,
+                -1
+            ]
+        }
+    },
+    "light": {
+        "scale-bri": 100,
+        "pal-mode": 0,
+        "aseg": false,
+        "gc": {
+            "bri": 1,
+            "col": 1,
+            "val": 2.8
+        },
+        "tr": {
+            "mode": true,
+            "fx": true,
+            "dur": 7,
+            "pal": false,
+            "rpc": 5,
+            "hrp": true
+        },
+        "nl": {
+            "mode": 1,
+--
+    "if": {
+        "sync": {
+            "port0": 21324,
+            "port1": 65506,
+            "espnow": false,
+            "recv": {
+                "bri": true,
+                "col": true,
+                "fx": true,
+                "pal": true,
+                "grp": 1,
+                "seg": false,
+                "sb": false
+            },
+            "send": {
+                "en": false,
+                "dir": true,
+                "btn": true,
+                "va": false,
+                "hue": false,
+                "grp": 1,
+                "ret": 0
+            }
+        },
+        "nodes": {
+            "list": true,
+            "bcast": true
+        },
+        "live": {
+            "en": true,
+            "mso": false,
+root@paintable:~# curl -s http://2.0.0.1/json/cfg | python3 -m json.tool 2>/dev/null | grep -A 20 '"live"'
+        "live": {
+            "en": true,
+            "mso": false,
+            "rlm": true,
+            "port": 6454,
+            "mc": false,
+            "dmx": {
+                "uni": 0,
+                "seqskip": false,
+                "e131prio": 0,
+                "addr": 1,
+                "dss": 0,
+                "mode": 4
+            },
+            "timeout": 25,
+            "maxbri": false,
+            "no-gc": true,
+            "offset": 0
+        },
+        "va": {
+            "alexa": false,
