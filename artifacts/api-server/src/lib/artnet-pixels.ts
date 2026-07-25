@@ -172,37 +172,23 @@ export class ArtNetPixelSender {
     const g1 = this.config.gledopto1;
     const g2 = this.config.gledopto2;
 
-    const protocol = this.config.pixelProtocol ?? "artnet";
+    // Gledopto #1: haube1 + haube2 as ONE combined 512-pixel buffer so WLED's
+    // sequential universe mapping (Universe N → combined pixels N×170..(N+1)×170-1)
+    // aligns across the GPIO16→GPIO12 boundary correctly.
+    const haubeBuf = Buffer.concat([
+      renderPattern(this.zones.haube,  g1.haube1PixelCount,  this.phases.haube),
+      renderPattern(this.zones.haube2, g1.haube2PixelCount,  this.phases.haube2),
+    ]);
+    const haubeUniStart   = g1.universeStart;
+    const schmerzUniStart = haubeUniStart + universesNeeded(g1.haube1PixelCount + g1.haube2PixelCount);
+    this.sendPixelBuffer(g1.host, haubeUniStart, haubeBuf);
+    this.sendZone(g1.host, schmerzUniStart, "schmerz", g1.schmerzPixelCount);
 
-    if (protocol === "ddp") {
-      // ── DDP: direct byte-offset addressing — no universe alignment issues ──
-      // WLED maps DDP byte offset → LED index (offset / 3 = pixel index).
-      // Each matrix maps exactly to its byte range regardless of pixel count.
-      const h1 = renderPattern(this.zones.haube,   g1.haube1PixelCount,   this.phases.haube);
-      const h2 = renderPattern(this.zones.haube2,  g1.haube2PixelCount,   this.phases.haube2);
-      const sc = renderPattern(this.zones.schmerz, g1.schmerzPixelCount,  this.phases.schmerz);
-      this.sendDdpBuffer(g1.host, 0, h1);
-      this.sendDdpBuffer(g1.host, h1.length, h2);
-      this.sendDdpBuffer(g1.host, h1.length + h2.length, sc);
-
-      const n  = renderPattern(this.zones.nsar,  g2.nsarPixelCount,  this.phases.nsar);
-      const op = renderPattern(this.zones.opiat, g2.opiatPixelCount, this.phases.opiat);
-      this.sendDdpBuffer(g2.host, 0, n);
-      this.sendDdpBuffer(g2.host, n.length, op);
-    } else {
-      // ── Art-Net / E1.31: sequential universe mapping ──
-      const haube1UniStart  = g1.universeStart;
-      const haube2UniStart  = haube1UniStart  + universesNeeded(g1.haube1PixelCount);
-      const schmerzUniStart = haube2UniStart  + universesNeeded(g1.haube2PixelCount);
-      this.sendZone(g1.host, haube1UniStart,  "haube",   g1.haube1PixelCount);
-      this.sendZone(g1.host, haube2UniStart,  "haube2",  g1.haube2PixelCount);
-      this.sendZone(g1.host, schmerzUniStart, "schmerz", g1.schmerzPixelCount);
-
-      const nsarUniStart  = g2.universeStart;
-      const opiatUniStart = nsarUniStart + universesNeeded(g2.nsarPixelCount);
-      this.sendZone(g2.host, nsarUniStart,  "nsar",  g2.nsarPixelCount);
-      this.sendZone(g2.host, opiatUniStart, "opiat", g2.opiatPixelCount);
-    }
+    // Gledopto #2: nsar then opiat
+    const nsarUniStart  = g2.universeStart;
+    const opiatUniStart = nsarUniStart + universesNeeded(g2.nsarPixelCount);
+    this.sendZone(g2.host, nsarUniStart,  "nsar",  g2.nsarPixelCount);
+    this.sendZone(g2.host, opiatUniStart, "opiat", g2.opiatPixelCount);
 
     // Advance sACN sequence (wraps 1-255, 0 is reserved)
     this.seqNum = (this.seqNum % 255) + 1;

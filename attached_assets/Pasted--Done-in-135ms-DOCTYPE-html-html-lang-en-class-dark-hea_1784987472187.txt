@@ -1,0 +1,29 @@
+
+⚡ Done in 135ms
+<!DOCTYPE html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+    <title>Painfader DMX Controller</title>
+    <meta name="description" content="Painfader DMX Controller — built on Replit. Update this description to reflect the app." />
+    <meta name="robots" content="index, follow" />
+    <meta property="og:title" content="Painfader DMX Controller" />
+    <meta property="og:description" content="Painfader DMX Controller — built on Replit. Update this description to reflect the app." />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Painfader DMX Controller" />
+    <meta name="twitter:description" content="Painfader DMX Controller — built on Replit. Update this description to reflect the app." />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script type="module" crossorigin src="/assets/index-D6ox8GJ1.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-DqBkbJF-.css">
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>
+
+{"mode":"idle","fan":{"speed":0,"enabled":false,"dmxChannel":1},"haube":{"pattern":{"type":"solid","primaryColor":{"r":255,"g":0,"b":0},"secondaryColor":{"r":255,"g":255,"b":255},"brightness":200,"speed":64,"enabled":true},"pixelCount":256},"haube2":{"pattern":{"type":"sparkle","primaryColor":{"r":255,"g":220,"b":120},"secondaryColor":{"r":255,"g":255,"b":255},"brightness":255,"speed":30,"enabled":true},"pixelCount":256},"schmerz":{"pattern":{"type":"solid","primaryColor":{"r":255,"g":255,"b":255},"secondaryColor":{"r":0,"g":0,"b":0},"brightness":128,"speed":64,"enabled":false},"pixelCount":1280},"nsar":{"pattern":{"type":"solid","primaryColor":{"r":255,"g":255,"b":255},"secondaryColor":{"r":0,"g":0,"b":0},"brightness":128,"speed":64,"enabled":false},"pixelCount":300},"opiat":{"pattern":{"type":"solid","primaryColor":{"r":255,"g":255,"b":255},"secondaryColor":{"r":0,"g":0,"b":0},"brightness":128,"speed":64,"enabled":false},"pixelCount":300},"motor":{"position":"down","speed":3000,"enabled":false,"simulated":true},"screen":{"videoFile":"Screen-Video_01.mp4","enabled":true,"loop":true},"painFader":{"position":0,"channel":22},"gpio":{"simulated":true,"position":0,"raw":{"nsar":false,"schmerz":false,"opiat":false}},"startButton":{"simulated":false,"port":"/dev/ttyUSB1"},"hardwareConfig":{"gledopto1":{"host":"2.0.0.255","universeStart":0,"haube1PixelCount":256,"haube2PixelCount":256,"schmerzPixelCount":1280},"gledopto2":{"host":"2.0.0.255","universeStart":16,"nsarPixelCount":300,"opiatPixelCount":300},"pixelProtocol":"ddp","pixelSourceIp":"2.0.0.10","artnetPort":6454,"artnetRefreshRate":30,"openDmxPort":"/dev/ttyUSB0","fanDmxChannel":1,"motorPort":"/dev/ttyACM0","motorDriverType":"grbl","motorUpPosition":100,"motorDownPosition":0,"motorMaxSpeed":3000,"gpioChip":0,"gpioPinNsar":0,"gpioPinSchmerz":1,"gpioPinOpiat":2,"gpioPollIntervalMs":50,"gpioDebounceMs":30},"idleTimer":{"enabled":true,"timerSeconds":30,"remaining":null,"triggered":false}}{"mode":"idle","fan":{"speed":0,"enabled":false,"dmxChannel":1},"haube":{"pattern":{"type":"solid","primaryColor":{"r":255,"g":0,"b":0},"secondaryColor":{"r":255,"g":255,"b":255},"brightness":200,"speed":64,"enabled":true},"pixelCount":256},"haube2":{"pattern":{"type":"solid","primaryColor":{"r":0,"g":255,"b":0},"secondaryColor":{"r":255,"g":255,"b":255},"brightness":200,"speed":64,"enabled":true},"pixelCount":256},"schmerz":{"pattern":{"type":"solid","primaryColor":{"r":255,"g":255,"b":255},"secondaryColor":{"r":0,"g":0,"b":0},"brightness":128,"speed":64,"enabled":false},"pixelCount":1280},"nsar":{"pattern":{"type":"solid","primaryColor":{"r":255,"g":255,"b":255},"secondaryColor":{"r":0,"g":0,"b":0},"brightness":128,"speed":64,"enabled":false},"pixelCount":300},"opiat":{"pattern":{"type":"solid","primaryColor":{"r":255,"g":255,"b":255},"secondaryColor":{"r":0,"g":0,"b":0},"brightness":128,"speed":64,"enabled":false},"pixelCount":300},"motor":{"position":"down","speed":3000,"enabled":false,"simulated":true},"screen":{"videoFile":"Screen-Video_01.mp4","enabled":true,"loop":true},"painFader":{"position":0,"channel":22},"gpio":{"simulated":true,"position":0,"raw":{"nsar":false,"schmerz":false,"opiat":false}},"startButton":{"simulated":false,"port":"/dev/ttyUSB1"},"hardwareConfig":{"gledopto1":{"host":"2.0.0.255","universeStart":0,"haube1PixelCount":256,"haube2PixelCount":256,"schmerzPixelCount":1280},"gledopto2":{"host":"2.0.0.255","universeStart":16,"nsarPixelCount":300,"opiatPixelCount":300},"pixelProtocol":"ddp","pixelSourceIp":"2.0.0.10","artnetPort":6454,"artnetRefreshRate":30,"openDmxPort":"/dev/ttyUSB0","fanDmxChannel":1,"motorPort":"/dev/ttyACM0","motorDriverType":"grbl","motorUpPosition":100,"motorDownPosition":0,"motorMaxSpeed":3000,"gpioChip":0,"gpioPinNsar":0,"gpioPinSchmerz":1,"gpioPinOpiat":2,"gpioPollIntervalMs":50,"gpioDebounceMs":30},"idleTimer":{"enabled":true,"timerSeconds":30,"remaining":null,"triggered":false}}root@paintable:/opt/painfader# 
