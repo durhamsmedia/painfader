@@ -219,11 +219,14 @@ export class ArtNetPixelSender {
   }
 
   private sendDdpBuffer(host: string, byteOffset: number, pixels: Buffer) {
+    // DDP requires unicast — broadcast (x.x.x.255) is not accepted by WLED's DDP socket.
+    // If the configured host is a subnet broadcast, derive unicast by replacing last octet with .1
+    const ddpHost = host.endsWith(".255") ? host.replace(/\d+$/, "1") : host;
     for (let i = 0; i < pixels.length; i += DDP_MAX_DATA_BYTES) {
       const chunk = pixels.subarray(i, i + DDP_MAX_DATA_BYTES);
       const pkt   = buildDdpPacket(byteOffset + i, chunk, this.seqNum);
-      this.socket.send(pkt, 0, pkt.length, DDP_PORT, host, (err) => {
-        if (err) logger.warn({ err, host }, "DDP send error (ignored)");
+      this.socket.send(pkt, 0, pkt.length, DDP_PORT, ddpHost, (err) => {
+        if (err) logger.warn({ err, ddpHost }, "DDP send error (ignored)");
       });
     }
   }
