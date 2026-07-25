@@ -1,0 +1,34 @@
+root@paintable:/opt/painfader# curl -s -X POST http://2.0.0.1/json/cfg \
+  -H "Content-Type: application/json" \
+  -d '{"hw":{"led":{"ins":[{"pin":[16],"type":22,"len":512,"co":0,"order":0,"skip":0,"rev":false}]}}}' && echo
+root@paintable:/opt/painfader# curl -s -X POST http://2.0.0.1/json/state -H "Content-Type: application/json" \
+  -d '{"reboot":true}' > /dev/null && echo "WLED restartet..."
+sleep 5
+root@paintable:/opt/painfader# curl -s http://localhost:8080/api/health && echo
+<!DOCTYPE html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+    <title>Painfader DMX Controller</title>
+    <meta name="description" content="Painfader DMX Controller — built on Replit. Update this description to reflect the app." />
+    <meta name="robots" content="index, follow" />
+    <meta property="og:title" content="Painfader DMX Controller" />
+    <meta property="og:description" content="Painfader DMX Controller — built on Replit. Update this description to reflect the app." />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Painfader DMX Controller" />
+    <meta name="twitter:description" content="Painfader DMX Controller — built on Replit. Update this description to reflect the app." />
+    <link rel="icon" type="image/svg+xml" href="/painfader/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script type="module" crossorigin src="/painfader/assets/index-JLlTUVZM.js"></script>
+    <link rel="stylesheet" crossorigin href="/painfader/assets/index-B0ZQrJkU.css">
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>
+
+root@paintable:/opt/painfader# 
