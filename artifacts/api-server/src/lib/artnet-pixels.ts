@@ -150,17 +150,31 @@ export class ArtNetPixelSender {
     const g1 = this.config.gledopto1;
     const g2 = this.config.gledopto2;
 
-    // Gledopto #1: haube1 + haube2 as ONE combined pixel buffer so WLED's
-    // 170-pixel-per-universe mapping aligns across the GPIO16→GPIO12 boundary.
-    // Universe N → WLED combined pixels N×170..(N+1)×170-1, so we must NOT
-    // start haube2 at a new universe; instead concatenate both renders.
-    const haubeBuf = Buffer.concat([
-      renderPattern(this.zones.haube,  g1.haube1PixelCount, this.phases.haube),
-      renderPattern(this.zones.haube2, g1.haube2PixelCount, this.phases.haube2),
-    ]);
-    const haubeUniStart   = g1.universeStart;
-    const schmerzUniStart = haubeUniStart + universesNeeded(g1.haube1PixelCount + g1.haube2PixelCount);
-    this.sendPixelBuffer(g1.host, haubeUniStart, haubeBuf);
+    // Gledopto #1: haube1 and haube2 sent as INDEPENDENT padded streams.
+    //
+    // WLED maps Universe N → combined pixels [N×170 .. (N+1)×170-1].
+    // To align each matrix with clean universe boundaries we pad each zone's
+    // render buffer to a multiple of PIXELS_PER_UNIVERSE (170) with zeros.
+    // WLED GPIO12 must be configured with start=340 (= 2×170) so that
+    // universe 2 hits GPIO12 pixel 0 exactly.
+    //
+    //   Universe 0-1 → combined[0..339]   → GPIO16[0..255] (haube1, 84 px padding)
+    //   Universe 2-3 → combined[340..679] → GPIO12[0..255] (haube2, 84 px padding)
+    //   Universe 4+  → schmerz
+    const UNIS_PER_MATRIX = 2; // ceil(256/170) = 2
+    const matrixBufSize = UNIS_PER_MATRIX * PIXELS_PER_UNIVERSE * 3; // 340 px × 3 = 1020 bytes
+
+    const haube1Buf = Buffer.alloc(matrixBufSize, 0);
+    renderPattern(this.zones.haube,  g1.haube1PixelCount, this.phases.haube).copy(haube1Buf);
+
+    const haube2Buf = Buffer.alloc(matrixBufSize, 0);
+    renderPattern(this.zones.haube2, g1.haube2PixelCount, this.phases.haube2).copy(haube2Buf);
+
+    const haube1UniStart  = g1.universeStart;
+    const haube2UniStart  = haube1UniStart + UNIS_PER_MATRIX;
+    const schmerzUniStart = haube2UniStart + UNIS_PER_MATRIX;
+    this.sendPixelBuffer(g1.host, haube1UniStart, haube1Buf);
+    this.sendPixelBuffer(g1.host, haube2UniStart, haube2Buf);
     this.sendZone(g1.host, schmerzUniStart, "schmerz", g1.schmerzPixelCount);
 
     // Gledopto #2: nsar then opiat
