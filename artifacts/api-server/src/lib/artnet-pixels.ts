@@ -25,6 +25,28 @@ import { HardwareConfig } from "./hardware-config";
 
 const PIXELS_PER_UNIVERSE = 170; // 170 × 3 = 510 bytes ≤ 512 DMX slots
 
+// DDP (Distributed Display Protocol) — direct byte-offset pixel addressing
+const DDP_PORT          = 4048;
+const DDP_MAX_DATA_BYTES = 1440; // safe below Ethernet MTU (480 RGB pixels)
+
+/**
+ * Build a DDP (Distributed Display Protocol) packet.
+ * DDP uses a 10-byte header with a direct byte-offset into the LED buffer,
+ * so GPIO16 (offset 0) and GPIO12 (offset 256*3=768) are addressed independently
+ * of Art-Net universe boundaries — no 170-pixel alignment issue.
+ */
+function buildDdpPacket(byteOffset: number, data: Buffer, seqNum: number): Buffer {
+  const pkt = Buffer.allocUnsafe(10 + data.length);
+  pkt[0] = 0x41;                  // Flags: VER=1 (bit6), PUSH=1 (bit0)
+  pkt[1] = seqNum & 0x0f;         // 4-bit rolling sequence (1-15)
+  pkt[2] = 0x01;                  // Data type: RGB (3 bytes/pixel)
+  pkt[3] = 0x01;                  // Destination ID: default output
+  pkt.writeUInt32BE(byteOffset, 4);
+  pkt.writeUInt16BE(data.length,  8);
+  data.copy(pkt, 10);
+  return pkt;
+}
+
 // sACN / E1.31 constants
 const E131_PORT = 5568;
 const E131_MULTICAST_BASE = "239.255"; // base; full = 239.255.(hi).(lo)
@@ -150,38 +172,37 @@ export class ArtNetPixelSender {
     const g1 = this.config.gledopto1;
     const g2 = this.config.gledopto2;
 
-    // Gledopto #1: haube1 and haube2 sent as INDEPENDENT padded streams.
-    //
-    // WLED maps Universe N → combined pixels [N×170 .. (N+1)×170-1].
-    // To align each matrix with clean universe boundaries we pad each zone's
-    // render buffer to a multiple of PIXELS_PER_UNIVERSE (170) with zeros.
-    // WLED GPIO12 must be configured with start=340 (= 2×170) so that
-    // universe 2 hits GPIO12 pixel 0 exactly.
-    //
-    //   Universe 0-1 → combined[0..339]   → GPIO16[0..255] (haube1, 84 px padding)
-    //   Universe 2-3 → combined[340..679] → GPIO12[0..255] (haube2, 84 px padding)
-    //   Universe 4+  → schmerz
-    const UNIS_PER_MATRIX = 2; // ceil(256/170) = 2
-    const matrixBufSize = UNIS_PER_MATRIX * PIXELS_PER_UNIVERSE * 3; // 340 px × 3 = 1020 bytes
+    const protocol = this.config.pixelProtocol ?? "artnet";
 
-    const haube1Buf = Buffer.alloc(matrixBufSize, 0);
-    renderPattern(this.zones.haube,  g1.haube1PixelCount, this.phases.haube).copy(haube1Buf);
+    if (protocol === "ddp") {
+      // ── DDP: direct byte-offset addressing — no universe alignment issues ──
+      // WLED maps DDP byte offset → LED index (offset / 3 = pixel index).
+      // Each matrix maps exactly to its byte range regardless of pixel count.
+      const h1 = renderPattern(this.zones.haube,   g1.haube1PixelCount,   this.phases.haube);
+      const h2 = renderPattern(this.zones.haube2,  g1.haube2PixelCount,   this.phases.haube2);
+      const sc = renderPattern(this.zones.schmerz, g1.schmerzPixelCount,  this.phases.schmerz);
+      this.sendDdpBuffer(g1.host, 0, h1);
+      this.sendDdpBuffer(g1.host, h1.length, h2);
+      this.sendDdpBuffer(g1.host, h1.length + h2.length, sc);
 
-    const haube2Buf = Buffer.alloc(matrixBufSize, 0);
-    renderPattern(this.zones.haube2, g1.haube2PixelCount, this.phases.haube2).copy(haube2Buf);
+      const n  = renderPattern(this.zones.nsar,  g2.nsarPixelCount,  this.phases.nsar);
+      const op = renderPattern(this.zones.opiat, g2.opiatPixelCount, this.phases.opiat);
+      this.sendDdpBuffer(g2.host, 0, n);
+      this.sendDdpBuffer(g2.host, n.length, op);
+    } else {
+      // ── Art-Net / E1.31: sequential universe mapping ──
+      const haube1UniStart  = g1.universeStart;
+      const haube2UniStart  = haube1UniStart  + universesNeeded(g1.haube1PixelCount);
+      const schmerzUniStart = haube2UniStart  + universesNeeded(g1.haube2PixelCount);
+      this.sendZone(g1.host, haube1UniStart,  "haube",   g1.haube1PixelCount);
+      this.sendZone(g1.host, haube2UniStart,  "haube2",  g1.haube2PixelCount);
+      this.sendZone(g1.host, schmerzUniStart, "schmerz", g1.schmerzPixelCount);
 
-    const haube1UniStart  = g1.universeStart;
-    const haube2UniStart  = haube1UniStart + UNIS_PER_MATRIX;
-    const schmerzUniStart = haube2UniStart + UNIS_PER_MATRIX;
-    this.sendPixelBuffer(g1.host, haube1UniStart, haube1Buf);
-    this.sendPixelBuffer(g1.host, haube2UniStart, haube2Buf);
-    this.sendZone(g1.host, schmerzUniStart, "schmerz", g1.schmerzPixelCount);
-
-    // Gledopto #2: nsar then opiat
-    const nsarUniStart  = g2.universeStart;
-    const opiatUniStart = nsarUniStart + universesNeeded(g2.nsarPixelCount);
-    this.sendZone(g2.host, nsarUniStart,  "nsar",  g2.nsarPixelCount);
-    this.sendZone(g2.host, opiatUniStart, "opiat", g2.opiatPixelCount);
+      const nsarUniStart  = g2.universeStart;
+      const opiatUniStart = nsarUniStart + universesNeeded(g2.nsarPixelCount);
+      this.sendZone(g2.host, nsarUniStart,  "nsar",  g2.nsarPixelCount);
+      this.sendZone(g2.host, opiatUniStart, "opiat", g2.opiatPixelCount);
+    }
 
     // Advance sACN sequence (wraps 1-255, 0 is reserved)
     this.seqNum = (this.seqNum % 255) + 1;
@@ -195,6 +216,16 @@ export class ArtNetPixelSender {
   ) {
     const pixels = renderPattern(this.zones[zone], pixelCount, this.phases[zone]);
     this.sendPixelBuffer(host, universeStart, pixels);
+  }
+
+  private sendDdpBuffer(host: string, byteOffset: number, pixels: Buffer) {
+    for (let i = 0; i < pixels.length; i += DDP_MAX_DATA_BYTES) {
+      const chunk = pixels.subarray(i, i + DDP_MAX_DATA_BYTES);
+      const pkt   = buildDdpPacket(byteOffset + i, chunk, this.seqNum);
+      this.socket.send(pkt, 0, pkt.length, DDP_PORT, host, (err) => {
+        if (err) logger.warn({ err, host }, "DDP send error (ignored)");
+      });
+    }
   }
 
   private sendPixelBuffer(host: string, universeStart: number, pixels: Buffer) {
