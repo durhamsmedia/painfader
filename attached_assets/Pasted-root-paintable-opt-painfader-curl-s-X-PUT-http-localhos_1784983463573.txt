@@ -1,0 +1,30 @@
+root@paintable:/opt/painfader# curl -s -X PUT http://localhost:8080/api/dmx/zone/haube2 \
+  -H "Content-Type: application/json" \
+  -d '{"type":"solid","primaryColor":{"r":255,"g":0,"b":0},"secondaryColor":{"r":0,"g":0,"b":0},"brightness":220,"speed":64,"enabled":true}'
+{"error":"zone must be one of: haube, schmerz, nsar, opiat"}root@paintable:/opt/painfader# cd /opt/painfader &cd /opt/painfader && git pull origin main && \
+pnpm --filter @workspace/api-server run build && \
+systemctl restart painfader && sleep 3 && \
+journalctl -u painfader -n 5 --no-pager
+From https://github.com/durhamsmedia/painfader
+ * branch            main       -> FETCH_HEAD
+Already up to date.
+$ node ./build.mjs
+
+  dist/index.mjs                       1.7mb ⚠️
+  dist/pino-worker.mjs               153.4kb
+  dist/pino-file.mjs                 142.0kb
+  dist/pino-pretty.mjs               114.6kb
+  dist/thread-stream-worker.mjs        7.3kb
+  dist/index.mjs.map                   2.6mb
+  dist/pino-worker.mjs.map           256.9kb
+  dist/pino-file.mjs.map             229.0kb
+  dist/pino-pretty.mjs.map           204.0kb
+  dist/thread-stream-worker.mjs.map   12.0kb
+
+⚡ Done in 139ms
+Jul 25 14:44:06 paintable node[11118]: {"level":40,"time":1784983446308,"pid":11118,"hostname":"paintable","port":"/dev/ttyACM0","err":{"type":"Error","message":"Error: No such file or directory, cannot open /dev/ttyACM0","stack":"Error: Error: No such file or directory, cannot open /dev/ttyACM0"},"msg":"Stepper motor unavailable — simulation mode"}
+Jul 25 14:44:06 paintable node[11118]: {"level":30,"time":1784983446448,"pid":11118,"hostname":"paintable","path":"/dev/ttyUSB1","label":"Waveshare USB-TTL (FT232R B0049WIS)","msg":"USB auto-detect: found Waveshare USB-TTL (FT232R B0049WIS)"}
+Jul 25 14:44:06 paintable node[11118]: {"level":30,"time":1784983446453,"pid":11118,"hostname":"paintable","path":"/dev/ttyUSB0","label":"Enttec OpenDMX USB (FT232R A50285BI)","msg":"USB auto-detect: found Enttec OpenDMX USB (FT232R A50285BI)"}
+Jul 25 14:44:06 paintable node[11118]: {"level":30,"time":1784983446454,"pid":11118,"hostname":"paintable","port":"/dev/ttyUSB1","msg":"Serial button: ready"}
+Jul 25 14:44:06 paintable node[11118]: {"level":30,"time":1784983446455,"pid":11118,"hostname":"paintable","portPath":"/dev/ttyUSB0","msg":"OpenDMX USB port opened"}
+root@paintable:/opt/painfader# 
