@@ -1,0 +1,175 @@
+root@paintable:/opt/painfader# journalctl -u painfader -f | grep -iE "mks|motor|Motor|UP|move"
+Jul 27 13:04:54 paintable node[9946]: {"level":30,"time":1785150294607,"pid":9946,"hostname":"paintable","msg":"MKS: DOWN move complete — stopped"}
+Jul 27 13:05:24 paintable node[9946]: {"level":30,"time":1785150324919,"pid":9946,"hostname":"paintable","position":"down","speed":3000,"enabled":true,"msg":"Motor command"}
+Jul 27 13:05:24 paintable node[9946]: {"level":30,"time":1785150324921,"pid":9946,"hostname":"paintable","req":{"id":399,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":3,"msg":"request completed"}
+Jul 27 13:05:24 paintable node[9946]: {"level":30,"time":1785150324921,"pid":9946,"hostname":"paintable","rpm":3000,"ms":0,"msg":"MKS: running CCW (DOWN)"}
+Jul 27 13:05:24 paintable node[9946]: {"level":30,"time":1785150324923,"pid":9946,"hostname":"paintable","msg":"MKS: DOWN move complete — stopped"}
+Jul 27 13:05:26 paintable node[9946]: {"level":30,"time":1785150326023,"pid":9946,"hostname":"paintable","position":"up","speed":3000,"enabled":true,"msg":"Motor command"}
+Jul 27 13:05:26 paintable node[9946]: {"level":30,"time":1785150326024,"pid":9946,"hostname":"paintable","req":{"id":403,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":2,"msg":"request completed"}
+Jul 27 13:05:26 paintable node[9946]: {"level":30,"time":1785150326024,"pid":9946,"hostname":"paintable","rpm":3000,"ms":100,"msg":"MKS: running CW (UP)"}
+Jul 27 13:05:26 paintable node[9946]: {"level":30,"time":1785150326125,"pid":9946,"hostname":"paintable","msg":"MKS: UP move complete — stopped"}
+Jul 27 13:05:27 paintable node[9946]: {"level":30,"time":1785150327561,"pid":9946,"hostname":"paintable","position":"up","speed":3400,"enabled":true,"msg":"Motor command"}
+Jul 27 13:05:27 paintable node[9946]: {"level":30,"time":1785150327562,"pid":9946,"hostname":"paintable","req":{"id":407,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":2,"msg":"request completed"}
+Jul 27 13:05:27 paintable node[9946]: {"level":30,"time":1785150327562,"pid":9946,"hostname":"paintable","rpm":3400,"ms":100,"msg":"MKS: running CW (UP)"}
+Jul 27 13:05:27 paintable node[9946]: {"level":30,"time":1785150327581,"pid":9946,"hostname":"paintable","position":"up","speed":3400,"enabled":true,"msg":"Motor command"}
+Jul 27 13:05:27 paintable node[9946]: {"level":30,"time":1785150327582,"pid":9946,"hostname":"paintable","req":{"id":408,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 13:05:27 paintable node[9946]: {"level":30,"time":1785150327582,"pid":9946,"hostname":"paintable","rpm":3400,"ms":100,"msg":"MKS: running CW (UP)"}
+Jul 27 13:05:27 paintable node[9946]: {"level":30,"time":1785150327600,"pid":9946,"hostname":"paintable","position":"up","speed":3600,"enabled":true,"msg":"Motor command"}
+Jul 27 13:05:27 paintable node[9946]: {"level":30,"time":1785150327601,"pid":9946,"hostname":"paintable","req":{"id":409,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 13:05:27 paintable node[9946]: {"level":30,"time":1785150327601,"pid":9946,"hostname":"paintable","rpm":3600,"ms":100,"msg":"MKS: running CW (UP)"}
+Jul 27 13:05:27 paintable node[9946]: {"level":30,"time":1785150327610,"pid":9946,"hostname":"paintable","position":"up","speed":3700,"enabled":true,"msg":"Motor command"}
+Jul 27 13:05:27 paintable node[9946]: {"level":30,"time":1785150327611,"pid":9946,"hostname":"paintable","req":{"id":411,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 13:05:27 paintable node[9946]: {"level":30,"time":1785150327611,"pid":9946,"hostname":"paintable","rpm":3700,"ms":100,"msg":"MKS: running CW (UP)"}
+Jul 27 13:05:27 paintable node[9946]: {"level":30,"time":1785150327624,"pid":9946,"hostname":"paintable","position":"up","speed":4000,"enabled":true,"msg":"Motor command"}
+Jul 27 13:05:27 paintable node[9946]: {"level":30,"time":1785150327625,"pid":9946,"hostname":"paintable","req":{"id":412,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 13:05:27 paintable node[9946]: {"level":30,"time":1785150327625,"pid":9946,"hostname":"paintable","rpm":4000,"ms":100,"msg":"MKS: running CW (UP)"}
+Jul 27 13:05:27 paintable node[9946]: {"level":30,"time":1785150327652,"pid":9946,"hostname":"paintable","position":"up","speed":4800,"enabled":true,"msg":"Motor command"}
+Jul 27 13:05:27 paintable node[9946]: {"level":30,"time":1785150327652,"pid":9946,"hostname":"paintable","req":{"id":414,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 13:05:27 paintable node[9946]: {"level":30,"time":1785150327652,"pid":9946,"hostname":"paintable","rpm":4800,"ms":100,"msg":"MKS: running CW (UP)"}
+Jul 27 13:05:27 paintable node[9946]: {"level":30,"time":1785150327665,"pid":9946,"hostname":"paintable","position":"up","speed":5000,"enabled":true,"msg":"Motor command"}
+Jul 27 13:05:27 paintable node[9946]: {"level":30,"time":1785150327665,"pid":9946,"hostname":"paintable","req":{"id":415,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 13:05:27 paintable node[9946]: {"level":30,"time":1785150327665,"pid":9946,"hostname":"paintable","rpm":5000,"ms":100,"msg":"MKS: running CW (UP)"}
+Jul 27 13:05:27 paintable node[9946]: {"level":30,"time":1785150327694,"pid":9946,"hostname":"paintable","position":"up","speed":5500,"enabled":true,"msg":"Motor command"}
+Jul 27 13:05:27 paintable node[9946]: {"level":30,"time":1785150327694,"pid":9946,"hostname":"paintable","req":{"id":417,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 13:05:27 paintable node[9946]: {"level":30,"time":1785150327695,"pid":9946,"hostname":"paintable","rpm":5500,"ms":100,"msg":"MKS: running CW (UP)"}
+Jul 27 13:05:27 paintable node[9946]: {"level":30,"time":1785150327715,"pid":9946,"hostname":"paintable","position":"up","speed":5700,"enabled":true,"msg":"Motor command"}
+Jul 27 13:05:27 paintable node[9946]: {"level":30,"time":1785150327716,"pid":9946,"hostname":"paintable","req":{"id":419,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 13:05:27 paintable node[9946]: {"level":30,"time":1785150327716,"pid":9946,"hostname":"paintable","rpm":5700,"ms":100,"msg":"MKS: running CW (UP)"}
+Jul 27 13:05:27 paintable node[9946]: {"level":30,"time":1785150327731,"pid":9946,"hostname":"paintable","position":"up","speed":5800,"enabled":true,"msg":"Motor command"}
+Jul 27 13:05:27 paintable node[9946]: {"level":30,"time":1785150327731,"pid":9946,"hostname":"paintable","req":{"id":420,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 13:05:27 paintable node[9946]: {"level":30,"time":1785150327731,"pid":9946,"hostname":"paintable","rpm":5800,"ms":100,"msg":"MKS: running CW (UP)"}
+Jul 27 13:05:27 paintable node[9946]: {"level":30,"time":1785150327748,"pid":9946,"hostname":"paintable","position":"up","speed":6300,"enabled":true,"msg":"Motor command"}
+Jul 27 13:05:27 paintable node[9946]: {"level":30,"time":1785150327748,"pid":9946,"hostname":"paintable","req":{"id":421,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 13:05:27 paintable node[9946]: {"level":30,"time":1785150327748,"pid":9946,"hostname":"paintable","rpm":6300,"ms":100,"msg":"MKS: running CW (UP)"}
+Jul 27 13:05:27 paintable node[9946]: {"level":30,"time":1785150327764,"pid":9946,"hostname":"paintable","position":"up","speed":6600,"enabled":true,"msg":"Motor command"}
+Jul 27 13:05:27 paintable node[9946]: {"level":30,"time":1785150327765,"pid":9946,"hostname":"paintable","req":{"id":423,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 13:05:27 paintable node[9946]: {"level":30,"time":1785150327765,"pid":9946,"hostname":"paintable","rpm":6600,"ms":100,"msg":"MKS: running CW (UP)"}
+Jul 27 13:05:27 paintable node[9946]: {"level":30,"time":1785150327777,"pid":9946,"hostname":"paintable","position":"up","speed":6800,"enabled":true,"msg":"Motor command"}
+Jul 27 13:05:27 paintable node[9946]: {"level":30,"time":1785150327777,"pid":9946,"hostname":"paintable","req":{"id":424,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 13:05:27 paintable node[9946]: {"level":30,"time":1785150327778,"pid":9946,"hostname":"paintable","rpm":6800,"ms":100,"msg":"MKS: running CW (UP)"}
+Jul 27 13:05:27 paintable node[9946]: {"level":30,"time":1785150327797,"pid":9946,"hostname":"paintable","position":"up","speed":7300,"enabled":true,"msg":"Motor command"}
+Jul 27 13:05:27 paintable node[9946]: {"level":30,"time":1785150327798,"pid":9946,"hostname":"paintable","req":{"id":426,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":0,"msg":"request completed"}
+Jul 27 13:05:27 paintable node[9946]: {"level":30,"time":1785150327798,"pid":9946,"hostname":"paintable","rpm":7300,"ms":100,"msg":"MKS: running CW (UP)"}
+Jul 27 13:05:27 paintable node[9946]: {"level":30,"time":1785150327818,"pid":9946,"hostname":"paintable","position":"up","speed":7600,"enabled":true,"msg":"Motor command"}
+Jul 27 13:05:27 paintable node[9946]: {"level":30,"time":1785150327819,"pid":9946,"hostname":"paintable","req":{"id":428,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 13:05:27 paintable node[9946]: {"level":30,"time":1785150327819,"pid":9946,"hostname":"paintable","rpm":7600,"ms":100,"msg":"MKS: running CW (UP)"}
+Jul 27 13:05:27 paintable node[9946]: {"level":30,"time":1785150327847,"pid":9946,"hostname":"paintable","position":"up","speed":7700,"enabled":true,"msg":"Motor command"}
+Jul 27 13:05:27 paintable node[9946]: {"level":30,"time":1785150327847,"pid":9946,"hostname":"paintable","req":{"id":430,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 13:05:27 paintable node[9946]: {"level":30,"time":1785150327847,"pid":9946,"hostname":"paintable","rpm":7700,"ms":100,"msg":"MKS: running CW (UP)"}
+Jul 27 13:05:27 paintable node[9946]: {"level":30,"time":1785150327911,"pid":9946,"hostname":"paintable","position":"up","speed":7800,"enabled":true,"msg":"Motor command"}
+Jul 27 13:05:27 paintable node[9946]: {"level":30,"time":1785150327912,"pid":9946,"hostname":"paintable","req":{"id":432,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":2,"msg":"request completed"}
+Jul 27 13:05:27 paintable node[9946]: {"level":30,"time":1785150327913,"pid":9946,"hostname":"paintable","rpm":7800,"ms":100,"msg":"MKS: running CW (UP)"}
+Jul 27 13:05:28 paintable node[9946]: {"level":30,"time":1785150328012,"pid":9946,"hostname":"paintable","msg":"MKS: UP move complete — stopped"}
+Jul 27 13:05:28 paintable node[9946]: {"level":30,"time":1785150328666,"pid":9946,"hostname":"paintable","position":"down","speed":7800,"enabled":true,"msg":"Motor command"}
+Jul 27 13:05:28 paintable node[9946]: {"level":30,"time":1785150328667,"pid":9946,"hostname":"paintable","req":{"id":435,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":3,"msg":"request completed"}
+Jul 27 13:05:28 paintable node[9946]: {"level":30,"time":1785150328668,"pid":9946,"hostname":"paintable","rpm":7800,"ms":0,"msg":"MKS: running CCW (DOWN)"}
+Jul 27 13:05:28 paintable node[9946]: {"level":30,"time":1785150328668,"pid":9946,"hostname":"paintable","msg":"MKS: DOWN move complete — stopped"}
+Jul 27 13:05:29 paintable node[9946]: {"level":30,"time":1785150329512,"pid":9946,"hostname":"paintable","position":"down","speed":7300,"enabled":true,"msg":"Motor command"}
+Jul 27 13:05:29 paintable node[9946]: {"level":30,"time":1785150329512,"pid":9946,"hostname":"paintable","req":{"id":438,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 13:05:29 paintable node[9946]: {"level":30,"time":1785150329513,"pid":9946,"hostname":"paintable","rpm":7300,"ms":0,"msg":"MKS: running CCW (DOWN)"}
+Jul 27 13:05:29 paintable node[9946]: {"level":30,"time":1785150329514,"pid":9946,"hostname":"paintable","msg":"MKS: DOWN move complete — stopped"}
+Jul 27 13:05:29 paintable node[9946]: {"level":30,"time":1785150329527,"pid":9946,"hostname":"paintable","position":"down","speed":7100,"enabled":true,"msg":"Motor command"}
+Jul 27 13:05:29 paintable node[9946]: {"level":30,"time":1785150329527,"pid":9946,"hostname":"paintable","req":{"id":439,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 13:05:29 paintable node[9946]: {"level":30,"time":1785150329527,"pid":9946,"hostname":"paintable","rpm":7100,"ms":0,"msg":"MKS: running CCW (DOWN)"}
+Jul 27 13:05:29 paintable node[9946]: {"level":30,"time":1785150329529,"pid":9946,"hostname":"paintable","msg":"MKS: DOWN move complete — stopped"}
+Jul 27 13:05:29 paintable node[9946]: {"level":30,"time":1785150329548,"pid":9946,"hostname":"paintable","position":"down","speed":6800,"enabled":true,"msg":"Motor command"}
+Jul 27 13:05:29 paintable node[9946]: {"level":30,"time":1785150329549,"pid":9946,"hostname":"paintable","req":{"id":441,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 13:05:29 paintable node[9946]: {"level":30,"time":1785150329549,"pid":9946,"hostname":"paintable","rpm":6800,"ms":0,"msg":"MKS: running CCW (DOWN)"}
+Jul 27 13:05:29 paintable node[9946]: {"level":30,"time":1785150329550,"pid":9946,"hostname":"paintable","msg":"MKS: DOWN move complete — stopped"}
+Jul 27 13:05:29 paintable node[9946]: {"level":30,"time":1785150329577,"pid":9946,"hostname":"paintable","position":"down","speed":6500,"enabled":true,"msg":"Motor command"}
+Jul 27 13:05:29 paintable node[9946]: {"level":30,"time":1785150329578,"pid":9946,"hostname":"paintable","req":{"id":443,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 13:05:29 paintable node[9946]: {"level":30,"time":1785150329578,"pid":9946,"hostname":"paintable","rpm":6500,"ms":0,"msg":"MKS: running CCW (DOWN)"}
+Jul 27 13:05:29 paintable node[9946]: {"level":30,"time":1785150329580,"pid":9946,"hostname":"paintable","msg":"MKS: DOWN move complete — stopped"}
+Jul 27 13:05:29 paintable node[9946]: {"level":30,"time":1785150329599,"pid":9946,"hostname":"paintable","position":"down","speed":6100,"enabled":true,"msg":"Motor command"}
+Jul 27 13:05:29 paintable node[9946]: {"level":30,"time":1785150329599,"pid":9946,"hostname":"paintable","req":{"id":445,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 13:05:29 paintable node[9946]: {"level":30,"time":1785150329599,"pid":9946,"hostname":"paintable","rpm":6100,"ms":0,"msg":"MKS: running CCW (DOWN)"}
+Jul 27 13:05:29 paintable node[9946]: {"level":30,"time":1785150329601,"pid":9946,"hostname":"paintable","msg":"MKS: DOWN move complete — stopped"}
+Jul 27 13:05:29 paintable node[9946]: {"level":30,"time":1785150329612,"pid":9946,"hostname":"paintable","position":"down","speed":6000,"enabled":true,"msg":"Motor command"}
+Jul 27 13:05:29 paintable node[9946]: {"level":30,"time":1785150329612,"pid":9946,"hostname":"paintable","req":{"id":446,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 13:05:29 paintable node[9946]: {"level":30,"time":1785150329613,"pid":9946,"hostname":"paintable","rpm":6000,"ms":0,"msg":"MKS: running CCW (DOWN)"}
+Jul 27 13:05:29 paintable node[9946]: {"level":30,"time":1785150329614,"pid":9946,"hostname":"paintable","msg":"MKS: DOWN move complete — stopped"}
+Jul 27 13:05:29 paintable node[9946]: {"level":30,"time":1785150329625,"pid":9946,"hostname":"paintable","position":"down","speed":5900,"enabled":true,"msg":"Motor command"}
+Jul 27 13:05:29 paintable node[9946]: {"level":30,"time":1785150329626,"pid":9946,"hostname":"paintable","req":{"id":447,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":2,"msg":"request completed"}
+Jul 27 13:05:29 paintable node[9946]: {"level":30,"time":1785150329626,"pid":9946,"hostname":"paintable","rpm":5900,"ms":0,"msg":"MKS: running CCW (DOWN)"}
+Jul 27 13:05:29 paintable node[9946]: {"level":30,"time":1785150329627,"pid":9946,"hostname":"paintable","msg":"MKS: DOWN move complete — stopped"}
+Jul 27 13:05:29 paintable node[9946]: {"level":30,"time":1785150329643,"pid":9946,"hostname":"paintable","position":"down","speed":5800,"enabled":true,"msg":"Motor command"}
+Jul 27 13:05:29 paintable node[9946]: {"level":30,"time":1785150329643,"pid":9946,"hostname":"paintable","req":{"id":449,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 13:05:29 paintable node[9946]: {"level":30,"time":1785150329643,"pid":9946,"hostname":"paintable","rpm":5800,"ms":0,"msg":"MKS: running CCW (DOWN)"}
+Jul 27 13:05:29 paintable node[9946]: {"level":30,"time":1785150329645,"pid":9946,"hostname":"paintable","msg":"MKS: DOWN move complete — stopped"}
+Jul 27 13:05:29 paintable node[9946]: {"level":30,"time":1785150329665,"pid":9946,"hostname":"paintable","position":"down","speed":5500,"enabled":true,"msg":"Motor command"}
+Jul 27 13:05:29 paintable node[9946]: {"level":30,"time":1785150329665,"pid":9946,"hostname":"paintable","req":{"id":451,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 13:05:29 paintable node[9946]: {"level":30,"time":1785150329665,"pid":9946,"hostname":"paintable","rpm":5500,"ms":0,"msg":"MKS: running CCW (DOWN)"}
+Jul 27 13:05:29 paintable node[9946]: {"level":30,"time":1785150329666,"pid":9946,"hostname":"paintable","msg":"MKS: DOWN move complete — stopped"}
+Jul 27 13:05:29 paintable node[9946]: {"level":30,"time":1785150329679,"pid":9946,"hostname":"paintable","position":"down","speed":5300,"enabled":true,"msg":"Motor command"}
+Jul 27 13:05:29 paintable node[9946]: {"level":30,"time":1785150329680,"pid":9946,"hostname":"paintable","req":{"id":452,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 13:05:29 paintable node[9946]: {"level":30,"time":1785150329680,"pid":9946,"hostname":"paintable","rpm":5300,"ms":0,"msg":"MKS: running CCW (DOWN)"}
+Jul 27 13:05:29 paintable node[9946]: {"level":30,"time":1785150329682,"pid":9946,"hostname":"paintable","msg":"MKS: DOWN move complete — stopped"}
+Jul 27 13:05:29 paintable node[9946]: {"level":30,"time":1785150329818,"pid":9946,"hostname":"paintable","position":"down","speed":5200,"enabled":true,"msg":"Motor command"}
+Jul 27 13:05:29 paintable node[9946]: {"level":30,"time":1785150329819,"pid":9946,"hostname":"paintable","req":{"id":454,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":2,"msg":"request completed"}
+Jul 27 13:05:29 paintable node[9946]: {"level":30,"time":1785150329819,"pid":9946,"hostname":"paintable","rpm":5200,"ms":0,"msg":"MKS: running CCW (DOWN)"}
+Jul 27 13:05:29 paintable node[9946]: {"level":30,"time":1785150329820,"pid":9946,"hostname":"paintable","msg":"MKS: DOWN move complete — stopped"}
+Jul 27 13:05:29 paintable node[9946]: {"level":30,"time":1785150329837,"pid":9946,"hostname":"paintable","position":"down","speed":5000,"enabled":true,"msg":"Motor command"}
+Jul 27 13:05:29 paintable node[9946]: {"level":30,"time":1785150329837,"pid":9946,"hostname":"paintable","req":{"id":455,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 13:05:29 paintable node[9946]: {"level":30,"time":1785150329837,"pid":9946,"hostname":"paintable","rpm":5000,"ms":0,"msg":"MKS: running CCW (DOWN)"}
+Jul 27 13:05:29 paintable node[9946]: {"level":30,"time":1785150329839,"pid":9946,"hostname":"paintable","msg":"MKS: DOWN move complete — stopped"}
+Jul 27 13:05:30 paintable node[9946]: {"level":30,"time":1785150330301,"pid":9946,"hostname":"paintable","position":"stop","speed":5000,"enabled":true,"msg":"Motor command"}
+Jul 27 13:05:30 paintable node[9946]: {"level":30,"time":1785150330302,"pid":9946,"hostname":"paintable","req":{"id":457,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":2,"msg":"request completed"}
+Jul 27 13:05:30 paintable node[9946]: {"level":30,"time":1785150330302,"pid":9946,"hostname":"paintable","msg":"MKS: stop command sent"}
+Jul 27 13:05:30 paintable node[9946]: {"level":30,"time":1785150330896,"pid":9946,"hostname":"paintable","position":"stop","speed":4900,"enabled":true,"msg":"Motor command"}
+Jul 27 13:05:30 paintable node[9946]: {"level":30,"time":1785150330898,"pid":9946,"hostname":"paintable","req":{"id":460,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":2,"msg":"request completed"}
+Jul 27 13:05:30 paintable node[9946]: {"level":30,"time":1785150330898,"pid":9946,"hostname":"paintable","msg":"MKS: stop command sent"}
+Jul 27 13:05:30 paintable node[9946]: {"level":30,"time":1785150330915,"pid":9946,"hostname":"paintable","position":"stop","speed":4800,"enabled":true,"msg":"Motor command"}
+Jul 27 13:05:30 paintable node[9946]: {"level":30,"time":1785150330915,"pid":9946,"hostname":"paintable","req":{"id":461,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 13:05:30 paintable node[9946]: {"level":30,"time":1785150330915,"pid":9946,"hostname":"paintable","msg":"MKS: stop command sent"}
+Jul 27 13:05:30 paintable node[9946]: {"level":30,"time":1785150330943,"pid":9946,"hostname":"paintable","position":"stop","speed":4700,"enabled":true,"msg":"Motor command"}
+Jul 27 13:05:30 paintable node[9946]: {"level":30,"time":1785150330943,"pid":9946,"hostname":"paintable","req":{"id":463,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 13:05:30 paintable node[9946]: {"level":30,"time":1785150330943,"pid":9946,"hostname":"paintable","msg":"MKS: stop command sent"}
+Jul 27 13:05:30 paintable node[9946]: {"level":30,"time":1785150330965,"pid":9946,"hostname":"paintable","position":"stop","speed":4500,"enabled":true,"msg":"Motor command"}
+Jul 27 13:05:30 paintable node[9946]: {"level":30,"time":1785150330965,"pid":9946,"hostname":"paintable","req":{"id":465,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":0,"msg":"request completed"}
+Jul 27 13:05:30 paintable node[9946]: {"level":30,"time":1785150330966,"pid":9946,"hostname":"paintable","msg":"MKS: stop command sent"}
+Jul 27 13:05:30 paintable node[9946]: {"level":30,"time":1785150330987,"pid":9946,"hostname":"paintable","position":"stop","speed":4300,"enabled":true,"msg":"Motor command"}
+Jul 27 13:05:30 paintable node[9946]: {"level":30,"time":1785150330987,"pid":9946,"hostname":"paintable","req":{"id":467,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 13:05:30 paintable node[9946]: {"level":30,"time":1785150330987,"pid":9946,"hostname":"paintable","msg":"MKS: stop command sent"}
+Jul 27 13:05:31 paintable node[9946]: {"level":30,"time":1785150331006,"pid":9946,"hostname":"paintable","position":"stop","speed":4100,"enabled":true,"msg":"Motor command"}
+Jul 27 13:05:31 paintable node[9946]: {"level":30,"time":1785150331007,"pid":9946,"hostname":"paintable","req":{"id":468,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 13:05:31 paintable node[9946]: {"level":30,"time":1785150331007,"pid":9946,"hostname":"paintable","msg":"MKS: stop command sent"}
+Jul 27 13:05:31 paintable node[9946]: {"level":30,"time":1785150331019,"pid":9946,"hostname":"paintable","position":"stop","speed":4100,"enabled":true,"msg":"Motor command"}
+Jul 27 13:05:31 paintable node[9946]: {"level":30,"time":1785150331019,"pid":9946,"hostname":"paintable","req":{"id":469,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":0,"msg":"request completed"}
+Jul 27 13:05:31 paintable node[9946]: {"level":30,"time":1785150331019,"pid":9946,"hostname":"paintable","msg":"MKS: stop command sent"}
+Jul 27 13:05:31 paintable node[9946]: {"level":30,"time":1785150331027,"pid":9946,"hostname":"paintable","position":"stop","speed":4000,"enabled":true,"msg":"Motor command"}
+Jul 27 13:05:31 paintable node[9946]: {"level":30,"time":1785150331028,"pid":9946,"hostname":"paintable","req":{"id":470,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 13:05:31 paintable node[9946]: {"level":30,"time":1785150331028,"pid":9946,"hostname":"paintable","msg":"MKS: stop command sent"}
+Jul 27 13:05:31 paintable node[9946]: {"level":30,"time":1785150331048,"pid":9946,"hostname":"paintable","position":"stop","speed":3900,"enabled":true,"msg":"Motor command"}
+Jul 27 13:05:31 paintable node[9946]: {"level":30,"time":1785150331049,"pid":9946,"hostname":"paintable","req":{"id":472,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 13:05:31 paintable node[9946]: {"level":30,"time":1785150331049,"pid":9946,"hostname":"paintable","msg":"MKS: stop command sent"}
+Jul 27 13:05:31 paintable node[9946]: {"level":30,"time":1785150331075,"pid":9946,"hostname":"paintable","position":"stop","speed":3800,"enabled":true,"msg":"Motor command"}
+Jul 27 13:05:31 paintable node[9946]: {"level":30,"time":1785150331076,"pid":9946,"hostname":"paintable","req":{"id":474,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 13:05:31 paintable node[9946]: {"level":30,"time":1785150331076,"pid":9946,"hostname":"paintable","msg":"MKS: stop command sent"}
+Jul 27 13:05:31 paintable node[9946]: {"level":30,"time":1785150331103,"pid":9946,"hostname":"paintable","position":"stop","speed":3600,"enabled":true,"msg":"Motor command"}
+Jul 27 13:05:31 paintable node[9946]: {"level":30,"time":1785150331103,"pid":9946,"hostname":"paintable","req":{"id":476,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 13:05:31 paintable node[9946]: {"level":30,"time":1785150331103,"pid":9946,"hostname":"paintable","msg":"MKS: stop command sent"}
+Jul 27 13:05:31 paintable node[9946]: {"level":30,"time":1785150331116,"pid":9946,"hostname":"paintable","position":"stop","speed":3500,"enabled":true,"msg":"Motor command"}
+Jul 27 13:05:31 paintable node[9946]: {"level":30,"time":1785150331116,"pid":9946,"hostname":"paintable","req":{"id":477,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":0,"msg":"request completed"}
+Jul 27 13:05:31 paintable node[9946]: {"level":30,"time":1785150331117,"pid":9946,"hostname":"paintable","msg":"MKS: stop command sent"}
+Jul 27 13:05:31 paintable node[9946]: {"level":30,"time":1785150331128,"pid":9946,"hostname":"paintable","position":"stop","speed":3500,"enabled":true,"msg":"Motor command"}
+Jul 27 13:05:31 paintable node[9946]: {"level":30,"time":1785150331129,"pid":9946,"hostname":"paintable","req":{"id":478,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 13:05:31 paintable node[9946]: {"level":30,"time":1785150331129,"pid":9946,"hostname":"paintable","msg":"MKS: stop command sent"}
+Jul 27 13:05:31 paintable node[9946]: {"level":30,"time":1785150331145,"pid":9946,"hostname":"paintable","position":"stop","speed":3400,"enabled":true,"msg":"Motor command"}
+Jul 27 13:05:31 paintable node[9946]: {"level":30,"time":1785150331145,"pid":9946,"hostname":"paintable","req":{"id":480,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":0,"msg":"request completed"}
+Jul 27 13:05:31 paintable node[9946]: {"level":30,"time":1785150331145,"pid":9946,"hostname":"paintable","msg":"MKS: stop command sent"}
+Jul 27 13:05:31 paintable node[9946]: {"level":30,"time":1785150331169,"pid":9946,"hostname":"paintable","position":"stop","speed":3300,"enabled":true,"msg":"Motor command"}
+Jul 27 13:05:31 paintable node[9946]: {"level":30,"time":1785150331169,"pid":9946,"hostname":"paintable","req":{"id":482,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 13:05:31 paintable node[9946]: {"level":30,"time":1785150331169,"pid":9946,"hostname":"paintable","msg":"MKS: stop command sent"}
+Jul 27 13:05:31 paintable node[9946]: {"level":30,"time":1785150331189,"pid":9946,"hostname":"paintable","position":"stop","speed":3200,"enabled":true,"msg":"Motor command"}
+Jul 27 13:05:31 paintable node[9946]: {"level":30,"time":1785150331190,"pid":9946,"hostname":"paintable","req":{"id":484,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":2,"msg":"request completed"}
+Jul 27 13:05:31 paintable node[9946]: {"level":30,"time":1785150331190,"pid":9946,"hostname":"paintable","msg":"MKS: stop command sent"}
+Jul 27 13:05:31 paintable node[9946]: {"level":30,"time":1785150331202,"pid":9946,"hostname":"paintable","position":"stop","speed":3100,"enabled":true,"msg":"Motor command"}
+Jul 27 13:05:31 paintable node[9946]: {"level":30,"time":1785150331203,"pid":9946,"hostname":"paintable","req":{"id":485,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 13:05:31 paintable node[9946]: {"level":30,"time":1785150331203,"pid":9946,"hostname":"paintable","msg":"MKS: stop command sent"}
+Jul 27 13:05:31 paintable node[9946]: {"level":30,"time":1785150331234,"pid":9946,"hostname":"paintable","position":"stop","speed":3000,"enabled":true,"msg":"Motor command"}
+Jul 27 13:05:31 paintable node[9946]: {"level":30,"time":1785150331235,"pid":9946,"hostname":"paintable","req":{"id":487,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 13:05:31 paintable node[9946]: {"level":30,"time":1785150331235,"pid":9946,"hostname":"paintable","msg":"MKS: stop command sent"}
+Jul 27 13:05:31 paintable node[9946]: {"level":30,"time":1785150331903,"pid":9946,"hostname":"paintable","position":"stop","speed":3000,"enabled":false,"msg":"Motor command"}
+Jul 27 13:05:31 paintable node[9946]: {"level":30,"time":1785150331905,"pid":9946,"hostname":"paintable","req":{"id":490,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":2,"msg":"request completed"}
+^C
+root@paintable:/opt/painfader# 
