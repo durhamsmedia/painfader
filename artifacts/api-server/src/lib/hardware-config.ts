@@ -107,10 +107,11 @@ export const DEFAULT_HARDWARE_CONFIG: HardwareConfig = {
     schmerzPixelCount: 1280, // 5 × 256
   },
   gledopto2: {
-    host: "2.0.0.255",     // same subnet broadcast
-    universeStart: 16,     // starts after Gledopto #1's 11 universes (with gap)
-    nsarPixelCount: 300,   // adjust to physical strip length
-    opiatPixelCount: 300,
+    host: "2.0.0.157",     // Gledopto Elite 2D #2 — unicast, DDP only
+    universeStart: 0,      // unused for DDP (byte-offset based)
+    protocol: "ddp",       // Elite 2D firmware only supports DDP, not Art-Net
+    nsarPixelCount: 300,   // GPIO16 — adjust to physical strip length
+    opiatPixelCount: 300,  // IO2    — adjust to physical strip length
   },
   pixelProtocol: "artnet",
   pixelSourceIp: "2.0.0.10",   // enp1s0 on Giada — multicast leaves on this NIC

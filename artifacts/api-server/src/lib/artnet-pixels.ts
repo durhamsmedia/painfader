@@ -84,13 +84,18 @@ export class ArtNetPixelSender {
     this.zones  = { ...initialZones };
 
     this.socket = dgram.createSocket({ type: "udp4", reuseAddr: true });
-    // Art-Net spec requires source port 6454; WLED checks remotePort() and drops packets from other ports.
-    // Bind to pixelSourceIp (e.g. "2.0.0.10") so broadcasts leave on the correct NIC (enp1s0),
-    // not on the default-route NIC (enp2s0). Without this, 255.255.255.255 goes on the wrong interface.
+    this.bindSocket();
+    this.startLoop();
+  }
+
+  /**
+   * Bind the UDP socket to pixelSourceIp:6454.
+   * Retries every 2 s if the interface is not yet up (EADDRNOTAVAIL on boot).
+   */
+  private bindSocket() {
     const bindIp = this.config.pixelSourceIp || undefined;
     this.socket.bind(6454, bindIp, () => {
       this.socket.setBroadcast(true);
-      // For E1.31 multicast: also set IP_MULTICAST_IF so multicast packets leave on the right NIC.
       if (this.config.pixelProtocol === "e131" && this.config.pixelSourceIp) {
         try {
           this.socket.setMulticastInterface(this.config.pixelSourceIp);
@@ -100,16 +105,23 @@ export class ArtNetPixelSender {
       }
       this.connected = true;
       logger.info(
-        { protocol: this.config.pixelProtocol, g1: config.gledopto1.host, sc: config.schmerzController.host, g2: config.gledopto2.host },
+        { protocol: this.config.pixelProtocol, g1: this.config.gledopto1.host, sc: this.config.schmerzController.host, g2: this.config.gledopto2.host },
         "Pixel socket ready",
       );
     });
-    this.socket.on("error", (err) => {
-      logger.warn({ err }, "Pixel socket error");
+    this.socket.once("error", (err: NodeJS.ErrnoException) => {
       this.connected = false;
+      if (err.code === "EADDRNOTAVAIL") {
+        logger.warn({ bindIp, retryMs: 2000 }, "Pixel socket EADDRNOTAVAIL — interface not ready, retrying...");
+        setTimeout(() => {
+          try { this.socket.close(); } catch (_) { /* ignore */ }
+          this.socket = dgram.createSocket({ type: "udp4", reuseAddr: true });
+          this.bindSocket();
+        }, 2000);
+      } else {
+        logger.warn({ err }, "Pixel socket error");
+      }
     });
-
-    this.startLoop();
   }
 
   // ── Public API ─────────────────────────────────────────────────────────────
