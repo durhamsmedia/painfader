@@ -4,6 +4,17 @@ Jede Version hier ist per **einem Befehl** auf dem Giada wiederherstellbar.
 
 ---
 
+## ✅ Haube + NSAR + Schmerz + Opiat + Ventilator — `5833739` (2026-07-27)
+**Status:** Haube Art-Net ✅ · Schmerz DDP ✅ · NSAR 240 LEDs ✅ · Opiat 125 LEDs ✅ · Ventilator DMX CH1 ✅  
+**Beschreibung:** Alle vier LED-Bänder + Ventilator über Enttec OpenDMX USB bestätigt funktionierend.  
+**Bekanntes Problem:** dnsmasq + enp1s0 IP nicht persistent — nach Reboot ggf. `ip addr add 2.0.0.10/24 dev enp1s0 && systemctl restart dnsmasq` nötig.
+
+```bash
+cd /opt/painfader && git fetch && git checkout 5833739 && pnpm install && pnpm build && systemctl restart painfader
+```
+
+---
+
 ## ✅ Schmerzband Haube NSAR Band OPIAT BAND Funktionieren 270726 — `4245a83` (2026-07-27)
 **Status:** Haube Art-Net ✅ · Schmerz DDP voll ✅ · NSAR 240 LEDs ✅ · Opiat 125 LEDs ✅  
 **Beschreibung:** Alle vier Bänder bestätigt funktionierend. NSAR GPIO16, Opiat IO2, korrekte DDP Byte-Offsets.

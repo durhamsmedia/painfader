@@ -1,4 +1,5 @@
 - [Stable versions policy](stable-versions.md) — user demands one-command restore; add entry to STABLE_VERSIONS.md on every confirmed-working state.
+- [enp1s0 static IP + boot order](enp1s0-static-ip.md) — no persistent IP on enp1s0 → dnsmasq + painfader fail at boot; manual fix needed after every reboot until resolved.
 - [TanStack Query v5 queryKey required](tq5-querykey.md) — when passing `{ query: { refetchInterval: N } }` to Orval hooks, must also include `queryKey: getGet*QueryKey()` or typecheck fails TS2741.
 - [Gledopto WLED Setup](gledopto-wled-setup.md) — GL-C-618WL Ethernet via dnsmasq (MAC 70:4b:ca:5b:c5:ab → 2.0.0.1); WLED 0.15.4 nötig; LED GPIO16 noch nicht konfiguriert.
 - [GitHub repo and deployment network](github-deployment.md) — repo URL, Giada two-NIC topology (no switch), Gledopto IPs per subnet.
