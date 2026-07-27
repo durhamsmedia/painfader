@@ -183,8 +183,8 @@ export class ArtNetPixelSender {
     ]);
     this.sendPixelBuffer(g1.host, g1.universeStart, haubeBuf);
 
-    // Elite 2D: schmerz-band — separate device (unicast to 2.0.0.158), own universe space
-    this.sendZone(sc.host, sc.universeStart, "schmerz", sc.schmerzPixelCount);
+    // Elite 2D: schmerz-band — uses DDP (Art-Net not supported in this firmware)
+    this.sendZone(sc.host, sc.universeStart, "schmerz", sc.schmerzPixelCount, sc.protocol);
 
     // Gledopto #2: nsar then opiat
     const nsarUniStart  = g2.universeStart;
@@ -201,9 +201,10 @@ export class ArtNetPixelSender {
     universeStart: number,
     zone: ZoneName,
     pixelCount: number,
+    protocolOverride?: "artnet" | "e131" | "ddp",
   ) {
     const pixels = renderPattern(this.zones[zone], pixelCount, this.phases[zone]);
-    this.sendPixelBuffer(host, universeStart, pixels);
+    this.sendPixelBuffer(host, universeStart, pixels, protocolOverride);
   }
 
   private sendDdpBuffer(host: string, byteOffset: number, pixels: Buffer) {
@@ -219,9 +220,15 @@ export class ArtNetPixelSender {
     }
   }
 
-  private sendPixelBuffer(host: string, universeStart: number, pixels: Buffer) {
+  private sendPixelBuffer(host: string, universeStart: number, pixels: Buffer, protocolOverride?: "artnet" | "e131" | "ddp") {
+    const protocol = protocolOverride ?? this.config.pixelProtocol ?? "artnet";
+
+    if (protocol === "ddp") {
+      this.sendDdpBuffer(host, 0, pixels);
+      return;
+    }
+
     const numU = Math.ceil(pixels.length / (PIXELS_PER_UNIVERSE * 3));
-    const protocol = this.config.pixelProtocol ?? "artnet";
 
     for (let u = 0; u < numU; u++) {
       const universe = universeStart + u;

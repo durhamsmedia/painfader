@@ -16,6 +16,12 @@ export interface GledoptoConfig {
   host: string;
   /** Art-Net universe of the first pixel on this unit */
   universeStart: number;
+  /**
+   * Per-device protocol override. When set, overrides the global pixelProtocol
+   * for this device only. Useful when devices support different protocols
+   * (e.g. Gledopto Elite 2D only supports DDP, not Art-Net).
+   */
+  protocol?: "artnet" | "e131" | "ddp";
 }
 
 export interface HardwareConfig {
@@ -96,7 +102,8 @@ export const DEFAULT_HARDWARE_CONFIG: HardwareConfig = {
   },
   schmerzController: {
     host: "2.0.0.158",       // Gledopto Elite 2D — unicast, IO2
-    universeStart: 0,        // WLED: configure IO2 with Art-Net universe 1 (WLED UI is 1-based)
+    universeStart: 0,        // unused for DDP (byte-offset based)
+    protocol: "ddp",         // Elite 2D firmware only supports DDP, not Art-Net
     schmerzPixelCount: 1280, // 5 × 256
   },
   gledopto2: {
