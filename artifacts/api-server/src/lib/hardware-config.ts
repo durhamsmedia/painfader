@@ -67,15 +67,30 @@ export interface HardwareConfig {
   /** DMX channel (1-based) connected to fan controller */
   fanDmxChannel: number;
 
-  // ── Stepper motor (USB-TTL step/dir board) ────────────────────────────────
+  // ── Stepper motor (USB-TTL board) ─────────────────────────────────────────
   motorPort: string;
-  /** 'grbl' | 'tic' | 'simulated' */
-  motorDriverType: "grbl" | "tic" | "simulated";
-  /** Absolute position (steps or mm) representing sign visible (UP) */
+  /** 'mks' | 'grbl' | 'tic' | 'simulated' */
+  motorDriverType: "grbl" | "tic" | "mks" | "simulated";
+  /**
+   * Semantics depend on motorDriverType:
+   *   mks  → time in ms to run CW  (UP)
+   *   grbl → absolute position in mm
+   *   tic  → absolute position in steps
+   */
   motorUpPosition: number;
-  /** Absolute position (steps or mm) representing sign hidden (DOWN) */
+  /**
+   * Semantics depend on motorDriverType:
+   *   mks  → time in ms to run CCW (DOWN)
+   *   grbl → absolute position in mm
+   *   tic  → absolute position in steps
+   */
   motorDownPosition: number;
-  /** Max feed rate (mm/min for GRBL, steps/s for Tic) */
+  /**
+   * Semantics depend on motorDriverType:
+   *   mks  → speed in RPM (0-3000)
+   *   grbl → feed rate in mm/min
+   *   tic  → steps/s
+   */
   motorMaxSpeed: number;
 
   // ── GPIO reed contacts (Giada AF208-N97, /dev/gpiochip0) ─────────────────
@@ -121,11 +136,11 @@ export const DEFAULT_HARDWARE_CONFIG: HardwareConfig = {
   openDmxPort: "/dev/ttyUSB0",
   fanDmxChannel: 1,
 
-  motorPort: "/dev/ttyACM0",
-  motorDriverType: "grbl",
-  motorUpPosition: 100,    // mm — adjust after physical calibration
-  motorDownPosition: 0,
-  motorMaxSpeed: 3000,     // mm/min
+  motorPort: "/dev/ttyUSB1",  // UTS-T01 USB-TTL converter (adjust if needed)
+  motorDriverType: "mks",
+  motorUpPosition: 3000,   // mks: ms to run CW  for UP   — calibrate!
+  motorDownPosition: 3000, // mks: ms to run CCW for DOWN — calibrate!
+  motorMaxSpeed: 200,      // mks: RPM (0-3000)
 
   gpioChip: 0,
   gpioPinNsar: 0,          // GPIO line numbers — check with `gpioinfo` on target hardware

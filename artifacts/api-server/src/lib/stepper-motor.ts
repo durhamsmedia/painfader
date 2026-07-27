@@ -1,35 +1,42 @@
 /**
- * Stepper motor driver for the Opiat sign (USB-TTL step/dir board).
+ * Stepper motor driver for the Opiat sign (USB-TTL board).
  *
  * Supports:
- *   - GRBL (default): G-code commands over 115200 baud serial
- *   - Pololu Tic: binary quick-commands over 115200 baud serial
- *   - simulated: logs only (Replit dev mode)
+ *   - MKS  (default): MKS Servo57CPCBA UART protocol, 38400 baud
+ *   - GRBL           : G-code commands over 115200 baud serial
+ *   - Pololu Tic     : binary quick-commands over 115200 baud serial
+ *   - simulated      : logs only (Replit dev mode)
  *
  * Motion model:
- *   UP   → sign is visible  (absolute position = motorUpPosition mm / steps)
- *   DOWN → sign is hidden   (absolute position = motorDownPosition)
+ *   UP   → sign is visible  (absolute position or timed velocity move)
+ *   DOWN → sign is hidden
  *   STOP → immediate halt
  *
- * Physical wiring (step/dir board):
- *   TX  → STEP or RX on controller
- *   RTS → DIR (some boards) OR use the protocol's direction commands
+ * MKS velocity-mode semantics (motorDriverType = "mks"):
+ *   motorMaxSpeed    → speed in RPM (0-3000)
+ *   motorUpPosition  → time in ms to run CW for UP
+ *   motorDownPosition→ time in ms to run CCW for DOWN
  *
- * On first connection GRBL is homed (G28) so the absolute coordinate system
- * is established.
+ * GRBL/Tic semantics:
+ *   motorMaxSpeed    → mm/min (GRBL) or steps/s (Tic)
+ *   motorUpPosition  → absolute position in mm / steps
+ *   motorDownPosition→ absolute position in mm / steps
  */
 
 import { logger } from "./logger";
 
 export type MotorPosition = "up" | "down" | "stop";
-export type MotorDriverType = "grbl" | "tic" | "simulated";
+export type MotorDriverType = "grbl" | "tic" | "mks" | "simulated";
 
 export interface MotorConfig {
   port: string;
   driverType: MotorDriverType;
-  upPosition: number;    // mm (GRBL) or steps (Tic)
+  /** mm (GRBL), steps (Tic), or run-time ms (MKS) for UP position */
+  upPosition: number;
+  /** mm (GRBL), steps (Tic), or run-time ms (MKS) for DOWN position */
   downPosition: number;
-  maxSpeed: number;      // mm/min (GRBL) or steps/s (Tic)
+  /** mm/min (GRBL), steps/s (Tic), or RPM (MKS) */
+  maxSpeed: number;
 }
 
 export class StepperMotorController {
@@ -39,6 +46,7 @@ export class StepperMotorController {
   private cfg: MotorConfig;
   private currentPosition: MotorPosition = "down";
   private homed = false;
+  private moveTimer: ReturnType<typeof setTimeout> | null = null;
 
   constructor(config: MotorConfig) {
     this.cfg = config;
@@ -53,7 +61,7 @@ export class StepperMotorController {
   private async open(config: MotorConfig) {
     try {
       const { SerialPort } = await import("serialport");
-      const baud = config.driverType === "grbl" ? 115200 : 115200;
+      const baud = config.driverType === "mks" ? 38400 : 115200;
       const sp = new SerialPort({ path: config.port, baudRate: baud, autoOpen: false });
 
       await new Promise<void>((res, rej) => sp.open((e) => (e ? rej(e) : res())));
@@ -66,8 +74,11 @@ export class StepperMotorController {
         this.port = null;
       });
 
-      // GRBL: send soft-reset + wait for startup banner, then set feed rate
-      if (config.driverType === "grbl") {
+      if (config.driverType === "mks") {
+        await delay(200); // allow controller to settle
+        await this.enableMks(true);
+        logger.info({ port: config.port }, "MKS Servo57C stepper motor connected");
+      } else if (config.driverType === "grbl") {
         await this.writeGrbl("\x18"); // Ctrl-X soft reset
         await delay(1500);
         await this.writeGrbl("$X\n"); // clear alarm
@@ -75,7 +86,6 @@ export class StepperMotorController {
         await this.writeGrbl(`F${config.maxSpeed}\n`); // default feed rate
         logger.info({ port: config.port }, "GRBL stepper motor connected");
       } else if (config.driverType === "tic") {
-        // Tic: energize
         await this.writeTic(0x85, 0); // Set Speed = 0
         logger.info({ port: config.port }, "Tic stepper motor connected");
       }
@@ -97,7 +107,9 @@ export class StepperMotorController {
 
     const spd = speed ?? this.cfg.maxSpeed;
 
-    if (this.driverType === "grbl") {
+    if (this.driverType === "mks") {
+      await this.moveMks(position, spd);
+    } else if (this.driverType === "grbl") {
       await this.moveGrbl(position, spd);
     } else if (this.driverType === "tic") {
       await this.moveTic(position, spd);
@@ -114,10 +126,102 @@ export class StepperMotorController {
   }
 
   destroy() {
+    this.clearMoveTimer();
     if (this.driverType === "grbl" && !this.simulated) {
       this.writeGrbl("!"); // feed hold
     }
+    if (this.driverType === "mks" && !this.simulated) {
+      this.stopMks().catch(() => {});
+    }
     try { this.port?.close(); } catch (_) { /* ignore */ }
+  }
+
+  // ── MKS Servo57CPCBA driver ───────────────────────────────────────────────
+  //
+  // Protocol: [ADDR=0x01] [CMD] [DATA...] [CRC]
+  //   CRC = XOR of all bytes in frame (ADDR ^ CMD ^ DATA...)
+  // Baud: 38400, 8N1
+  //
+  // Velocity (timed) mode:
+  //   UP   = run CW  at maxSpeed RPM for upPosition ms, then stop
+  //   DOWN = run CCW at maxSpeed RPM for downPosition ms, then stop
+  //   STOP = send stop command immediately
+
+  private clearMoveTimer() {
+    if (this.moveTimer !== null) {
+      clearTimeout(this.moveTimer);
+      this.moveTimer = null;
+    }
+  }
+
+  private async moveMks(position: MotorPosition, rpm: number) {
+    this.clearMoveTimer();
+
+    switch (position) {
+      case "up": {
+        await this.runMks("cw", rpm);
+        logger.info({ rpm, ms: this.cfg.upPosition }, "MKS: running CW (UP)");
+        this.moveTimer = setTimeout(async () => {
+          await this.stopMks();
+          logger.info("MKS: UP move complete — stopped");
+        }, this.cfg.upPosition);
+        break;
+      }
+      case "down": {
+        await this.runMks("ccw", rpm);
+        logger.info({ rpm, ms: this.cfg.downPosition }, "MKS: running CCW (DOWN)");
+        this.moveTimer = setTimeout(async () => {
+          await this.stopMks();
+          logger.info("MKS: DOWN move complete — stopped");
+        }, this.cfg.downPosition);
+        break;
+      }
+      case "stop":
+        await this.stopMks();
+        logger.info("MKS: stop command sent");
+        break;
+    }
+  }
+
+  /**
+   * Run the motor at the given speed.
+   * CMD 0xF6: [ADDR] [0xF6] [dir|speed_H] [speed_L] [acc] [CRC]
+   *   speed is 15-bit RPM (0-3000), direction in bit7 of first speed byte.
+   */
+  private async runMks(direction: "cw" | "ccw", rpm: number, accel = 2) {
+    const speed = Math.max(0, Math.min(3000, Math.round(rpm)));
+    const speedH = (direction === "cw" ? 0x80 : 0x00) | ((speed >> 8) & 0x7F);
+    const speedL = speed & 0xFF;
+    await this.writeMks(0xF6, speedH, speedL, accel);
+  }
+
+  /**
+   * Stop the motor.
+   * CMD 0xF7: [ADDR] [0xF7] [CRC]
+   */
+  private async stopMks() {
+    await this.writeMks(0xF7);
+  }
+
+  /**
+   * Enable or disable the motor.
+   * CMD 0xF3: [ADDR] [0xF3] [0x01=enable | 0x00=disable] [CRC]
+   */
+  private async enableMks(on: boolean) {
+    await this.writeMks(0xF3, on ? 0x01 : 0x00);
+  }
+
+  /** Build and write an MKS frame. CRC = XOR of all frame bytes. */
+  private writeMks(cmd: number, ...data: number[]): Promise<void> {
+    return new Promise((res, rej) => {
+      if (!this.port?.isOpen) { res(); return; }
+      const addr = 0x01;
+      const frame = [addr, cmd, ...data];
+      const crc = frame.reduce((acc, b) => acc ^ b, 0);
+      const buf = Buffer.from([...frame, crc]);
+      logger.debug({ frame: buf.toString("hex") }, "MKS serial write");
+      this.port.write(buf, (err) => (err ? rej(err) : res()));
+    });
   }
 
   // ── GRBL driver ───────────────────────────────────────────────────────────
@@ -149,7 +253,7 @@ export class StepperMotorController {
   private async moveTic(position: MotorPosition, stepsPerSec: number) {
     switch (position) {
       case "up": {
-        const spd = Math.min(stepsPerSec, 50000000); // Tic speed in steps/10000000 s
+        const spd = Math.min(stepsPerSec, 50000000);
         await this.writeTic(0x85, Math.round(spd * 10000)); // Set Target Velocity
         break;
       }
@@ -168,7 +272,6 @@ export class StepperMotorController {
   private writeTic(cmd: number, value: number): Promise<void> {
     return new Promise((res, rej) => {
       if (!this.port?.isOpen) { res(); return; }
-      // Quick serial format: cmd byte (if no payload) or cmd + 4 data bytes
       const buf = value !== undefined && value !== 0
         ? Buffer.from([cmd,
             (value >> 0) & 0x7f,

@@ -24,5 +24,6 @@ export type HardwareConfigMotorDriverType = typeof HardwareConfigMotorDriverType
 export const HardwareConfigMotorDriverType = {
   grbl: 'grbl',
   tic: 'tic',
+  mks: 'mks',
   simulated: 'simulated',
 } as const;

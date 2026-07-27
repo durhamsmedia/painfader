@@ -580,7 +580,7 @@ components:
         motorPort: { type: string }
         motorDriverType:
           type: string
-          enum: [grbl, tic, simulated]
+          enum: [grbl, tic, mks, simulated]
         motorUpPosition: { type: number }
         motorDownPosition: { type: number }
         motorMaxSpeed: { type: number }
