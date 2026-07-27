@@ -1,0 +1,12 @@
+root@paintable:/opt/painfader# journalctl -u painfader -n 20 | grep -E "MKS|GRBL|motor|sim|serial"
+Jul 27 12:48:59 paintable node[9396]: {"level":30,"time":1785149339872,"pid":9396,"hostname":"paintable","position":"up","speed":3900,"msg":"Stepper motor (sim): move command"}
+Jul 27 12:48:59 paintable node[9396]: {"level":30,"time":1785149339873,"pid":9396,"hostname":"paintable","req":{"id":762,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 12:48:59 paintable node[9396]: {"level":30,"time":1785149339885,"pid":9396,"hostname":"paintable","position":"up","speed":3800,"msg":"Stepper motor (sim): move command"}
+Jul 27 12:48:59 paintable node[9396]: {"level":30,"time":1785149339885,"pid":9396,"hostname":"paintable","req":{"id":763,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 12:48:59 paintable node[9396]: {"level":30,"time":1785149339901,"pid":9396,"hostname":"paintable","position":"up","speed":3600,"msg":"Stepper motor (sim): move command"}
+Jul 27 12:48:59 paintable node[9396]: {"level":30,"time":1785149339901,"pid":9396,"hostname":"paintable","req":{"id":765,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 12:48:59 paintable node[9396]: {"level":30,"time":1785149339912,"pid":9396,"hostname":"paintable","position":"up","speed":3500,"msg":"Stepper motor (sim): move command"}
+Jul 27 12:48:59 paintable node[9396]: {"level":30,"time":1785149339912,"pid":9396,"hostname":"paintable","req":{"id":766,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":0,"msg":"request completed"}
+Jul 27 12:48:59 paintable node[9396]: {"level":30,"time":1785149339929,"pid":9396,"hostname":"paintable","position":"up","speed":3400,"msg":"Stepper motor (sim): move command"}
+Jul 27 12:48:59 paintable node[9396]: {"level":30,"time":1785149339929,"pid":9396,"hostname":"paintable","req":{"id":768,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+root@paintable:/opt/painfader# 

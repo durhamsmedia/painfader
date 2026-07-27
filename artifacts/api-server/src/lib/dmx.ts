@@ -566,8 +566,24 @@ class DmxController {
   // ── Hardware config ───────────────────────────────────────────────────────
 
   updateHardwareConfig(updates: Partial<HardwareConfig>): HardwareConfig {
+    const motorChanged = updates.motorPort !== undefined || updates.motorDriverType !== undefined ||
+      updates.motorUpPosition !== undefined || updates.motorDownPosition !== undefined ||
+      updates.motorMaxSpeed !== undefined;
+
     this.hwConfig = { ...this.hwConfig, ...updates };
     this.artnet.updateConfig(this.hwConfig);
+
+    if (motorChanged) {
+      this.motor.destroy();
+      this.motor = new StepperMotorController({
+        port:          this.hwConfig.motorPort,
+        driverType:    this.hwConfig.motorDriverType,
+        upPosition:    this.hwConfig.motorUpPosition,
+        downPosition:  this.hwConfig.motorDownPosition,
+        maxSpeed:      this.hwConfig.motorMaxSpeed,
+      });
+    }
+
     return { ...this.hwConfig };
   }
 
