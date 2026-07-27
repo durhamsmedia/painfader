@@ -1,0 +1,125 @@
+root@paintable:/opt/painfader# journalctl -u painfader -f | grep -E "MKS|motor|Motor|sim"
+Jul 27 12:37:42 paintable node[8333]: {"level":30,"time":1785148662872,"pid":8333,"hostname":"paintable","position":"up","speed":6500,"msg":"Stepper motor (sim): move command"}
+Jul 27 12:37:42 paintable node[8333]: {"level":30,"time":1785148662872,"pid":8333,"hostname":"paintable","position":"up","speed":6500,"enabled":true,"msg":"Motor command"}
+Jul 27 12:37:42 paintable node[8333]: {"level":30,"time":1785148662873,"pid":8333,"hostname":"paintable","req":{"id":2155,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":2,"msg":"request completed"}
+Jul 27 12:37:45 paintable node[8333]: {"level":30,"time":1785148665176,"pid":8333,"hostname":"paintable","position":"stop","speed":6500,"msg":"Stepper motor (sim): move command"}
+Jul 27 12:37:45 paintable node[8333]: {"level":30,"time":1785148665176,"pid":8333,"hostname":"paintable","position":"stop","speed":6500,"enabled":true,"msg":"Motor command"}
+Jul 27 12:37:45 paintable node[8333]: {"level":30,"time":1785148665178,"pid":8333,"hostname":"paintable","req":{"id":2161,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":2,"msg":"request completed"}
+Jul 27 12:37:45 paintable node[8333]: {"level":30,"time":1785148665785,"pid":8333,"hostname":"paintable","position":"down","speed":6500,"msg":"Stepper motor (sim): move command"}
+Jul 27 12:37:45 paintable node[8333]: {"level":30,"time":1785148665785,"pid":8333,"hostname":"paintable","position":"down","speed":6500,"enabled":true,"msg":"Motor command"}
+Jul 27 12:37:45 paintable node[8333]: {"level":30,"time":1785148665786,"pid":8333,"hostname":"paintable","req":{"id":2164,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 12:37:46 paintable node[8333]: {"level":30,"time":1785148666525,"pid":8333,"hostname":"paintable","position":"up","speed":6500,"msg":"Stepper motor (sim): move command"}
+Jul 27 12:37:46 paintable node[8333]: {"level":30,"time":1785148666525,"pid":8333,"hostname":"paintable","position":"up","speed":6500,"enabled":true,"msg":"Motor command"}
+Jul 27 12:37:46 paintable node[8333]: {"level":30,"time":1785148666526,"pid":8333,"hostname":"paintable","req":{"id":2167,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":2,"msg":"request completed"}
+Jul 27 12:37:47 paintable node[8333]: {"level":30,"time":1785148667125,"pid":8333,"hostname":"paintable","position":"stop","speed":6500,"msg":"Stepper motor (sim): move command"}
+Jul 27 12:37:47 paintable node[8333]: {"level":30,"time":1785148667125,"pid":8333,"hostname":"paintable","position":"stop","speed":6500,"enabled":true,"msg":"Motor command"}
+Jul 27 12:37:47 paintable node[8333]: {"level":30,"time":1785148667126,"pid":8333,"hostname":"paintable","req":{"id":2170,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":2,"msg":"request completed"}
+Jul 27 12:37:48 paintable node[8333]: {"level":30,"time":1785148668151,"pid":8333,"hostname":"paintable","position":"down","speed":6500,"msg":"Stepper motor (sim): move command"}
+Jul 27 12:37:48 paintable node[8333]: {"level":30,"time":1785148668151,"pid":8333,"hostname":"paintable","position":"down","speed":6500,"enabled":true,"msg":"Motor command"}
+Jul 27 12:37:48 paintable node[8333]: {"level":30,"time":1785148668152,"pid":8333,"hostname":"paintable","req":{"id":2173,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":2,"msg":"request completed"}
+Jul 27 12:37:49 paintable node[8333]: {"level":30,"time":1785148669304,"pid":8333,"hostname":"paintable","position":"down","speed":6400,"msg":"Stepper motor (sim): move command"}
+Jul 27 12:37:49 paintable node[8333]: {"level":30,"time":1785148669304,"pid":8333,"hostname":"paintable","position":"down","speed":6400,"enabled":true,"msg":"Motor command"}
+Jul 27 12:37:49 paintable node[8333]: {"level":30,"time":1785148669305,"pid":8333,"hostname":"paintable","req":{"id":2177,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":2,"msg":"request completed"}
+Jul 27 12:37:49 paintable node[8333]: {"level":30,"time":1785148669334,"pid":8333,"hostname":"paintable","position":"down","speed":6700,"msg":"Stepper motor (sim): move command"}
+Jul 27 12:37:49 paintable node[8333]: {"level":30,"time":1785148669334,"pid":8333,"hostname":"paintable","position":"down","speed":6700,"enabled":true,"msg":"Motor command"}
+Jul 27 12:37:49 paintable node[8333]: {"level":30,"time":1785148669334,"pid":8333,"hostname":"paintable","req":{"id":2179,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":0,"msg":"request completed"}
+Jul 27 12:37:49 paintable node[8333]: {"level":30,"time":1785148669354,"pid":8333,"hostname":"paintable","position":"down","speed":7000,"msg":"Stepper motor (sim): move command"}
+Jul 27 12:37:49 paintable node[8333]: {"level":30,"time":1785148669354,"pid":8333,"hostname":"paintable","position":"down","speed":7000,"enabled":true,"msg":"Motor command"}
+Jul 27 12:37:49 paintable node[8333]: {"level":30,"time":1785148669354,"pid":8333,"hostname":"paintable","req":{"id":2181,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":0,"msg":"request completed"}
+Jul 27 12:37:49 paintable node[8333]: {"level":30,"time":1785148669380,"pid":8333,"hostname":"paintable","position":"down","speed":7100,"msg":"Stepper motor (sim): move command"}
+Jul 27 12:37:49 paintable node[8333]: {"level":30,"time":1785148669380,"pid":8333,"hostname":"paintable","position":"down","speed":7100,"enabled":true,"msg":"Motor command"}
+Jul 27 12:37:49 paintable node[8333]: {"level":30,"time":1785148669381,"pid":8333,"hostname":"paintable","req":{"id":2183,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 12:37:49 paintable node[8333]: {"level":30,"time":1785148669403,"pid":8333,"hostname":"paintable","position":"down","speed":7200,"msg":"Stepper motor (sim): move command"}
+Jul 27 12:37:49 paintable node[8333]: {"level":30,"time":1785148669403,"pid":8333,"hostname":"paintable","position":"down","speed":7200,"enabled":true,"msg":"Motor command"}
+Jul 27 12:37:49 paintable node[8333]: {"level":30,"time":1785148669404,"pid":8333,"hostname":"paintable","req":{"id":2184,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 12:37:49 paintable node[8333]: {"level":30,"time":1785148669416,"pid":8333,"hostname":"paintable","position":"down","speed":7200,"msg":"Stepper motor (sim): move command"}
+Jul 27 12:37:49 paintable node[8333]: {"level":30,"time":1785148669416,"pid":8333,"hostname":"paintable","position":"down","speed":7200,"enabled":true,"msg":"Motor command"}
+Jul 27 12:37:49 paintable node[8333]: {"level":30,"time":1785148669416,"pid":8333,"hostname":"paintable","req":{"id":2185,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":0,"msg":"request completed"}
+Jul 27 12:37:49 paintable node[8333]: {"level":30,"time":1785148669433,"pid":8333,"hostname":"paintable","position":"down","speed":7300,"msg":"Stepper motor (sim): move command"}
+Jul 27 12:37:49 paintable node[8333]: {"level":30,"time":1785148669433,"pid":8333,"hostname":"paintable","position":"down","speed":7300,"enabled":true,"msg":"Motor command"}
+Jul 27 12:37:49 paintable node[8333]: {"level":30,"time":1785148669433,"pid":8333,"hostname":"paintable","req":{"id":2187,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":0,"msg":"request completed"}
+Jul 27 12:37:49 paintable node[8333]: {"level":30,"time":1785148669457,"pid":8333,"hostname":"paintable","position":"down","speed":7300,"msg":"Stepper motor (sim): move command"}
+Jul 27 12:37:49 paintable node[8333]: {"level":30,"time":1785148669457,"pid":8333,"hostname":"paintable","position":"down","speed":7300,"enabled":true,"msg":"Motor command"}
+Jul 27 12:37:49 paintable node[8333]: {"level":30,"time":1785148669458,"pid":8333,"hostname":"paintable","req":{"id":2189,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 12:37:49 paintable node[8333]: {"level":30,"time":1785148669635,"pid":8333,"hostname":"paintable","position":"down","speed":7200,"msg":"Stepper motor (sim): move command"}
+Jul 27 12:37:49 paintable node[8333]: {"level":30,"time":1785148669635,"pid":8333,"hostname":"paintable","position":"down","speed":7200,"enabled":true,"msg":"Motor command"}
+Jul 27 12:37:49 paintable node[8333]: {"level":30,"time":1785148669636,"pid":8333,"hostname":"paintable","req":{"id":2191,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 12:37:49 paintable node[8333]: {"level":30,"time":1785148669649,"pid":8333,"hostname":"paintable","position":"down","speed":7100,"msg":"Stepper motor (sim): move command"}
+Jul 27 12:37:49 paintable node[8333]: {"level":30,"time":1785148669649,"pid":8333,"hostname":"paintable","position":"down","speed":7100,"enabled":true,"msg":"Motor command"}
+Jul 27 12:37:49 paintable node[8333]: {"level":30,"time":1785148669649,"pid":8333,"hostname":"paintable","req":{"id":2192,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 12:37:49 paintable node[8333]: {"level":30,"time":1785148669675,"pid":8333,"hostname":"paintable","position":"down","speed":6900,"msg":"Stepper motor (sim): move command"}
+Jul 27 12:37:49 paintable node[8333]: {"level":30,"time":1785148669675,"pid":8333,"hostname":"paintable","position":"down","speed":6900,"enabled":true,"msg":"Motor command"}
+Jul 27 12:37:49 paintable node[8333]: {"level":30,"time":1785148669675,"pid":8333,"hostname":"paintable","req":{"id":2194,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":0,"msg":"request completed"}
+Jul 27 12:37:49 paintable node[8333]: {"level":30,"time":1785148669704,"pid":8333,"hostname":"paintable","position":"down","speed":6600,"msg":"Stepper motor (sim): move command"}
+Jul 27 12:37:49 paintable node[8333]: {"level":30,"time":1785148669704,"pid":8333,"hostname":"paintable","position":"down","speed":6600,"enabled":true,"msg":"Motor command"}
+Jul 27 12:37:49 paintable node[8333]: {"level":30,"time":1785148669704,"pid":8333,"hostname":"paintable","req":{"id":2196,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":0,"msg":"request completed"}
+Jul 27 12:37:49 paintable node[8333]: {"level":30,"time":1785148669726,"pid":8333,"hostname":"paintable","position":"down","speed":6400,"msg":"Stepper motor (sim): move command"}
+Jul 27 12:37:49 paintable node[8333]: {"level":30,"time":1785148669726,"pid":8333,"hostname":"paintable","position":"down","speed":6400,"enabled":true,"msg":"Motor command"}
+Jul 27 12:37:49 paintable node[8333]: {"level":30,"time":1785148669727,"pid":8333,"hostname":"paintable","req":{"id":2198,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 12:37:49 paintable node[8333]: {"level":30,"time":1785148669752,"pid":8333,"hostname":"paintable","position":"down","speed":6200,"msg":"Stepper motor (sim): move command"}
+Jul 27 12:37:49 paintable node[8333]: {"level":30,"time":1785148669752,"pid":8333,"hostname":"paintable","position":"down","speed":6200,"enabled":true,"msg":"Motor command"}
+Jul 27 12:37:49 paintable node[8333]: {"level":30,"time":1785148669753,"pid":8333,"hostname":"paintable","req":{"id":2200,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 12:37:49 paintable node[8333]: {"level":30,"time":1785148669765,"pid":8333,"hostname":"paintable","position":"down","speed":6100,"msg":"Stepper motor (sim): move command"}
+Jul 27 12:37:49 paintable node[8333]: {"level":30,"time":1785148669765,"pid":8333,"hostname":"paintable","position":"down","speed":6100,"enabled":true,"msg":"Motor command"}
+Jul 27 12:37:49 paintable node[8333]: {"level":30,"time":1785148669765,"pid":8333,"hostname":"paintable","req":{"id":2201,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":0,"msg":"request completed"}
+Jul 27 12:37:49 paintable node[8333]: {"level":30,"time":1785148669787,"pid":8333,"hostname":"paintable","position":"down","speed":6000,"msg":"Stepper motor (sim): move command"}
+Jul 27 12:37:49 paintable node[8333]: {"level":30,"time":1785148669787,"pid":8333,"hostname":"paintable","position":"down","speed":6000,"enabled":true,"msg":"Motor command"}
+Jul 27 12:37:49 paintable node[8333]: {"level":30,"time":1785148669788,"pid":8333,"hostname":"paintable","req":{"id":2203,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 12:37:49 paintable node[8333]: {"level":30,"time":1785148669814,"pid":8333,"hostname":"paintable","position":"down","speed":5900,"msg":"Stepper motor (sim): move command"}
+Jul 27 12:37:49 paintable node[8333]: {"level":30,"time":1785148669814,"pid":8333,"hostname":"paintable","position":"down","speed":5900,"enabled":true,"msg":"Motor command"}
+Jul 27 12:37:49 paintable node[8333]: {"level":30,"time":1785148669815,"pid":8333,"hostname":"paintable","req":{"id":2205,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 12:37:49 paintable node[8333]: {"level":30,"time":1785148669836,"pid":8333,"hostname":"paintable","position":"down","speed":5800,"msg":"Stepper motor (sim): move command"}
+Jul 27 12:37:49 paintable node[8333]: {"level":30,"time":1785148669836,"pid":8333,"hostname":"paintable","position":"down","speed":5800,"enabled":true,"msg":"Motor command"}
+Jul 27 12:37:49 paintable node[8333]: {"level":30,"time":1785148669836,"pid":8333,"hostname":"paintable","req":{"id":2207,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 12:37:49 paintable node[8333]: {"level":30,"time":1785148669859,"pid":8333,"hostname":"paintable","position":"down","speed":5600,"msg":"Stepper motor (sim): move command"}
+Jul 27 12:37:49 paintable node[8333]: {"level":30,"time":1785148669859,"pid":8333,"hostname":"paintable","position":"down","speed":5600,"enabled":true,"msg":"Motor command"}
+Jul 27 12:37:49 paintable node[8333]: {"level":30,"time":1785148669859,"pid":8333,"hostname":"paintable","req":{"id":2208,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":0,"msg":"request completed"}
+Jul 27 12:37:49 paintable node[8333]: {"level":30,"time":1785148669877,"pid":8333,"hostname":"paintable","position":"down","speed":5400,"msg":"Stepper motor (sim): move command"}
+Jul 27 12:37:49 paintable node[8333]: {"level":30,"time":1785148669877,"pid":8333,"hostname":"paintable","position":"down","speed":5400,"enabled":true,"msg":"Motor command"}
+Jul 27 12:37:49 paintable node[8333]: {"level":30,"time":1785148669877,"pid":8333,"hostname":"paintable","req":{"id":2209,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 12:37:49 paintable node[8333]: {"level":30,"time":1785148669903,"pid":8333,"hostname":"paintable","position":"down","speed":5100,"msg":"Stepper motor (sim): move command"}
+Jul 27 12:37:49 paintable node[8333]: {"level":30,"time":1785148669903,"pid":8333,"hostname":"paintable","position":"down","speed":5100,"enabled":true,"msg":"Motor command"}
+Jul 27 12:37:49 paintable node[8333]: {"level":30,"time":1785148669904,"pid":8333,"hostname":"paintable","req":{"id":2211,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 12:37:49 paintable node[8333]: {"level":30,"time":1785148669932,"pid":8333,"hostname":"paintable","position":"down","speed":5000,"msg":"Stepper motor (sim): move command"}
+Jul 27 12:37:49 paintable node[8333]: {"level":30,"time":1785148669932,"pid":8333,"hostname":"paintable","position":"down","speed":5000,"enabled":true,"msg":"Motor command"}
+Jul 27 12:37:49 paintable node[8333]: {"level":30,"time":1785148669933,"pid":8333,"hostname":"paintable","req":{"id":2213,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 12:37:49 paintable node[8333]: {"level":30,"time":1785148669951,"pid":8333,"hostname":"paintable","position":"down","speed":5000,"msg":"Stepper motor (sim): move command"}
+Jul 27 12:37:49 paintable node[8333]: {"level":30,"time":1785148669951,"pid":8333,"hostname":"paintable","position":"down","speed":5000,"enabled":true,"msg":"Motor command"}
+Jul 27 12:37:49 paintable node[8333]: {"level":30,"time":1785148669951,"pid":8333,"hostname":"paintable","req":{"id":2214,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":0,"msg":"request completed"}
+Jul 27 12:37:49 paintable node[8333]: {"level":30,"time":1785148669976,"pid":8333,"hostname":"paintable","position":"down","speed":4900,"msg":"Stepper motor (sim): move command"}
+Jul 27 12:37:49 paintable node[8333]: {"level":30,"time":1785148669976,"pid":8333,"hostname":"paintable","position":"down","speed":4900,"enabled":true,"msg":"Motor command"}
+Jul 27 12:37:49 paintable node[8333]: {"level":30,"time":1785148669977,"pid":8333,"hostname":"paintable","req":{"id":2216,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 12:37:49 paintable node[8333]: {"level":30,"time":1785148669986,"pid":8333,"hostname":"paintable","position":"down","speed":4900,"msg":"Stepper motor (sim): move command"}
+Jul 27 12:37:49 paintable node[8333]: {"level":30,"time":1785148669986,"pid":8333,"hostname":"paintable","position":"down","speed":4900,"enabled":true,"msg":"Motor command"}
+Jul 27 12:37:49 paintable node[8333]: {"level":30,"time":1785148669987,"pid":8333,"hostname":"paintable","req":{"id":2217,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 12:37:50 paintable node[8333]: {"level":30,"time":1785148669999,"pid":8333,"hostname":"paintable","position":"down","speed":4800,"msg":"Stepper motor (sim): move command"}
+Jul 27 12:37:50 paintable node[8333]: {"level":30,"time":1785148670000,"pid":8333,"hostname":"paintable","position":"down","speed":4800,"enabled":true,"msg":"Motor command"}
+Jul 27 12:37:50 paintable node[8333]: {"level":30,"time":1785148670000,"pid":8333,"hostname":"paintable","req":{"id":2218,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 12:37:50 paintable node[8333]: {"level":30,"time":1785148670019,"pid":8333,"hostname":"paintable","position":"down","speed":4700,"msg":"Stepper motor (sim): move command"}
+Jul 27 12:37:50 paintable node[8333]: {"level":30,"time":1785148670019,"pid":8333,"hostname":"paintable","position":"down","speed":4700,"enabled":true,"msg":"Motor command"}
+Jul 27 12:37:50 paintable node[8333]: {"level":30,"time":1785148670020,"pid":8333,"hostname":"paintable","req":{"id":2220,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 12:37:50 paintable node[8333]: {"level":30,"time":1785148670032,"pid":8333,"hostname":"paintable","position":"down","speed":4700,"msg":"Stepper motor (sim): move command"}
+Jul 27 12:37:50 paintable node[8333]: {"level":30,"time":1785148670032,"pid":8333,"hostname":"paintable","position":"down","speed":4700,"enabled":true,"msg":"Motor command"}
+Jul 27 12:37:50 paintable node[8333]: {"level":30,"time":1785148670032,"pid":8333,"hostname":"paintable","req":{"id":2221,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":0,"msg":"request completed"}
+Jul 27 12:37:50 paintable node[8333]: {"level":30,"time":1785148670052,"pid":8333,"hostname":"paintable","position":"down","speed":4600,"msg":"Stepper motor (sim): move command"}
+Jul 27 12:37:50 paintable node[8333]: {"level":30,"time":1785148670052,"pid":8333,"hostname":"paintable","position":"down","speed":4600,"enabled":true,"msg":"Motor command"}
+Jul 27 12:37:50 paintable node[8333]: {"level":30,"time":1785148670052,"pid":8333,"hostname":"paintable","req":{"id":2223,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 12:37:50 paintable node[8333]: {"level":30,"time":1785148670075,"pid":8333,"hostname":"paintable","position":"down","speed":4500,"msg":"Stepper motor (sim): move command"}
+Jul 27 12:37:50 paintable node[8333]: {"level":30,"time":1785148670076,"pid":8333,"hostname":"paintable","position":"down","speed":4500,"enabled":true,"msg":"Motor command"}
+Jul 27 12:37:50 paintable node[8333]: {"level":30,"time":1785148670076,"pid":8333,"hostname":"paintable","req":{"id":2225,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 12:37:50 paintable node[8333]: {"level":30,"time":1785148670114,"pid":8333,"hostname":"paintable","position":"down","speed":4400,"msg":"Stepper motor (sim): move command"}
+Jul 27 12:37:50 paintable node[8333]: {"level":30,"time":1785148670114,"pid":8333,"hostname":"paintable","position":"down","speed":4400,"enabled":true,"msg":"Motor command"}
+Jul 27 12:37:50 paintable node[8333]: {"level":30,"time":1785148670114,"pid":8333,"hostname":"paintable","req":{"id":2227,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":0,"msg":"request completed"}
+Jul 27 12:37:50 paintable node[8333]: {"level":30,"time":1785148670136,"pid":8333,"hostname":"paintable","position":"down","speed":4300,"msg":"Stepper motor (sim): move command"}
+Jul 27 12:37:50 paintable node[8333]: {"level":30,"time":1785148670136,"pid":8333,"hostname":"paintable","position":"down","speed":4300,"enabled":true,"msg":"Motor command"}
+Jul 27 12:37:50 paintable node[8333]: {"level":30,"time":1785148670136,"pid":8333,"hostname":"paintable","req":{"id":2229,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 12:37:50 paintable node[8333]: {"level":30,"time":1785148670164,"pid":8333,"hostname":"paintable","position":"down","speed":4100,"msg":"Stepper motor (sim): move command"}
+Jul 27 12:37:50 paintable node[8333]: {"level":30,"time":1785148670164,"pid":8333,"hostname":"paintable","position":"down","speed":4100,"enabled":true,"msg":"Motor command"}
+Jul 27 12:37:50 paintable node[8333]: {"level":30,"time":1785148670164,"pid":8333,"hostname":"paintable","req":{"id":2231,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":0,"msg":"request completed"}
+Jul 27 12:37:50 paintable node[8333]: {"level":30,"time":1785148670185,"pid":8333,"hostname":"paintable","position":"down","speed":4100,"msg":"Stepper motor (sim): move command"}
+Jul 27 12:37:50 paintable node[8333]: {"level":30,"time":1785148670185,"pid":8333,"hostname":"paintable","position":"down","speed":4100,"enabled":true,"msg":"Motor command"}
+Jul 27 12:37:50 paintable node[8333]: {"level":30,"time":1785148670185,"pid":8333,"hostname":"paintable","req":{"id":2232,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 12:37:51 paintable node[8333]: {"level":30,"time":1785148671424,"pid":8333,"hostname":"paintable","position":"down","speed":4100,"enabled":false,"msg":"Motor command"}
+Jul 27 12:37:51 paintable node[8333]: {"level":30,"time":1785148671424,"pid":8333,"hostname":"paintable","req":{"id":2236,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+^C
+root@paintable:/opt/painfader# 
