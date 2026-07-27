@@ -1,0 +1,30 @@
+root@paintable:/opt/painfader# # Query-Status-Frame: 01 F1 F0 (bei 38400 baud)
+python3 -c "
+import serial, time
+s = serial.Serial('/dev/ttyUSB1', 38400, timeout=1)
+time.sleep(0.2)
+frame = bytes([0x01, 0xF1, 0xF0])
+s.write(frame)
+print('sent:', frame.hex())
+resp = s.read(10)
+print('response:', resp.hex() if resp else '(none)')
+s.close()
+"
+Traceback (most recent call last):
+  File "<string>", line 2, in <module>
+    import serial, time
+ModuleNotFoundError: No module named 'serial'
+root@paintable:/opt/painfader# journalctl -u painfader -n 50 | grep -E "MKS|motor|serial"
+Jul 27 12:32:08 paintable node[8333]: {"level":30,"time":1785148328596,"pid":8333,"hostname":"paintable","req":{"id":1941,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":6,"msg":"request completed"}
+Jul 27 12:32:09 paintable node[8333]: {"level":30,"time":1785148329109,"pid":8333,"hostname":"paintable","position":"down","speed":10000,"msg":"Stepper motor (sim): move command"}
+Jul 27 12:32:09 paintable node[8333]: {"level":30,"time":1785148329110,"pid":8333,"hostname":"paintable","req":{"id":1943,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 12:32:09 paintable node[8333]: {"level":30,"time":1785148329263,"pid":8333,"hostname":"paintable","position":"down","speed":10000,"msg":"Stepper motor (sim): move command"}
+Jul 27 12:32:09 paintable node[8333]: {"level":30,"time":1785148329264,"pid":8333,"hostname":"paintable","req":{"id":1945,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":2,"msg":"request completed"}
+Jul 27 12:32:09 paintable node[8333]: {"level":30,"time":1785148329555,"pid":8333,"hostname":"paintable","position":"stop","speed":10000,"msg":"Stepper motor (sim): move command"}
+Jul 27 12:32:09 paintable node[8333]: {"level":30,"time":1785148329555,"pid":8333,"hostname":"paintable","req":{"id":1947,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 12:32:10 paintable node[8333]: {"level":30,"time":1785148330589,"pid":8333,"hostname":"paintable","position":"up","speed":10000,"msg":"Stepper motor (sim): move command"}
+Jul 27 12:32:10 paintable node[8333]: {"level":30,"time":1785148330589,"pid":8333,"hostname":"paintable","req":{"id":1950,"method":"PUT","url":"/api/dmx/motor"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 12:32:12 paintable node[8333]: {"level":30,"time":1785148332926,"pid":8333,"hostname":"paintable","position":"down","speed":3000,"msg":"Stepper motor (sim): move command"}
+Jul 27 12:32:14 paintable node[8333]: {"level":30,"time":1785148334636,"pid":8333,"hostname":"paintable","position":"down","speed":3000,"msg":"Stepper motor (sim): move command"}
+Jul 27 12:32:16 paintable node[8333]: {"level":30,"time":1785148336845,"pid":8333,"hostname":"paintable","position":"down","speed":3000,"msg":"Stepper motor (sim): move command"}
+root@paintable:/opt/painfader# 
