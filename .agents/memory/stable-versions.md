@@ -16,7 +16,8 @@ cd /opt/painfader && git fetch && git checkout <commit> && pnpm install && pnpm 
 ```
 
 ## Current stable entries
-- stable-2: d2ac66e — Haube Art-Net + Schmerz DDP voll, gledopto2 DDP unicast 2.0.0.157, socket retry on boot
-- stable-1: 55d0523 — Haube Art-Net + Schmerz DDP (gledopto2 noch Art-Net broadcast, kann Schmerz stören)
+- "Schmerzband Haube NSAR Band OPIAT BAND Funktionieren 270726": 4245a83 — alle 4 Bänder OK, NSAR 240px GPIO16, Opiat 125px IO2
+- "27.07. SCHMERZBAND UND HAUBEN": bd86f17 — Haube + Schmerz DDP voll, socket retry on boot
+- stable-1: 55d0523 — Haube Art-Net + Schmerz DDP (gledopto2 noch Art-Net broadcast)
 
 **Why:** User explicitly demanded always-available one-command restore. Non-negotiable requirement.
