@@ -833,7 +833,7 @@ export default function Dashboard() {
                         artnetRefreshRate: n('fps'),
                         openDmxPort: g('openDmxPort'),
                         motorPort: g('motorPort'),
-                        motorDriverType: g('motorDriverType') as 'grbl' | 'tic' | 'simulated',
+                        motorDriverType: g('motorDriverType') as 'grbl' | 'tic' | 'mks' | 'simulated',
                         motorUpPosition: n('motorUp'),
                         motorDownPosition: n('motorDown'),
                         motorMaxSpeed: n('motorSpeed'),
@@ -881,6 +881,7 @@ export default function Dashboard() {
                           <Label className="text-[10px] font-mono text-zinc-600">Driver type</Label>
                           <select name="motorDriverType" defaultValue={hwConfig.motorDriverType}
                             className="h-7 w-full font-mono text-xs bg-black border border-zinc-800 rounded-sm text-zinc-300 px-2">
+                            <option value="mks">MKS Servo57C (UART)</option>
                             <option value="grbl">GRBL</option>
                             <option value="tic">Pololu Tic</option>
                             <option value="simulated">Simulated</option>
