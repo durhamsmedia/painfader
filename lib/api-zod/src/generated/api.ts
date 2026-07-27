@@ -299,8 +299,13 @@ export const GetDmxStateResponse = zod.object({
   "host": zod.string(),
   "universeStart": zod.number(),
   "haube1PixelCount": zod.number(),
-  "haube2PixelCount": zod.number(),
-  "schmerzPixelCount": zod.number()
+  "haube2PixelCount": zod.number()
+}),
+  "schmerzController": zod.object({
+  "host": zod.string(),
+  "universeStart": zod.number(),
+  "schmerzPixelCount": zod.number(),
+  "protocol": zod.enum(['artnet', 'e131', 'ddp']).optional()
 }),
   "gledopto2": zod.object({
   "host": zod.string(),
@@ -341,8 +346,13 @@ export const GetHardwareConfigResponse = zod.object({
   "host": zod.string(),
   "universeStart": zod.number(),
   "haube1PixelCount": zod.number(),
-  "haube2PixelCount": zod.number(),
-  "schmerzPixelCount": zod.number()
+  "haube2PixelCount": zod.number()
+}),
+  "schmerzController": zod.object({
+  "host": zod.string(),
+  "universeStart": zod.number(),
+  "schmerzPixelCount": zod.number(),
+  "protocol": zod.enum(['artnet', 'e131', 'ddp']).optional()
 }),
   "gledopto2": zod.object({
   "host": zod.string(),
@@ -376,8 +386,13 @@ export const UpdateHardwareConfigBody = zod.object({
   "host": zod.string(),
   "universeStart": zod.number(),
   "haube1PixelCount": zod.number(),
-  "haube2PixelCount": zod.number(),
-  "schmerzPixelCount": zod.number()
+  "haube2PixelCount": zod.number()
+}),
+  "schmerzController": zod.object({
+  "host": zod.string(),
+  "universeStart": zod.number(),
+  "schmerzPixelCount": zod.number(),
+  "protocol": zod.enum(['artnet', 'e131', 'ddp']).optional()
 }),
   "gledopto2": zod.object({
   "host": zod.string(),
@@ -407,8 +422,13 @@ export const UpdateHardwareConfigResponse = zod.object({
   "host": zod.string(),
   "universeStart": zod.number(),
   "haube1PixelCount": zod.number(),
-  "haube2PixelCount": zod.number(),
-  "schmerzPixelCount": zod.number()
+  "haube2PixelCount": zod.number()
+}),
+  "schmerzController": zod.object({
+  "host": zod.string(),
+  "universeStart": zod.number(),
+  "schmerzPixelCount": zod.number(),
+  "protocol": zod.enum(['artnet', 'e131', 'ddp']).optional()
 }),
   "gledopto2": zod.object({
   "host": zod.string(),
@@ -709,8 +729,13 @@ export const SetModeResponse = zod.object({
   "host": zod.string(),
   "universeStart": zod.number(),
   "haube1PixelCount": zod.number(),
-  "haube2PixelCount": zod.number(),
-  "schmerzPixelCount": zod.number()
+  "haube2PixelCount": zod.number()
+}),
+  "schmerzController": zod.object({
+  "host": zod.string(),
+  "universeStart": zod.number(),
+  "schmerzPixelCount": zod.number(),
+  "protocol": zod.enum(['artnet', 'e131', 'ddp']).optional()
 }),
   "gledopto2": zod.object({
   "host": zod.string(),
@@ -1024,8 +1049,13 @@ export const SetFanResponse = zod.object({
   "host": zod.string(),
   "universeStart": zod.number(),
   "haube1PixelCount": zod.number(),
-  "haube2PixelCount": zod.number(),
-  "schmerzPixelCount": zod.number()
+  "haube2PixelCount": zod.number()
+}),
+  "schmerzController": zod.object({
+  "host": zod.string(),
+  "universeStart": zod.number(),
+  "schmerzPixelCount": zod.number(),
+  "protocol": zod.enum(['artnet', 'e131', 'ddp']).optional()
 }),
   "gledopto2": zod.object({
   "host": zod.string(),
@@ -1376,8 +1406,13 @@ export const SetZoneResponse = zod.object({
   "host": zod.string(),
   "universeStart": zod.number(),
   "haube1PixelCount": zod.number(),
-  "haube2PixelCount": zod.number(),
-  "schmerzPixelCount": zod.number()
+  "haube2PixelCount": zod.number()
+}),
+  "schmerzController": zod.object({
+  "host": zod.string(),
+  "universeStart": zod.number(),
+  "schmerzPixelCount": zod.number(),
+  "protocol": zod.enum(['artnet', 'e131', 'ddp']).optional()
 }),
   "gledopto2": zod.object({
   "host": zod.string(),
@@ -1691,8 +1726,13 @@ export const SetMotorResponse = zod.object({
   "host": zod.string(),
   "universeStart": zod.number(),
   "haube1PixelCount": zod.number(),
-  "haube2PixelCount": zod.number(),
-  "schmerzPixelCount": zod.number()
+  "haube2PixelCount": zod.number()
+}),
+  "schmerzController": zod.object({
+  "host": zod.string(),
+  "universeStart": zod.number(),
+  "schmerzPixelCount": zod.number(),
+  "protocol": zod.enum(['artnet', 'e131', 'ddp']).optional()
 }),
   "gledopto2": zod.object({
   "host": zod.string(),
@@ -2012,8 +2052,13 @@ export const SetScreenResponse = zod.object({
   "host": zod.string(),
   "universeStart": zod.number(),
   "haube1PixelCount": zod.number(),
-  "haube2PixelCount": zod.number(),
-  "schmerzPixelCount": zod.number()
+  "haube2PixelCount": zod.number()
+}),
+  "schmerzController": zod.object({
+  "host": zod.string(),
+  "universeStart": zod.number(),
+  "schmerzPixelCount": zod.number(),
+  "protocol": zod.enum(['artnet', 'e131', 'ddp']).optional()
 }),
   "gledopto2": zod.object({
   "host": zod.string(),
@@ -2326,8 +2371,13 @@ export const SetPainFaderResponse = zod.object({
   "host": zod.string(),
   "universeStart": zod.number(),
   "haube1PixelCount": zod.number(),
-  "haube2PixelCount": zod.number(),
-  "schmerzPixelCount": zod.number()
+  "haube2PixelCount": zod.number()
+}),
+  "schmerzController": zod.object({
+  "host": zod.string(),
+  "universeStart": zod.number(),
+  "schmerzPixelCount": zod.number(),
+  "protocol": zod.enum(['artnet', 'e131', 'ddp']).optional()
 }),
   "gledopto2": zod.object({
   "host": zod.string(),
@@ -2635,8 +2685,13 @@ export const LoadSceneResponse = zod.object({
   "host": zod.string(),
   "universeStart": zod.number(),
   "haube1PixelCount": zod.number(),
-  "haube2PixelCount": zod.number(),
-  "schmerzPixelCount": zod.number()
+  "haube2PixelCount": zod.number()
+}),
+  "schmerzController": zod.object({
+  "host": zod.string(),
+  "universeStart": zod.number(),
+  "schmerzPixelCount": zod.number(),
+  "protocol": zod.enum(['artnet', 'e131', 'ddp']).optional()
 }),
   "gledopto2": zod.object({
   "host": zod.string(),
@@ -2940,8 +2995,13 @@ export const BlackoutResponse = zod.object({
   "host": zod.string(),
   "universeStart": zod.number(),
   "haube1PixelCount": zod.number(),
-  "haube2PixelCount": zod.number(),
-  "schmerzPixelCount": zod.number()
+  "haube2PixelCount": zod.number()
+}),
+  "schmerzController": zod.object({
+  "host": zod.string(),
+  "universeStart": zod.number(),
+  "schmerzPixelCount": zod.number(),
+  "protocol": zod.enum(['artnet', 'e131', 'ddp']).optional()
 }),
   "gledopto2": zod.object({
   "host": zod.string(),
@@ -3254,8 +3314,13 @@ export const HardwareFaderInputResponse = zod.object({
   "host": zod.string(),
   "universeStart": zod.number(),
   "haube1PixelCount": zod.number(),
-  "haube2PixelCount": zod.number(),
-  "schmerzPixelCount": zod.number()
+  "haube2PixelCount": zod.number()
+}),
+  "schmerzController": zod.object({
+  "host": zod.string(),
+  "universeStart": zod.number(),
+  "schmerzPixelCount": zod.number(),
+  "protocol": zod.enum(['artnet', 'e131', 'ddp']).optional()
 }),
   "gledopto2": zod.object({
   "host": zod.string(),
@@ -5160,8 +5225,13 @@ export const ApplyPresetResponse = zod.object({
   "host": zod.string(),
   "universeStart": zod.number(),
   "haube1PixelCount": zod.number(),
-  "haube2PixelCount": zod.number(),
-  "schmerzPixelCount": zod.number()
+  "haube2PixelCount": zod.number()
+}),
+  "schmerzController": zod.object({
+  "host": zod.string(),
+  "universeStart": zod.number(),
+  "schmerzPixelCount": zod.number(),
+  "protocol": zod.enum(['artnet', 'e131', 'ddp']).optional()
 }),
   "gledopto2": zod.object({
   "host": zod.string(),

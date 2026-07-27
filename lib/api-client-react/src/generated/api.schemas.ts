@@ -170,6 +170,15 @@ export interface GpioStatus {
   raw: GpioStatusRaw;
 }
 
+export type HardwareConfigSchmerzControllerProtocol = typeof HardwareConfigSchmerzControllerProtocol[keyof typeof HardwareConfigSchmerzControllerProtocol];
+
+
+export const HardwareConfigSchmerzControllerProtocol = {
+  artnet: 'artnet',
+  e131: 'e131',
+  ddp: 'ddp',
+} as const;
+
 export type HardwareConfigMotorDriverType = typeof HardwareConfigMotorDriverType[keyof typeof HardwareConfigMotorDriverType];
 
 
@@ -184,7 +193,13 @@ export type HardwareConfigGledopto1 = {
   universeStart: number;
   haube1PixelCount: number;
   haube2PixelCount: number;
+};
+
+export type HardwareConfigSchmerzController = {
+  host: string;
+  universeStart: number;
   schmerzPixelCount: number;
+  protocol?: HardwareConfigSchmerzControllerProtocol;
 };
 
 export type HardwareConfigGledopto2 = {
@@ -196,6 +211,7 @@ export type HardwareConfigGledopto2 = {
 
 export interface HardwareConfig {
   gledopto1: HardwareConfigGledopto1;
+  schmerzController: HardwareConfigSchmerzController;
   gledopto2: HardwareConfigGledopto2;
   artnetPort: number;
   artnetRefreshRate: number;

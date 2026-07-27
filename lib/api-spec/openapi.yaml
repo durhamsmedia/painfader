@@ -547,17 +547,24 @@ components:
 
     HardwareConfig:
       type: object
-      required: [gledopto1, gledopto2, artnetPort, artnetRefreshRate, openDmxPort, fanDmxChannel, motorPort, motorDriverType, motorUpPosition, motorDownPosition, motorMaxSpeed, gpioChip, gpioPinNsar, gpioPinSchmerz, gpioPinOpiat, gpioPollIntervalMs, gpioDebounceMs]
+      required: [gledopto1, schmerzController, gledopto2, artnetPort, artnetRefreshRate, openDmxPort, fanDmxChannel, motorPort, motorDriverType, motorUpPosition, motorDownPosition, motorMaxSpeed, gpioChip, gpioPinNsar, gpioPinSchmerz, gpioPinOpiat, gpioPollIntervalMs, gpioDebounceMs]
       properties:
         gledopto1:
           type: object
-          required: [host, universeStart, haube1PixelCount, haube2PixelCount, schmerzPixelCount]
+          required: [host, universeStart, haube1PixelCount, haube2PixelCount]
           properties:
             host: { type: string }
             universeStart: { type: integer }
             haube1PixelCount: { type: integer }
             haube2PixelCount: { type: integer }
+        schmerzController:
+          type: object
+          required: [host, universeStart, schmerzPixelCount]
+          properties:
+            host: { type: string }
+            universeStart: { type: integer }
             schmerzPixelCount: { type: integer }
+            protocol: { type: string, enum: [artnet, e131, ddp] }
         gledopto2:
           type: object
           required: [host, universeStart, nsarPixelCount, opiatPixelCount]

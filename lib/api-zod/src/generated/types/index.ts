@@ -41,6 +41,8 @@ export * from './hardwareConfig';
 export * from './hardwareConfigGledopto1';
 export * from './hardwareConfigGledopto2';
 export * from './hardwareConfigMotorDriverType';
+export * from './hardwareConfigSchmerzController';
+export * from './hardwareConfigSchmerzControllerProtocol';
 export * from './healthStatus';
 export * from './modeInput';
 export * from './modeInputMode';

@@ -20,9 +20,11 @@
 import type { HardwareConfigGledopto1 } from './hardwareConfigGledopto1';
 import type { HardwareConfigGledopto2 } from './hardwareConfigGledopto2';
 import type { HardwareConfigMotorDriverType } from './hardwareConfigMotorDriverType';
+import type { HardwareConfigSchmerzController } from './hardwareConfigSchmerzController';
 
 export interface HardwareConfig {
   gledopto1: HardwareConfigGledopto1;
+  schmerzController: HardwareConfigSchmerzController;
   gledopto2: HardwareConfigGledopto2;
   artnetPort: number;
   artnetRefreshRate: number;

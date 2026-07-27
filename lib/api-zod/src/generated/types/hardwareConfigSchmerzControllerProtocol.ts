@@ -18,9 +18,11 @@
  * OpenAPI spec version: 0.3.0
  */
 
-export type HardwareConfigGledopto1 = {
-  host: string;
-  universeStart: number;
-  haube1PixelCount: number;
-  haube2PixelCount: number;
-};
+export type HardwareConfigSchmerzControllerProtocol = typeof HardwareConfigSchmerzControllerProtocol[keyof typeof HardwareConfigSchmerzControllerProtocol];
+
+
+export const HardwareConfigSchmerzControllerProtocol = {
+  artnet: 'artnet',
+  e131: 'e131',
+  ddp: 'ddp',
+} as const;

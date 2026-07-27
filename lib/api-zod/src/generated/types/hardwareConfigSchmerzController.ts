@@ -17,10 +17,11 @@
  *
  * OpenAPI spec version: 0.3.0
  */
+import type { HardwareConfigSchmerzControllerProtocol } from './hardwareConfigSchmerzControllerProtocol';
 
-export type HardwareConfigGledopto1 = {
+export type HardwareConfigSchmerzController = {
   host: string;
   universeStart: number;
-  haube1PixelCount: number;
-  haube2PixelCount: number;
+  schmerzPixelCount: number;
+  protocol?: HardwareConfigSchmerzControllerProtocol;
 };
