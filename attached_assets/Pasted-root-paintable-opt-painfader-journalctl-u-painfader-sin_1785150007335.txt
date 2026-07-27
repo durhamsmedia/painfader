@@ -1,0 +1,26 @@
+root@paintable:/opt/painfader# journalctl -u painfader --since "3 minutes ago" --no-pager | head -40
+Jul 27 12:57:11 paintable node[9715]: {"level":30,"time":1785149831782,"pid":9715,"hostname":"paintable","req":{"id":1,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":200},"responseTime":9,"msg":"request completed"}
+Jul 27 12:57:11 paintable node[9715]: {"level":30,"time":1785149831787,"pid":9715,"hostname":"paintable","req":{"id":2,"method":"GET","url":"/api/dmx/hardware-config"},"res":{"statusCode":200},"responseTime":2,"msg":"request completed"}
+Jul 27 12:57:12 paintable node[9715]: {"level":30,"time":1785149832297,"pid":9715,"hostname":"paintable","req":{"id":3,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":304},"responseTime":3,"msg":"request completed"}
+Jul 27 12:57:12 paintable node[9715]: {"level":30,"time":1785149832809,"pid":9715,"hostname":"paintable","req":{"id":4,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":304},"responseTime":1,"msg":"request completed"}
+Jul 27 12:57:13 paintable node[9715]: {"level":30,"time":1785149833368,"pid":9715,"hostname":"paintable","req":{"id":5,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":304},"responseTime":1,"msg":"request completed"}
+Jul 27 12:57:13 paintable node[9715]: {"level":30,"time":1785149833877,"pid":9715,"hostname":"paintable","req":{"id":6,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":304},"responseTime":1,"msg":"request completed"}
+Jul 27 12:57:14 paintable node[9715]: {"level":30,"time":1785149834400,"pid":9715,"hostname":"paintable","scene":"schmerz","msg":"Scene loaded"}
+Jul 27 12:57:14 paintable node[9715]: {"level":30,"time":1785149834402,"pid":9715,"hostname":"paintable","req":{"id":7,"method":"PUT","url":"/api/dmx/scene"},"res":{"statusCode":200},"responseTime":15,"msg":"request completed"}
+Jul 27 12:57:14 paintable node[9715]: {"level":30,"time":1785149834405,"pid":9715,"hostname":"paintable","req":{"id":8,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":200},"responseTime":0,"msg":"request completed"}
+Jul 27 12:57:14 paintable node[9715]: {"level":30,"time":1785149834420,"pid":9715,"hostname":"paintable","req":{"id":9,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":304},"responseTime":1,"msg":"request completed"}
+Jul 27 12:57:14 paintable node[9715]: {"level":30,"time":1785149834936,"pid":9715,"hostname":"paintable","req":{"id":10,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":304},"responseTime":2,"msg":"request completed"}
+Jul 27 12:57:15 paintable node[9715]: {"level":30,"time":1785149835041,"pid":9715,"hostname":"paintable","scene":"nsar","msg":"Scene loaded"}
+Jul 27 12:57:15 paintable node[9715]: {"level":30,"time":1785149835043,"pid":9715,"hostname":"paintable","req":{"id":11,"method":"PUT","url":"/api/dmx/scene"},"res":{"statusCode":200},"responseTime":3,"msg":"request completed"}
+Jul 27 12:57:15 paintable node[9715]: {"level":30,"time":1785149835069,"pid":9715,"hostname":"paintable","req":{"id":12,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 12:57:15 paintable node[9715]: {"level":30,"time":1785149835588,"pid":9715,"hostname":"paintable","req":{"id":13,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":304},"responseTime":1,"msg":"request completed"}
+Jul 27 12:57:15 paintable node[9715]: {"level":30,"time":1785149835677,"pid":9715,"hostname":"paintable","scene":"opiat","msg":"Scene loaded"}
+Jul 27 12:57:15 paintable node[9715]: {"level":30,"time":1785149835678,"pid":9715,"hostname":"paintable","req":{"id":14,"method":"PUT","url":"/api/dmx/scene"},"res":{"statusCode":200},"responseTime":2,"msg":"request completed"}
+Jul 27 12:57:15 paintable node[9715]: {"level":30,"time":1785149835698,"pid":9715,"hostname":"paintable","req":{"id":15,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 12:57:16 paintable node[9715]: {"level":30,"time":1785149836215,"pid":9715,"hostname":"paintable","req":{"id":16,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":304},"responseTime":1,"msg":"request completed"}
+Jul 27 12:57:16 paintable node[9715]: {"level":30,"time":1785149836408,"pid":9715,"hostname":"paintable","scene":"idle","msg":"Scene loaded"}
+Jul 27 12:57:16 paintable node[9715]: {"level":30,"time":1785149836409,"pid":9715,"hostname":"paintable","req":{"id":17,"method":"PUT","url":"/api/dmx/scene"},"res":{"statusCode":200},"responseTime":2,"msg":"request completed"}
+Jul 27 12:57:16 paintable node[9715]: {"level":30,"time":1785149836434,"pid":9715,"hostname":"paintable","req":{"id":18,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 12:57:16 paintable node[9715]: {"level":30,"time":1785149836952,"pid":9715,"hostname":"paintable","req":{"id":19,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":304},"responseTime":1,"msg":"request completed"}
+Jul 27 12:57:17 paintable node[9715]: {"level":30,"time":1785149837463,"pid":9715,"hostname":"paintable","req":{"id":20,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":304},"responseTime":1,"msg":"request completed"}
+root@paintable:/opt/painfader# 
