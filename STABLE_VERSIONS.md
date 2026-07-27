@@ -4,6 +4,39 @@ Jede Version hier ist per **einem Befehl** auf dem Giada wiederherstellbar.
 
 ---
 
+## ✅ MKS Motor + alle LEDs + Ventilator — `ca09264` (2026-07-27)
+
+**Status:** Haube Art-Net ✅ · Schmerz DDP ✅ · NSAR 240 LEDs ✅ · Opiat 125 LEDs ✅ · Ventilator DMX CH1 ✅ · **Motor MKS UART ✅**
+
+**Was funktioniert:**
+- MKS Servo57CPCBA über UTS-T01 auf `/dev/ttyACM0` verbunden
+- Protokoll: 38400 baud, UART (0xF3 enable / 0xF6 run / 0xF7 stop, XOR-CRC)
+- `motorUpPosition` / `motorDownPosition` = Zeit in ms (CW / CCW)
+- `motorMaxSpeed` = RPM (0–3000)
+- Dashboard-Änderungen an Motor-Config werden live übernommen (Motor neu initialisiert)
+
+**Defaults:** UP=3000 ms · DOWN=3000 ms · Speed=200 RPM — noch zu kalibrieren!
+
+**Bekanntes Problem:** dnsmasq + enp1s0 IP nicht persistent → nach Reboot:
+```bash
+ip addr add 2.0.0.10/24 dev enp1s0 && systemctl restart dnsmasq
+```
+
+**⚠️ Hinweis:** GitHub-Push schlägt fehl (kein Token). Diese Version lebt nur im  
+Replit-Workspace und als direkt gepatchter Quellcode auf dem Giada.  
+Restore über das Python-Skript unten.
+
+### Restore-Befehl
+
+```bash
+python3 /opt/painfader/scripts/restore-giada-motor.py
+```
+
+> Schreibt `hardware-config.ts`, `stepper-motor.ts`, patcht `dmx.ts` + `Dashboard.tsx`, baut neu und startet den Dienst.  
+> Prüfen mit: `journalctl -u painfader -n 5 | grep -i motor`
+
+---
+
 ## ✅ Haube + NSAR + Schmerz + Opiat + Ventilator — `5833739` (2026-07-27)
 **Status:** Haube Art-Net ✅ · Schmerz DDP ✅ · NSAR 240 LEDs ✅ · Opiat 125 LEDs ✅ · Ventilator DMX CH1 ✅  
 **Beschreibung:** Alle vier LED-Bänder + Ventilator über Enttec OpenDMX USB bestätigt funktionierend.  
