@@ -1,0 +1,47 @@
+root@paintable:/opt/painfader# cd /opt/painfader && git stash && git pull --rebase && pnpm build && systemctl restart painfader
+Saved working directory and index state WIP on main: 5833739 Stable: Haube NSAR Schmerz Opiat Ventilator alle funktionieren 270726
+Successfully rebased and updated refs/heads/main.
+$ pnpm run typecheck && pnpm -r --if-present run build
+$ pnpm run typecheck:libs && pnpm -r --filter "./artifacts/**" --filter "./scripts" --if-present run typecheck
+$ tsc --build
+Scope: 4 of 9 workspace projects
+artifacts/api-server typecheck$ tsc -p tsconfig.json --noEmit
+└─ Done in 2.3s
+artifacts/mockup-sandbox typecheck$ tsc -p tsconfig.json --noEmit
+└─ Done in 3.7s
+artifacts/painfader typecheck$ tsc -p tsconfig.json --noEmit
+└─ Done in 4s
+scripts typecheck$ tsc -p tsconfig.json --noEmit
+└─ Done in 2s
+Scope: 8 of 9 workspace projects
+artifacts/mockup-sandbox build$ echo 'mockup-sandbox: skipping production …
+│ mockup-sandbox: skipping production build (dev-only artifact)
+└─ Done in 39ms
+artifacts/api-server build$ node ./build.mjs
+[1 lines collapsed]
+│   dist/pino-worker.mjs               153.4kb
+│   dist/pino-file.mjs                 142.0kb
+│   dist/pino-pretty.mjs               114.6kb
+│   dist/thread-stream-worker.mjs        7.3kb
+│   dist/index.mjs.map                   2.7mb
+│   dist/pino-worker.mjs.map           256.9kb
+│   dist/pino-file.mjs.map             229.0kb
+│   dist/pino-pretty.mjs.map           204.0kb
+│   dist/thread-stream-worker.mjs.map   12.0kb
+│ ⚡ Done in 237ms
+└─ Done in 339ms
+artifacts/painfader build$ vite build --config vite.config.ts
+[1 lines collapsed]
+│ transforming...
+│ src/components/ui/tooltip.tsx (2:0): Error when using sourcemap for repo…
+│ src/components/ui/label.tsx (2:0): Error when using sourcemap for report…
+│ ✓ 1829 modules transformed.
+│ rendering chunks...
+│ computing gzip size...
+│ dist/public/index.html                   1.47 kB │ gzip:   0.57 kB
+│ dist/public/assets/index-DqBkbJF-.css  103.06 kB │ gzip:  17.07 kB
+│ dist/public/assets/index-zWnD_oWY.js   462.90 kB │ gzip: 139.69 kB
+│ ✓ built in 3.12s
+└─ Done in 3.5s
+root@paintable:/opt/painfader# 
+
