@@ -136,7 +136,7 @@ export const DEFAULT_HARDWARE_CONFIG: HardwareConfig = {
   openDmxPort: "/dev/ttyUSB0",
   fanDmxChannel: 1,
 
-  motorPort: "/dev/ttyUSB1",  // UTS-T01 USB-TTL converter (adjust if needed)
+  motorPort: "/dev/ttyACM0",  // UTS-T01 USB-TTL (CH341 1a86:55d3) — auto-detected by serial
   motorDriverType: "mks",
   motorUpPosition: 3000,   // mks: ms to run CW  for UP   — calibrate!
   motorDownPosition: 3000, // mks: ms to run CCW for DOWN — calibrate!

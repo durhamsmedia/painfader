@@ -34,6 +34,13 @@ export const FTDI_WAVESHARE: UsbId = {
   label:        "Waveshare USB-TTL (FT232R B0049WIS)",
 };
 
+export const CH341_UTS_T01: UsbId = {
+  vendorId:     "1a86",
+  productId:    "55d3",
+  serialNumber: "5C66049883",
+  label:        "UTS-T01 USB-TTL (CH341 5C66049883)",
+};
+
 // kept for back-compat in case anything still imports it
 export const CH340_WAVESHARE = FTDI_WAVESHARE;
 
