@@ -110,8 +110,8 @@ export const DEFAULT_HARDWARE_CONFIG: HardwareConfig = {
     host: "2.0.0.157",     // Gledopto Elite 2D #2 — unicast, DDP only
     universeStart: 0,      // unused for DDP (byte-offset based)
     protocol: "ddp",       // Elite 2D firmware only supports DDP, not Art-Net
-    nsarPixelCount: 300,   // GPIO16 — adjust to physical strip length
-    opiatPixelCount: 300,  // IO2    — adjust to physical strip length
+    nsarPixelCount: 240,   // GPIO16 — confirmed 240 LEDs
+    opiatPixelCount: 125,  // IO2    — confirmed 125 LEDs
   },
   pixelProtocol: "artnet",
   pixelSourceIp: "2.0.0.10",   // enp1s0 on Giada — multicast leaves on this NIC

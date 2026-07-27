@@ -198,11 +198,13 @@ export class ArtNetPixelSender {
     // Elite 2D: schmerz-band — uses DDP (Art-Net not supported in this firmware)
     this.sendZone(sc.host, sc.universeStart, "schmerz", sc.schmerzPixelCount, sc.protocol);
 
-    // Gledopto #2: nsar then opiat
-    const nsarUniStart  = g2.universeStart;
-    const opiatUniStart = nsarUniStart + universesNeeded(g2.nsarPixelCount);
-    this.sendZone(g2.host, nsarUniStart,  "nsar",  g2.nsarPixelCount);
-    this.sendZone(g2.host, opiatUniStart, "opiat", g2.opiatPixelCount);
+    // Gledopto #2: nsar (GPIO16, first in WLED chain) then opiat (IO2, second)
+    // DDP byte offset: NSAR at 0, Opiat at nsarPixelCount×3
+    const nsarUniStart    = g2.universeStart;
+    const opiatUniStart   = nsarUniStart + universesNeeded(g2.nsarPixelCount);
+    const opiatDdpOffset  = g2.nsarPixelCount * 3;
+    this.sendZone(g2.host, nsarUniStart,  "nsar",  g2.nsarPixelCount, g2.protocol);
+    this.sendZone(g2.host, opiatUniStart, "opiat", g2.opiatPixelCount, g2.protocol, opiatDdpOffset);
 
     // Advance sACN sequence (wraps 1-255, 0 is reserved)
     this.seqNum = (this.seqNum % 255) + 1;
@@ -214,9 +216,10 @@ export class ArtNetPixelSender {
     zone: ZoneName,
     pixelCount: number,
     protocolOverride?: "artnet" | "e131" | "ddp",
+    ddpByteOffset = 0,
   ) {
     const pixels = renderPattern(this.zones[zone], pixelCount, this.phases[zone]);
-    this.sendPixelBuffer(host, universeStart, pixels, protocolOverride);
+    this.sendPixelBuffer(host, universeStart, pixels, protocolOverride, ddpByteOffset);
   }
 
   private sendDdpBuffer(host: string, byteOffset: number, pixels: Buffer) {
@@ -232,11 +235,11 @@ export class ArtNetPixelSender {
     }
   }
 
-  private sendPixelBuffer(host: string, universeStart: number, pixels: Buffer, protocolOverride?: "artnet" | "e131" | "ddp") {
+  private sendPixelBuffer(host: string, universeStart: number, pixels: Buffer, protocolOverride?: "artnet" | "e131" | "ddp", ddpByteOffset = 0) {
     const protocol = protocolOverride ?? this.config.pixelProtocol ?? "artnet";
 
     if (protocol === "ddp") {
-      this.sendDdpBuffer(host, 0, pixels);
+      this.sendDdpBuffer(host, ddpByteOffset, pixels);
       return;
     }
 
