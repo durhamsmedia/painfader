@@ -1,0 +1,146 @@
+root@paintable:/opt/painfader# journalctl -u painfader -n 5 --no-pager | grep -E "Pixel|socket|EADDR|ready|retry|error"
+root@paintable:/opt/painfader# ip addr show enp1s0 && journalctl -u painfader -n 15 --no-pager
+3: enp1s0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq state UP group default qlen 1000
+    link/ether 24:1c:04:22:ed:94 brd ff:ff:ff:ff:ff:ff
+    altname enx241c0422ed94
+    inet 2.0.0.10/24 scope global enp1s0
+       valid_lft forever preferred_lft forever
+Jul 27 11:37:06 paintable node[7004]: {"level":30,"time":1785145026773,"pid":7004,"hostname":"paintable","req":{"id":20,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 11:37:07 paintable node[7004]: {"level":30,"time":1785145027180,"pid":7004,"hostname":"paintable","scene":"idle","msg":"Scene loaded"}
+Jul 27 11:37:07 paintable node[7004]: {"level":30,"time":1785145027181,"pid":7004,"hostname":"paintable","req":{"id":21,"method":"PUT","url":"/api/dmx/scene"},"res":{"statusCode":200},"responseTime":2,"msg":"request completed"}
+Jul 27 11:37:07 paintable node[7004]: {"level":30,"time":1785145027208,"pid":7004,"hostname":"paintable","req":{"id":22,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 11:37:07 paintable node[7004]: {"level":30,"time":1785145027711,"pid":7004,"hostname":"paintable","position":"down","speed":3000,"msg":"Stepper motor (sim): move command"}
+Jul 27 11:37:07 paintable node[7004]: {"level":30,"time":1785145027711,"pid":7004,"hostname":"paintable","scene":"opiat","msg":"Scene loaded"}
+Jul 27 11:37:07 paintable node[7004]: {"level":30,"time":1785145027713,"pid":7004,"hostname":"paintable","req":{"id":23,"method":"PUT","url":"/api/dmx/scene"},"res":{"statusCode":200},"responseTime":4,"msg":"request completed"}
+Jul 27 11:37:07 paintable node[7004]: {"level":30,"time":1785145027740,"pid":7004,"hostname":"paintable","req":{"id":24,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":200},"responseTime":0,"msg":"request completed"}
+Jul 27 11:37:07 paintable node[7004]: {"level":30,"time":1785145027748,"pid":7004,"hostname":"paintable","req":{"id":25,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":304},"responseTime":1,"msg":"request completed"}
+Jul 27 11:37:08 paintable node[7004]: {"level":30,"time":1785145028037,"pid":7004,"hostname":"paintable","position":"down","speed":3000,"msg":"Stepper motor (sim): move command"}
+Jul 27 11:37:08 paintable node[7004]: {"level":30,"time":1785145028037,"pid":7004,"hostname":"paintable","scene":"nsar","msg":"Scene loaded"}
+Jul 27 11:37:08 paintable node[7004]: {"level":30,"time":1785145028038,"pid":7004,"hostname":"paintable","req":{"id":26,"method":"PUT","url":"/api/dmx/scene"},"res":{"statusCode":200},"responseTime":2,"msg":"request completed"}
+Jul 27 11:37:08 paintable node[7004]: {"level":30,"time":1785145028059,"pid":7004,"hostname":"paintable","req":{"id":27,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 11:37:08 paintable node[7004]: {"level":30,"time":1785145028571,"pid":7004,"hostname":"paintable","req":{"id":28,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":304},"responseTime":1,"msg":"request completed"}
+Jul 27 11:37:09 paintable node[7004]: {"level":30,"time":1785145029080,"pid":7004,"hostname":"paintable","req":{"id":29,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":304},"responseTime":0,"msg":"request completed"}
+root@paintable:/opt/painfader# journalctl -u painfader --since "11:37:05" --until "11:37:10" --no-pager
+Jul 27 11:37:05 paintable node[7004]: {"level":30,"time":1785145025302,"pid":7004,"hostname":"paintable","req":{"id":13,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":304},"responseTime":2,"msg":"request completed"}
+Jul 27 11:37:05 paintable node[7004]: {"level":30,"time":1785145025824,"pid":7004,"hostname":"paintable","req":{"id":14,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":304},"responseTime":2,"msg":"request completed"}
+Jul 27 11:37:05 paintable node[7004]: {"level":30,"time":1785145025838,"pid":7004,"hostname":"paintable","position":"down","speed":3000,"msg":"Stepper motor (sim): move command"}
+Jul 27 11:37:05 paintable node[7004]: {"level":30,"time":1785145025838,"pid":7004,"hostname":"paintable","scene":"schmerz","msg":"Scene loaded"}
+Jul 27 11:37:05 paintable node[7004]: {"level":30,"time":1785145025839,"pid":7004,"hostname":"paintable","req":{"id":15,"method":"PUT","url":"/api/dmx/scene"},"res":{"statusCode":200},"responseTime":13,"msg":"request completed"}
+Jul 27 11:37:05 paintable node[7004]: {"level":30,"time":1785145025852,"pid":7004,"hostname":"paintable","req":{"id":16,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 11:37:06 paintable node[7004]: {"level":30,"time":1785145026293,"pid":7004,"hostname":"paintable","position":"down","speed":3000,"msg":"Stepper motor (sim): move command"}
+Jul 27 11:37:06 paintable node[7004]: {"level":30,"time":1785145026293,"pid":7004,"hostname":"paintable","scene":"nsar","msg":"Scene loaded"}
+Jul 27 11:37:06 paintable node[7004]: {"level":30,"time":1785145026294,"pid":7004,"hostname":"paintable","req":{"id":17,"method":"PUT","url":"/api/dmx/scene"},"res":{"statusCode":200},"responseTime":2,"msg":"request completed"}
+Jul 27 11:37:06 paintable node[7004]: {"level":30,"time":1785145026314,"pid":7004,"hostname":"paintable","req":{"id":18,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 11:37:06 paintable node[7004]: {"level":30,"time":1785145026746,"pid":7004,"hostname":"paintable","position":"down","speed":3000,"msg":"Stepper motor (sim): move command"}
+Jul 27 11:37:06 paintable node[7004]: {"level":30,"time":1785145026746,"pid":7004,"hostname":"paintable","scene":"opiat","msg":"Scene loaded"}
+Jul 27 11:37:06 paintable node[7004]: {"level":30,"time":1785145026748,"pid":7004,"hostname":"paintable","req":{"id":19,"method":"PUT","url":"/api/dmx/scene"},"res":{"statusCode":200},"responseTime":3,"msg":"request completed"}
+Jul 27 11:37:06 paintable node[7004]: {"level":30,"time":1785145026773,"pid":7004,"hostname":"paintable","req":{"id":20,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 11:37:07 paintable node[7004]: {"level":30,"time":1785145027180,"pid":7004,"hostname":"paintable","scene":"idle","msg":"Scene loaded"}
+Jul 27 11:37:07 paintable node[7004]: {"level":30,"time":1785145027181,"pid":7004,"hostname":"paintable","req":{"id":21,"method":"PUT","url":"/api/dmx/scene"},"res":{"statusCode":200},"responseTime":2,"msg":"request completed"}
+Jul 27 11:37:07 paintable node[7004]: {"level":30,"time":1785145027208,"pid":7004,"hostname":"paintable","req":{"id":22,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 11:37:07 paintable node[7004]: {"level":30,"time":1785145027711,"pid":7004,"hostname":"paintable","position":"down","speed":3000,"msg":"Stepper motor (sim): move command"}
+Jul 27 11:37:07 paintable node[7004]: {"level":30,"time":1785145027711,"pid":7004,"hostname":"paintable","scene":"opiat","msg":"Scene loaded"}
+Jul 27 11:37:07 paintable node[7004]: {"level":30,"time":1785145027713,"pid":7004,"hostname":"paintable","req":{"id":23,"method":"PUT","url":"/api/dmx/scene"},"res":{"statusCode":200},"responseTime":4,"msg":"request completed"}
+Jul 27 11:37:07 paintable node[7004]: {"level":30,"time":1785145027740,"pid":7004,"hostname":"paintable","req":{"id":24,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":200},"responseTime":0,"msg":"request completed"}
+Jul 27 11:37:07 paintable node[7004]: {"level":30,"time":1785145027748,"pid":7004,"hostname":"paintable","req":{"id":25,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":304},"responseTime":1,"msg":"request completed"}
+Jul 27 11:37:08 paintable node[7004]: {"level":30,"time":1785145028037,"pid":7004,"hostname":"paintable","position":"down","speed":3000,"msg":"Stepper motor (sim): move command"}
+Jul 27 11:37:08 paintable node[7004]: {"level":30,"time":1785145028037,"pid":7004,"hostname":"paintable","scene":"nsar","msg":"Scene loaded"}
+Jul 27 11:37:08 paintable node[7004]: {"level":30,"time":1785145028038,"pid":7004,"hostname":"paintable","req":{"id":26,"method":"PUT","url":"/api/dmx/scene"},"res":{"statusCode":200},"responseTime":2,"msg":"request completed"}
+Jul 27 11:37:08 paintable node[7004]: {"level":30,"time":1785145028059,"pid":7004,"hostname":"paintable","req":{"id":27,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 11:37:08 paintable node[7004]: {"level":30,"time":1785145028571,"pid":7004,"hostname":"paintable","req":{"id":28,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":304},"responseTime":1,"msg":"request completed"}
+Jul 27 11:37:09 paintable node[7004]: {"level":30,"time":1785145029080,"pid":7004,"hostname":"paintable","req":{"id":29,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":304},"responseTime":0,"msg":"request completed"}
+root@paintable:/opt/painfader# journalctl -u painfader --since "11:37:05" --until "11:37:10" --no-pager
+Jul 27 11:37:05 paintable node[7004]: {"level":30,"time":1785145025302,"pid":7004,"hostname":"paintable","req":{"id":13,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":304},"responseTime":2,"msg":"request completed"}
+Jul 27 11:37:05 paintable node[7004]: {"level":30,"time":1785145025824,"pid":7004,"hostname":"paintable","req":{"id":14,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":304},"responseTime":2,"msg":"request completed"}
+Jul 27 11:37:05 paintable node[7004]: {"level":30,"time":1785145025838,"pid":7004,"hostname":"paintable","position":"down","speed":3000,"msg":"Stepper motor (sim): move command"}
+Jul 27 11:37:05 paintable node[7004]: {"level":30,"time":1785145025838,"pid":7004,"hostname":"paintable","scene":"schmerz","msg":"Scene loaded"}
+Jul 27 11:37:05 paintable node[7004]: {"level":30,"time":1785145025839,"pid":7004,"hostname":"paintable","req":{"id":15,"method":"PUT","url":"/api/dmx/scene"},"res":{"statusCode":200},"responseTime":13,"msg":"request completed"}
+Jul 27 11:37:05 paintable node[7004]: {"level":30,"time":1785145025852,"pid":7004,"hostname":"paintable","req":{"id":16,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 11:37:06 paintable node[7004]: {"level":30,"time":1785145026293,"pid":7004,"hostname":"paintable","position":"down","speed":3000,"msg":"Stepper motor (sim): move command"}
+Jul 27 11:37:06 paintable node[7004]: {"level":30,"time":1785145026293,"pid":7004,"hostname":"paintable","scene":"nsar","msg":"Scene loaded"}
+Jul 27 11:37:06 paintable node[7004]: {"level":30,"time":1785145026294,"pid":7004,"hostname":"paintable","req":{"id":17,"method":"PUT","url":"/api/dmx/scene"},"res":{"statusCode":200},"responseTime":2,"msg":"request completed"}
+Jul 27 11:37:06 paintable node[7004]: {"level":30,"time":1785145026314,"pid":7004,"hostname":"paintable","req":{"id":18,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 11:37:06 paintable node[7004]: {"level":30,"time":1785145026746,"pid":7004,"hostname":"paintable","position":"down","speed":3000,"msg":"Stepper motor (sim): move command"}
+Jul 27 11:37:06 paintable node[7004]: {"level":30,"time":1785145026746,"pid":7004,"hostname":"paintable","scene":"opiat","msg":"Scene loaded"}
+Jul 27 11:37:06 paintable node[7004]: {"level":30,"time":1785145026748,"pid":7004,"hostname":"paintable","req":{"id":19,"method":"PUT","url":"/api/dmx/scene"},"res":{"statusCode":200},"responseTime":3,"msg":"request completed"}
+Jul 27 11:37:06 paintable node[7004]: {"level":30,"time":1785145026773,"pid":7004,"hostname":"paintable","req":{"id":20,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 11:37:07 paintable node[7004]: {"level":30,"time":1785145027180,"pid":7004,"hostname":"paintable","scene":"idle","msg":"Scene loaded"}
+Jul 27 11:37:07 paintable node[7004]: {"level":30,"time":1785145027181,"pid":7004,"hostname":"paintable","req":{"id":21,"method":"PUT","url":"/api/dmx/scene"},"res":{"statusCode":200},"responseTime":2,"msg":"request completed"}
+Jul 27 11:37:07 paintable node[7004]: {"level":30,"time":1785145027208,"pid":7004,"hostname":"paintable","req":{"id":22,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 11:37:07 paintable node[7004]: {"level":30,"time":1785145027711,"pid":7004,"hostname":"paintable","position":"down","speed":3000,"msg":"Stepper motor (sim): move command"}
+Jul 27 11:37:07 paintable node[7004]: {"level":30,"time":1785145027711,"pid":7004,"hostname":"paintable","scene":"opiat","msg":"Scene loaded"}
+Jul 27 11:37:07 paintable node[7004]: {"level":30,"time":1785145027713,"pid":7004,"hostname":"paintable","req":{"id":23,"method":"PUT","url":"/api/dmx/scene"},"res":{"statusCode":200},"responseTime":4,"msg":"request completed"}
+Jul 27 11:37:07 paintable node[7004]: {"level":30,"time":1785145027740,"pid":7004,"hostname":"paintable","req":{"id":24,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":200},"responseTime":0,"msg":"request completed"}
+Jul 27 11:37:07 paintable node[7004]: {"level":30,"time":1785145027748,"pid":7004,"hostname":"paintable","req":{"id":25,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":304},"responseTime":1,"msg":"request completed"}
+Jul 27 11:37:08 paintable node[7004]: {"level":30,"time":1785145028037,"pid":7004,"hostname":"paintable","position":"down","speed":3000,"msg":"Stepper motor (sim): move command"}
+Jul 27 11:37:08 paintable node[7004]: {"level":30,"time":1785145028037,"pid":7004,"hostname":"paintable","scene":"nsar","msg":"Scene loaded"}
+Jul 27 11:37:08 paintable node[7004]: {"level":30,"time":1785145028038,"pid":7004,"hostname":"paintable","req":{"id":26,"method":"PUT","url":"/api/dmx/scene"},"res":{"statusCode":200},"responseTime":2,"msg":"request completed"}
+Jul 27 11:37:08 paintable node[7004]: {"level":30,"time":1785145028059,"pid":7004,"hostname":"paintable","req":{"id":27,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 11:37:08 paintable node[7004]: {"level":30,"time":1785145028571,"pid":7004,"hostname":"paintable","req":{"id":28,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":304},"responseTime":1,"msg":"request completed"}
+Jul 27 11:37:09 paintable node[7004]: {"level":30,"time":1785145029080,"pid":7004,"hostname":"paintable","req":{"id":29,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":304},"responseTime":0,"msg":"request completed"}
+root@paintable:/opt/painfader# journalctl -u painfader --since "11:37:05" --until "11:37:10" --no-pager
+Jul 27 11:37:05 paintable node[7004]: {"level":30,"time":1785145025302,"pid":7004,"hostname":"paintable","req":{"id":13,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":304},"responseTime":2,"msg":"request completed"}
+Jul 27 11:37:05 paintable node[7004]: {"level":30,"time":1785145025824,"pid":7004,"hostname":"paintable","req":{"id":14,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":304},"responseTime":2,"msg":"request completed"}
+Jul 27 11:37:05 paintable node[7004]: {"level":30,"time":1785145025838,"pid":7004,"hostname":"paintable","position":"down","speed":3000,"msg":"Stepper motor (sim): move command"}
+Jul 27 11:37:05 paintable node[7004]: {"level":30,"time":1785145025838,"pid":7004,"hostname":"paintable","scene":"schmerz","msg":"Scene loaded"}
+Jul 27 11:37:05 paintable node[7004]: {"level":30,"time":1785145025839,"pid":7004,"hostname":"paintable","req":{"id":15,"method":"PUT","url":"/api/dmx/scene"},"res":{"statusCode":200},"responseTime":13,"msg":"request completed"}
+Jul 27 11:37:05 paintable node[7004]: {"level":30,"time":1785145025852,"pid":7004,"hostname":"paintable","req":{"id":16,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 11:37:06 paintable node[7004]: {"level":30,"time":1785145026293,"pid":7004,"hostname":"paintable","position":"down","speed":3000,"msg":"Stepper motor (sim): move command"}
+Jul 27 11:37:06 paintable node[7004]: {"level":30,"time":1785145026293,"pid":7004,"hostname":"paintable","scene":"nsar","msg":"Scene loaded"}
+Jul 27 11:37:06 paintable node[7004]: {"level":30,"time":1785145026294,"pid":7004,"hostname":"paintable","req":{"id":17,"method":"PUT","url":"/api/dmx/scene"},"res":{"statusCode":200},"responseTime":2,"msg":"request completed"}
+Jul 27 11:37:06 paintable node[7004]: {"level":30,"time":1785145026314,"pid":7004,"hostname":"paintable","req":{"id":18,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 11:37:06 paintable node[7004]: {"level":30,"time":1785145026746,"pid":7004,"hostname":"paintable","position":"down","speed":3000,"msg":"Stepper motor (sim): move command"}
+Jul 27 11:37:06 paintable node[7004]: {"level":30,"time":1785145026746,"pid":7004,"hostname":"paintable","scene":"opiat","msg":"Scene loaded"}
+Jul 27 11:37:06 paintable node[7004]: {"level":30,"time":1785145026748,"pid":7004,"hostname":"paintable","req":{"id":19,"method":"PUT","url":"/api/dmx/scene"},"res":{"statusCode":200},"responseTime":3,"msg":"request completed"}
+Jul 27 11:37:06 paintable node[7004]: {"level":30,"time":1785145026773,"pid":7004,"hostname":"paintable","req":{"id":20,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 11:37:07 paintable node[7004]: {"level":30,"time":1785145027180,"pid":7004,"hostname":"paintable","scene":"idle","msg":"Scene loaded"}
+Jul 27 11:37:07 paintable node[7004]: {"level":30,"time":1785145027181,"pid":7004,"hostname":"paintable","req":{"id":21,"method":"PUT","url":"/api/dmx/scene"},"res":{"statusCode":200},"responseTime":2,"msg":"request completed"}
+Jul 27 11:37:07 paintable node[7004]: {"level":30,"time":1785145027208,"pid":7004,"hostname":"paintable","req":{"id":22,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 11:37:07 paintable node[7004]: {"level":30,"time":1785145027711,"pid":7004,"hostname":"paintable","position":"down","speed":3000,"msg":"Stepper motor (sim): move command"}
+Jul 27 11:37:07 paintable node[7004]: {"level":30,"time":1785145027711,"pid":7004,"hostname":"paintable","scene":"opiat","msg":"Scene loaded"}
+Jul 27 11:37:07 paintable node[7004]: {"level":30,"time":1785145027713,"pid":7004,"hostname":"paintable","req":{"id":23,"method":"PUT","url":"/api/dmx/scene"},"res":{"statusCode":200},"responseTime":4,"msg":"request completed"}
+Jul 27 11:37:07 paintable node[7004]: {"level":30,"time":1785145027740,"pid":7004,"hostname":"paintable","req":{"id":24,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":200},"responseTime":0,"msg":"request completed"}
+Jul 27 11:37:07 paintable node[7004]: {"level":30,"time":1785145027748,"pid":7004,"hostname":"paintable","req":{"id":25,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":304},"responseTime":1,"msg":"request completed"}
+Jul 27 11:37:08 paintable node[7004]: {"level":30,"time":1785145028037,"pid":7004,"hostname":"paintable","position":"down","speed":3000,"msg":"Stepper motor (sim): move command"}
+Jul 27 11:37:08 paintable node[7004]: {"level":30,"time":1785145028037,"pid":7004,"hostname":"paintable","scene":"nsar","msg":"Scene loaded"}
+Jul 27 11:37:08 paintable node[7004]: {"level":30,"time":1785145028038,"pid":7004,"hostname":"paintable","req":{"id":26,"method":"PUT","url":"/api/dmx/scene"},"res":{"statusCode":200},"responseTime":2,"msg":"request completed"}
+Jul 27 11:37:08 paintable node[7004]: {"level":30,"time":1785145028059,"pid":7004,"hostname":"paintable","req":{"id":27,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 11:37:08 paintable node[7004]: {"level":30,"time":1785145028571,"pid":7004,"hostname":"paintable","req":{"id":28,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":304},"responseTime":1,"msg":"request completed"}
+Jul 27 11:37:09 paintable node[7004]: {"level":30,"time":1785145029080,"pid":7004,"hostname":"paintable","req":{"id":29,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":304},"responseTime":0,"msg":"request completed"}
+root@paintable:/opt/painfader# journalctl -u painfader --since "11:37:05" --until "11:37:10" --no-pager
+Jul 27 11:37:05 paintable node[7004]: {"level":30,"time":1785145025302,"pid":7004,"hostname":"paintable","req":{"id":13,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":304},"responseTime":2,"msg":"request completed"}
+Jul 27 11:37:05 paintable node[7004]: {"level":30,"time":1785145025824,"pid":7004,"hostname":"paintable","req":{"id":14,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":304},"responseTime":2,"msg":"request completed"}
+Jul 27 11:37:05 paintable node[7004]: {"level":30,"time":1785145025838,"pid":7004,"hostname":"paintable","position":"down","speed":3000,"msg":"Stepper motor (sim): move command"}
+Jul 27 11:37:05 paintable node[7004]: {"level":30,"time":1785145025838,"pid":7004,"hostname":"paintable","scene":"schmerz","msg":"Scene loaded"}
+Jul 27 11:37:05 paintable node[7004]: {"level":30,"time":1785145025839,"pid":7004,"hostname":"paintable","req":{"id":15,"method":"PUT","url":"/api/dmx/scene"},"res":{"statusCode":200},"responseTime":13,"msg":"request completed"}
+Jul 27 11:37:05 paintable node[7004]: {"level":30,"time":1785145025852,"pid":7004,"hostname":"paintable","req":{"id":16,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 11:37:06 paintable node[7004]: {"level":30,"time":1785145026293,"pid":7004,"hostname":"paintable","position":"down","speed":3000,"msg":"Stepper motor (sim): move command"}
+Jul 27 11:37:06 paintable node[7004]: {"level":30,"time":1785145026293,"pid":7004,"hostname":"paintable","scene":"nsar","msg":"Scene loaded"}
+Jul 27 11:37:06 paintable node[7004]: {"level":30,"time":1785145026294,"pid":7004,"hostname":"paintable","req":{"id":17,"method":"PUT","url":"/api/dmx/scene"},"res":{"statusCode":200},"responseTime":2,"msg":"request completed"}
+Jul 27 11:37:06 paintable node[7004]: {"level":30,"time":1785145026314,"pid":7004,"hostname":"paintable","req":{"id":18,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 11:37:06 paintable node[7004]: {"level":30,"time":1785145026746,"pid":7004,"hostname":"paintable","position":"down","speed":3000,"msg":"Stepper motor (sim): move command"}
+Jul 27 11:37:06 paintable node[7004]: {"level":30,"time":1785145026746,"pid":7004,"hostname":"paintable","scene":"opiat","msg":"Scene loaded"}
+Jul 27 11:37:06 paintable node[7004]: {"level":30,"time":1785145026748,"pid":7004,"hostname":"paintable","req":{"id":19,"method":"PUT","url":"/api/dmx/scene"},"res":{"statusCode":200},"responseTime":3,"msg":"request completed"}
+Jul 27 11:37:06 paintable node[7004]: {"level":30,"time":1785145026773,"pid":7004,"hostname":"paintable","req":{"id":20,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 11:37:07 paintable node[7004]: {"level":30,"time":1785145027180,"pid":7004,"hostname":"paintable","scene":"idle","msg":"Scene loaded"}
+Jul 27 11:37:07 paintable node[7004]: {"level":30,"time":1785145027181,"pid":7004,"hostname":"paintable","req":{"id":21,"method":"PUT","url":"/api/dmx/scene"},"res":{"statusCode":200},"responseTime":2,"msg":"request completed"}
+Jul 27 11:37:07 paintable node[7004]: {"level":30,"time":1785145027208,"pid":7004,"hostname":"paintable","req":{"id":22,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 11:37:07 paintable node[7004]: {"level":30,"time":1785145027711,"pid":7004,"hostname":"paintable","position":"down","speed":3000,"msg":"Stepper motor (sim): move command"}
+Jul 27 11:37:07 paintable node[7004]: {"level":30,"time":1785145027711,"pid":7004,"hostname":"paintable","scene":"opiat","msg":"Scene loaded"}
+Jul 27 11:37:07 paintable node[7004]: {"level":30,"time":1785145027713,"pid":7004,"hostname":"paintable","req":{"id":23,"method":"PUT","url":"/api/dmx/scene"},"res":{"statusCode":200},"responseTime":4,"msg":"request completed"}
+Jul 27 11:37:07 paintable node[7004]: {"level":30,"time":1785145027740,"pid":7004,"hostname":"paintable","req":{"id":24,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":200},"responseTime":0,"msg":"request completed"}
+Jul 27 11:37:07 paintable node[7004]: {"level":30,"time":1785145027748,"pid":7004,"hostname":"paintable","req":{"id":25,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":304},"responseTime":1,"msg":"request completed"}
+Jul 27 11:37:08 paintable node[7004]: {"level":30,"time":1785145028037,"pid":7004,"hostname":"paintable","position":"down","speed":3000,"msg":"Stepper motor (sim): move command"}
+Jul 27 11:37:08 paintable node[7004]: {"level":30,"time":1785145028037,"pid":7004,"hostname":"paintable","scene":"nsar","msg":"Scene loaded"}
+Jul 27 11:37:08 paintable node[7004]: {"level":30,"time":1785145028038,"pid":7004,"hostname":"paintable","req":{"id":26,"method":"PUT","url":"/api/dmx/scene"},"res":{"statusCode":200},"responseTime":2,"msg":"request completed"}
+Jul 27 11:37:08 paintable node[7004]: {"level":30,"time":1785145028059,"pid":7004,"hostname":"paintable","req":{"id":27,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+Jul 27 11:37:08 paintable node[7004]: {"level":30,"time":1785145028571,"pid":7004,"hostname":"paintable","req":{"id":28,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":304},"responseTime":1,"msg":"request completed"}
+Jul 27 11:37:09 paintable node[7004]: {"level":30,"time":1785145029080,"pid":7004,"hostname":"paintable","req":{"id":29,"method":"GET","url":"/api/dmx/state"},"res":{"statusCode":304},"responseTime":0,"msg":"request completed"}
+root@paintable:/opt/painfader# journalctl -u painfader -n 200 --no-pager | grep -E "Started|Pixel|socket|EADDR|ready|retry"
+Jul 27 11:36:24 paintable systemd[1]: Started painfader.service - Painfader DMX Controller.
+Jul 27 11:36:24 paintable node[6978]: {"level":30,"time":1785144984922,"pid":6978,"hostname":"paintable","protocol":"artnet","g1":"2.0.0.255","sc":"2.0.0.158","g2":"2.0.0.157","msg":"Pixel socket ready"}
+Jul 27 11:36:25 paintable node[6978]: {"level":30,"time":1785144985075,"pid":6978,"hostname":"paintable","port":"/dev/ttyUSB1","msg":"Serial button: ready"}
+Jul 27 11:36:45 paintable systemd[1]: Started painfader.service - Painfader DMX Controller.
+Jul 27 11:36:45 paintable node[7004]: {"level":30,"time":1785145005589,"pid":7004,"hostname":"paintable","protocol":"artnet","g1":"2.0.0.255","sc":"2.0.0.158","g2":"2.0.0.157","msg":"Pixel socket ready"}
+Jul 27 11:36:45 paintable node[7004]: {"level":30,"time":1785145005733,"pid":7004,"hostname":"paintable","port":"/dev/ttyUSB1","msg":"Serial button: ready"}
+root@paintable:/opt/painfader# 
