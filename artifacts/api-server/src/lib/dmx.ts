@@ -340,7 +340,7 @@ class DmxController {
       fan: { ...this.fan },
       haube:   { pattern: { ...this.zones.haube },   pixelCount: this.hwConfig.gledopto1.haube1PixelCount },
       haube2:  { pattern: { ...this.zones.haube2 },  pixelCount: this.hwConfig.gledopto1.haube2PixelCount },
-      schmerz: { pattern: { ...this.zones.schmerz }, pixelCount: this.hwConfig.gledopto1.schmerzPixelCount },
+      schmerz: { pattern: { ...this.zones.schmerz }, pixelCount: this.hwConfig.schmerzController.schmerzPixelCount },
       nsar:    { pattern: { ...this.zones.nsar },    pixelCount: this.hwConfig.gledopto2.nsarPixelCount },
       opiat:   { pattern: { ...this.zones.opiat },   pixelCount: this.hwConfig.gledopto2.opiatPixelCount },
       motor: {

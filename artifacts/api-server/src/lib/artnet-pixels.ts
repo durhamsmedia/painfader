@@ -8,10 +8,11 @@
  *                Works across WiFi-AP / Ethernet simultaneously (IGMP multicast).
  *
  * Universe layout (same for both protocols):
- *   Gledopto #1 (haube1 + haube2 + schmerz):
+ *   Gledopto #1 (haube1 + haube2 only):
  *     universeStart+0  … → haube  (Matrix 1, GPIO16)
  *     universeStart+N  … → haube2 (Matrix 2, GPIO12)
- *     universeStart+M  … → schmerz
+ *   Elite 2D / schmerzController (IO2):
+ *     universeStart+0  … → schmerz (independent device)
  *   Gledopto #2 (nsar + opiat):
  *     universeStart+0 … +ceil(nsarPixelCount/170)-1    → nsar
  *     universeStart+M … +ceil(opiatPixelCount/170)-1   → opiat
@@ -99,7 +100,7 @@ export class ArtNetPixelSender {
       }
       this.connected = true;
       logger.info(
-        { protocol: this.config.pixelProtocol, g1: config.gledopto1.host, g2: config.gledopto2.host },
+        { protocol: this.config.pixelProtocol, g1: config.gledopto1.host, sc: config.schmerzController.host, g2: config.gledopto2.host },
         "Pixel socket ready",
       );
     });
@@ -171,6 +172,7 @@ export class ArtNetPixelSender {
 
     const g1 = this.config.gledopto1;
     const g2 = this.config.gledopto2;
+    const sc = this.config.schmerzController;
 
     // Gledopto #1: haube1 + haube2 as ONE combined 512-pixel buffer so WLED's
     // sequential universe mapping (Universe N → combined pixels N×170..(N+1)×170-1)
@@ -179,10 +181,10 @@ export class ArtNetPixelSender {
       renderPattern(this.zones.haube,  g1.haube1PixelCount,  this.phases.haube),
       renderPattern(this.zones.haube2, g1.haube2PixelCount,  this.phases.haube2),
     ]);
-    const haubeUniStart   = g1.universeStart;
-    const schmerzUniStart = haubeUniStart + universesNeeded(g1.haube1PixelCount + g1.haube2PixelCount);
-    this.sendPixelBuffer(g1.host, haubeUniStart, haubeBuf);
-    this.sendZone(g1.host, schmerzUniStart, "schmerz", g1.schmerzPixelCount);
+    this.sendPixelBuffer(g1.host, g1.universeStart, haubeBuf);
+
+    // Elite 2D: schmerz-band — separate device (unicast to 2.0.0.158), own universe space
+    this.sendZone(sc.host, sc.universeStart, "schmerz", sc.schmerzPixelCount);
 
     // Gledopto #2: nsar then opiat
     const nsarUniStart  = g2.universeStart;

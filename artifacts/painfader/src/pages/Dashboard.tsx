@@ -725,7 +725,11 @@ export default function Dashboard() {
                         <div className="flex justify-between"><span className="text-zinc-600">Universe start #1</span><span>{dmxState.hardwareConfig.gledopto1.universeStart}</span></div>
                         <div className="flex justify-between"><span className="text-zinc-600">Haube 1 pixels</span><span>{dmxState.hardwareConfig.gledopto1.haube1PixelCount}</span></div>
                         <div className="flex justify-between"><span className="text-zinc-600">Haube 2 pixels</span><span>{dmxState.hardwareConfig.gledopto1.haube2PixelCount}</span></div>
-                        <div className="flex justify-between"><span className="text-zinc-600">Schmerz pixels</span><span>{dmxState.hardwareConfig.gledopto1.schmerzPixelCount}</span></div>
+                      </div>
+                      <div className="border-t border-zinc-800 pt-2 space-y-1.5">
+                        <div className="flex justify-between"><span className="text-zinc-600">Elite 2D IP</span><span>{dmxState.hardwareConfig.schmerzController.host}</span></div>
+                        <div className="flex justify-between"><span className="text-zinc-600">Universe start (Schmerz)</span><span>{dmxState.hardwareConfig.schmerzController.universeStart}</span></div>
+                        <div className="flex justify-between"><span className="text-zinc-600">Schmerz pixels</span><span>{dmxState.hardwareConfig.schmerzController.schmerzPixelCount}</span></div>
                       </div>
                       <div className="border-t border-zinc-800 pt-2 space-y-1.5">
                         <div className="flex justify-between"><span className="text-zinc-600">Gledopto #2 IP</span><span>{dmxState.hardwareConfig.gledopto2.host}</span></div>
@@ -823,7 +827,8 @@ export default function Dashboard() {
                       const n = (k: string) => Number(f.get(k));
                       updateHwConfig.mutate({ data: {
                         ...hwConfig,
-                        gledopto1: { ...hwConfig.gledopto1, host: g('g1host'), universeStart: n('g1uni'), haube1PixelCount: n('haube1Pixels'), haube2PixelCount: n('haube2Pixels'), schmerzPixelCount: n('schmerzPixels') },
+                        gledopto1: { ...hwConfig.gledopto1, host: g('g1host'), universeStart: n('g1uni'), haube1PixelCount: n('haube1Pixels'), haube2PixelCount: n('haube2Pixels') },
+                        schmerzController: { ...hwConfig.schmerzController, host: g('scHost'), universeStart: n('scUni'), schmerzPixelCount: n('schmerzPixels') },
                         gledopto2: { ...hwConfig.gledopto2, host: g('g2host'), universeStart: n('g2uni'), nsarPixelCount: n('nsarPixels'), opiatPixelCount: n('opiatPixels') },
                         artnetRefreshRate: n('fps'),
                         openDmxPort: g('openDmxPort'),
@@ -841,13 +846,19 @@ export default function Dashboard() {
                       }}, { onSuccess: () => toast.success('Hardware config saved') });
                     }} className="space-y-4">
 
-                      <div className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest">Gledopto #1 — Haube + Schmerz</div>
+                      <div className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest">Gledopto #1 — Haube (GL-C-618WL)</div>
                       <div className="grid grid-cols-2 gap-3">
                         <div className="space-y-1"><Label className="text-[10px] font-mono text-zinc-600">IP Gledopto #1</Label><Input name="g1host" defaultValue={hwConfig.gledopto1.host} className="h-7 font-mono text-xs bg-black border-zinc-800 rounded-sm" /></div>
                         <div className="space-y-1"><Label className="text-[10px] font-mono text-zinc-600">Universe start #1</Label><Input name="g1uni" type="number" defaultValue={hwConfig.gledopto1.universeStart} className="h-7 font-mono text-xs bg-black border-zinc-800 rounded-sm" /></div>
                         <div className="space-y-1"><Label className="text-[10px] font-mono text-zinc-600">Haube 1 pixels</Label><Input name="haube1Pixels" type="number" defaultValue={hwConfig.gledopto1.haube1PixelCount} className="h-7 font-mono text-xs bg-black border-zinc-800 rounded-sm" /></div>
                         <div className="space-y-1"><Label className="text-[10px] font-mono text-zinc-600">Haube 2 pixels</Label><Input name="haube2Pixels" type="number" defaultValue={hwConfig.gledopto1.haube2PixelCount} className="h-7 font-mono text-xs bg-black border-zinc-800 rounded-sm" /></div>
-                        <div className="space-y-1"><Label className="text-[10px] font-mono text-zinc-600">Schmerz pixels</Label><Input name="schmerzPixels" type="number" defaultValue={hwConfig.gledopto1.schmerzPixelCount} className="h-7 font-mono text-xs bg-black border-zinc-800 rounded-sm" /></div>
+                      </div>
+
+                      <div className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest border-t border-zinc-800 pt-3">Elite 2D — Schmerz-Band (IO2)</div>
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className="space-y-1"><Label className="text-[10px] font-mono text-zinc-600">IP Elite 2D</Label><Input name="scHost" defaultValue={hwConfig.schmerzController.host} className="h-7 font-mono text-xs bg-black border-zinc-800 rounded-sm" /></div>
+                        <div className="space-y-1"><Label className="text-[10px] font-mono text-zinc-600">Universe start (IO2)</Label><Input name="scUni" type="number" defaultValue={hwConfig.schmerzController.universeStart} className="h-7 font-mono text-xs bg-black border-zinc-800 rounded-sm" /></div>
+                        <div className="space-y-1"><Label className="text-[10px] font-mono text-zinc-600">Schmerz pixels</Label><Input name="schmerzPixels" type="number" defaultValue={hwConfig.schmerzController.schmerzPixelCount} className="h-7 font-mono text-xs bg-black border-zinc-800 rounded-sm" /></div>
                       </div>
 
                       <div className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest border-t border-zinc-800 pt-3">Gledopto #2 — NSAR + Opiat</div>

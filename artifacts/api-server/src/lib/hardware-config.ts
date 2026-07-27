@@ -3,11 +3,12 @@
  * All values can be overridden at runtime via the /api/hardware-config endpoint.
  *
  * Physical layout:
- *  • Gledopto 2D-EXMU #1  — Haube (2 × 16×16 px) + Schmerz-Band (5 × 16×16 px)
- *  • Gledopto 2D-EXMU #2  — NSAR-Band (strip) + Opiat-Band (strip)
- *  • Enttec OpenDMX USB   — Fan on CH 1
- *  • USB-TTL step/dir      — Stepper motor for Opiat sign
- *  • GPIO (gpiochip0)      — Reed contacts: GPI1=N(−1), GPI2=0, GPI3=O(+1)
+ *  • Gledopto GL-C-618WL #1 (WLED)  — Haube (2 × 16×16 px, GPIO16 + GPIO12)
+ *  • Gledopto Elite 2D    (WLED)     — Schmerz-Band (5 × 16×16 px, IO2)
+ *  • Gledopto 2D-EXMU #2  (WLED)    — NSAR-Band (strip) + Opiat-Band (strip)
+ *  • Enttec OpenDMX USB              — Fan on CH 1
+ *  • USB-TTL step/dir                — Stepper motor for Opiat sign
+ *  • GPIO (gpiochip0)                — Reed contacts: GPI1=N(−1), GPI2=0, GPI3=O(+1)
  */
 
 export interface GledoptoConfig {
@@ -18,12 +19,16 @@ export interface GledoptoConfig {
 }
 
 export interface HardwareConfig {
-  // ── Gledopto #1 (Haube + Schmerz) ───────────────────────────────────────
+  // ── Gledopto #1 (Haube only) ─────────────────────────────────────────────
   gledopto1: GledoptoConfig & {
     /** Haube Matrix 1 (GPIO16): 1 × 16×16 = 256 pixels */
     haube1PixelCount: number;
     /** Haube Matrix 2 (GPIO12): 1 × 16×16 = 256 pixels — independently controlled */
     haube2PixelCount: number;
+  };
+
+  // ── Gledopto Elite 2D (Schmerz-Band, IO2) ────────────────────────────────
+  schmerzController: GledoptoConfig & {
     /** Schmerz-Band: 5 matrices × 16×16 = 1280 pixels */
     schmerzPixelCount: number;
   };
@@ -88,6 +93,10 @@ export const DEFAULT_HARDWARE_CONFIG: HardwareConfig = {
     universeStart: 0,
     haube1PixelCount: 256,   // Matrix 1 (GPIO16) — Haube NSAR side
     haube2PixelCount: 256,   // Matrix 2 (GPIO12) — Haube Schmerz side
+  },
+  schmerzController: {
+    host: "2.0.0.158",       // Gledopto Elite 2D — unicast, IO2
+    universeStart: 0,        // WLED: configure IO2 with Art-Net universe 1 (WLED UI is 1-based)
     schmerzPixelCount: 1280, // 5 × 256
   },
   gledopto2: {
