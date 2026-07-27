@@ -1,0 +1,58 @@
+
+⚡ Done in 198ms
+✓ protocol: artnet
+root@paintable:/opt/painfader# nmap -sn 2.0.0.0/24
+-bash: nmap: command not found
+root@paintable:/opt/painfader# arp-scan --interface=enp1s0 2.0.0.0/24
+-bash: arp-scan: command not found
+root@paintable:/opt/painfader# arp-scan --interface=enp1s0 2.0.0.0/24
+-bash: arp-scan: command not found
+root@paintable:/opt/painfader# arp-scan --interface=enp1s0 2.0.0.0/24
+-bash: arp-scan: command not found
+root@paintable:/opt/painfader# for i in $(seq 1 20); do ping -c1 -W1 2.0.0.$i &>/dev/null && echo "2.0.0.$i alive"; done
+2.0.0.1 alive
+for i in $(seq 1 20); do ping -c1 -W1 2.0.0.$i &>/dev/null && echo "2.0.0.$i alive"; done2.0.0.10 alive
+^Croot@paintable:/opt/painfader# ip neigh show && echo "---" && cat /proc/net/arp                              ip neigh show && echo "---" && cat /proc/net/arp
+2.0.0.3 dev enp1s0 FAILED 
+2.0.0.7 dev enp1s0 FAILED 
+2.0.0.19 dev enp1s0 FAILED 
+2.0.0.14 dev enp1s0 FAILED 
+2.0.0.2 dev enp1s0 FAILED 
+2.0.0.6 dev enp1s0 FAILED 
+2.0.0.18 dev enp1s0 FAILED 
+2.0.0.9 dev enp1s0 FAILED 
+2.0.0.13 dev enp1s0 FAILED 
+2.0.0.1 dev enp1s0 lladdr 70:4b:ca:5b:c5:ab STALE 
+2.0.0.5 dev enp1s0 FAILED 
+2.0.0.8 dev enp1s0 FAILED 
+2.0.0.17 dev enp1s0 FAILED 
+2.0.0.12 dev enp1s0 FAILED 
+2.0.0.4 dev enp1s0 FAILED 
+10.21.101.254 dev enp2s0 lladdr c0:ea:e4:84:3b:f4 REACHABLE 
+2.0.0.11 dev enp1s0 FAILED 
+2.0.0.16 dev enp1s0 FAILED 
+2.0.0.15 dev enp1s0 FAILED 
+2.0.0.20 dev enp1s0 FAILED 
+---
+IP address       HW type     Flags       HW address            Mask     Device
+2.0.0.3          0x1         0x0         00:00:00:00:00:00     *        enp1s0
+2.0.0.7          0x1         0x0         00:00:00:00:00:00     *        enp1s0
+2.0.0.19         0x1         0x0         00:00:00:00:00:00     *        enp1s0
+2.0.0.14         0x1         0x0         00:00:00:00:00:00     *        enp1s0
+2.0.0.2          0x1         0x0         00:00:00:00:00:00     *        enp1s0
+2.0.0.6          0x1         0x0         00:00:00:00:00:00     *        enp1s0
+2.0.0.18         0x1         0x0         00:00:00:00:00:00     *        enp1s0
+2.0.0.9          0x1         0x0         00:00:00:00:00:00     *        enp1s0
+2.0.0.13         0x1         0x0         00:00:00:00:00:00     *        enp1s0
+2.0.0.1          0x1         0x2         70:4b:ca:5b:c5:ab     *        enp1s0
+2.0.0.5          0x1         0x0         00:00:00:00:00:00     *        enp1s0
+2.0.0.8          0x1         0x0         00:00:00:00:00:00     *        enp1s0
+2.0.0.17         0x1         0x0         00:00:00:00:00:00     *        enp1s0
+2.0.0.12         0x1         0x0         00:00:00:00:00:00     *        enp1s0
+2.0.0.4          0x1         0x0         00:00:00:00:00:00     *        enp1s0
+10.21.101.254    0x1         0x2         c0:ea:e4:84:3b:f4     *        enp2s0
+2.0.0.11         0x1         0x0         00:00:00:00:00:00     *        enp1s0
+2.0.0.16         0x1         0x0         00:00:00:00:00:00     *        enp1s0
+2.0.0.15         0x1         0x0         00:00:00:00:00:00     *        enp1s0
+2.0.0.20         0x1         0x0         00:00:00:00:00:00     *        enp1s0
+root@paintable:/opt/painfader# 
