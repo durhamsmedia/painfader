@@ -4,6 +4,16 @@ Jede Version hier ist per **einem Befehl** auf dem Giada wiederherstellbar.
 
 ---
 
+## ✅ Schmerzband Haube NSAR Band OPIAT BAND Funktionieren 270726 — `4245a83` (2026-07-27)
+**Status:** Haube Art-Net ✅ · Schmerz DDP voll ✅ · NSAR 240 LEDs ✅ · Opiat 125 LEDs ✅  
+**Beschreibung:** Alle vier Bänder bestätigt funktionierend. NSAR GPIO16, Opiat IO2, korrekte DDP Byte-Offsets.
+
+```bash
+cd /opt/painfader && git fetch && git checkout 4245a83 && pnpm install && pnpm build && systemctl restart painfader
+```
+
+---
+
 ## ✅ 27.07. SCHMERZBAND UND HAUBEN — `bd86f17` (2026-07-27)
 **Status:** Haube Art-Net ✅ · Schmerz DDP voll ✅ · Socket-Retry bei Boot ✅  
 **Beschreibung:** Bestätigter Stabilitätspunkt. gledopto2 DDP-Unicast zu 2.0.0.157 — kein Art-Net-Broadcast der Schmerz stört.
