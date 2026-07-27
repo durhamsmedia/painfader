@@ -7,3 +7,4 @@
 - [WLED Universe Alignment Problem](wled-universe-alignment.md) — GPIO12[0-83] (84px) stay off due to Art-Net universe boundary mismatch; still open.
 - [Gledopto Elite 2D — DDP only](elite2d-ddp.md) — Art-Net port 6454 unreachable on Elite 2D; use protocol:"ddp" in schmerzController config.
 - [Giada GPIO and start button](giada-gpio-button.md) — IT87 GPIO compiled from kernel source; DI connector needs 12-24V; start button uses Waveshare TTL serial (GND→button→RXD on /dev/ttyUSB0).
+- [MKS Motor restore workflow](mks-motor-restore.md) — GitHub push fails; motor patches live only on Giada + Replit; restore via scripts/restore-giada-motor.py.
