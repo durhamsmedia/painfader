@@ -193,9 +193,9 @@ export class ArtNetPixelSender {
       renderPattern(this.zones.haube,  g1.haube1PixelCount,  this.phases.haube),
       renderPattern(this.zones.haube2, g1.haube2PixelCount,  this.phases.haube2),
     ]);
-    this.sendPixelBuffer(g1.host, g1.universeStart, haubeBuf);
+    this.sendPixelBuffer(g1.host, g1.universeStart, haubeBuf, g1.protocol);
 
-    // Elite 2D: schmerz-band — uses DDP (Art-Net not supported in this firmware)
+    // Schmerz-band
     this.sendZone(sc.host, sc.universeStart, "schmerz", sc.schmerzPixelCount, sc.protocol);
 
     // Gledopto #2: nsar (GPIO16, first in WLED chain) then opiat (IO2, second)
