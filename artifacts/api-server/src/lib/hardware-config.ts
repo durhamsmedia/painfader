@@ -110,8 +110,9 @@ export interface HardwareConfig {
 
 export const DEFAULT_HARDWARE_CONFIG: HardwareConfig = {
   gledopto1: {
-    host: "2.0.0.156",       // 2D EXMU "led matrix lang" — Haube, Art-Net, static IP (WLED 16.0.1)
+    host: "2.0.0.156",       // 2D EXMU "led matrix lang" — Haube, DDP, static IP (WLED 16.0.1)
     universeStart: 0,
+    protocol: "ddp",
     haube1PixelCount: 256,   // Matrix 1 (GPIO16) — Haube NSAR side
     haube2PixelCount: 256,   // Matrix 2 (GPIO12) — Haube Schmerz side
   },
@@ -122,8 +123,9 @@ export const DEFAULT_HARDWARE_CONFIG: HardwareConfig = {
     schmerzPixelCount: 1280, // 5 × 256
   },
   gledopto2: {
-    host: "2.0.0.157",     // 2D EXMU "led bänder" — NSAR + Opiat, Art-Net, static IP (WLED 16.0.1)
-    universeStart: 0,      // NSAR: universes 0–1, Opiat: universe 2
+    host: "2.0.0.157",     // 2D EXMU "led bänder" — NSAR + Opiat, DDP, static IP (WLED 16.0.1)
+    universeStart: 0,
+    protocol: "ddp",
     nsarPixelCount: 240,   // GPIO16 — confirmed 240 LEDs
     opiatPixelCount: 125,  // IO2    — confirmed 125 LEDs
   },
