@@ -4,6 +4,24 @@ Jede Version hier ist per **einem Befehl** auf dem Giada wiederherstellbar.
 
 ---
 
+## ✅ Alle LEDs DDP + GPIO + Motor MKS + Ventilator — `12ec882` (2026-07-28)
+
+**Status:** Haube ✅ · Schmerz ✅ · NSAR ✅ · Opiat ✅ · Ventilator ✅ · GPIO ✅ · Motor MKS verbunden ✅
+
+**GPIO (gpiochip0 = INTC1057, Intel platform):**
+- DI0 → chip0 line 5 → NSAR (−1)
+- DI1 → chip0 line 6 → Schmerz/Mitte (0)
+- DI2 → chip0 line 7 → Opiat (+1)
+- Wiring: 3,3V (Stecker Pin 1) → Reed-Kontakt → DI-Pin; GND (Stecker letzter Pin)
+- Kein --bias=pull-down (Crash-Risiko auf chip0)
+
+**Restore:**
+```bash
+python3 /opt/painfader/scripts/restore-giada-motor.py
+```
+
+---
+
 ## ✅ Alle LEDs DDP + Motor MKS + Ventilator — `8db5f0d` (2026-07-28)
 
 **Status:** Haube DDP ✅ · Schmerz DDP ✅ · NSAR DDP ✅ · Opiat DDP ✅ · Ventilator ✅ · Motor MKS verbunden ✅

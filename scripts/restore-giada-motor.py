@@ -111,10 +111,10 @@ export const DEFAULT_HARDWARE_CONFIG: HardwareConfig = {
   motorDownPosition: 3000,     // ms CCW for DOWN — calibrate!
   motorMaxSpeed: 200,          // RPM (0-3000)
 
-  gpioChip: 0,
-  gpioPinNsar: 0,
-  gpioPinSchmerz: 1,
-  gpioPinOpiat: 2,
+  gpioChip: 0,             // gpiochip0 = INTC1057 (Intel platform GPIO — confirmed DI connector)
+  gpioPinNsar: 5,          // DI0 — confirmed chip0 line 5
+  gpioPinSchmerz: 6,       // DI1 — confirmed chip0 line 6
+  gpioPinOpiat: 7,         // DI2 — confirmed chip0 line 7
   gpioPollIntervalMs: 50,
   gpioDebounceMs: 30,
 };
