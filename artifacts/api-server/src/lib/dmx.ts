@@ -405,13 +405,18 @@ class DmxController {
     const pos = clampPos(position);
     this.faderPos = pos;
 
+    // Always apply the preset for the new position immediately
+    const preset = this.presets[POS_TO_IDX[pos]];
+    if (preset) {
+      this.mode = "experience";
+      this.applyPreset(preset);
+    }
+
+    // Position 0 (Schmerz/center) also starts the idle timer
     if (pos === 0) {
       this.startIdleTimer();
     } else {
       this.stopIdleTimer();
-      this.mode = "experience";
-      const preset = this.presets[POS_TO_IDX[pos]];
-      if (preset) this.applyPreset(preset);
     }
 
     logger.info({ position: pos }, "Fader position applied");
