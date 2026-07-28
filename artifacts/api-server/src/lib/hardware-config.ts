@@ -116,8 +116,9 @@ export const DEFAULT_HARDWARE_CONFIG: HardwareConfig = {
     haube2PixelCount: 256,   // Matrix 2 (GPIO12) — Haube Schmerz side
   },
   schmerzController: {
-    host: "2.0.0.158",       // 4D EXMU — Schmerzband, Art-Net, static IP (WLED 16.0.1)
-    universeStart: 0,        // universes 0–7 (1280 px = 8 universes)
+    host: "2.0.0.158",       // 4D EXMU — Schmerzband, DDP, static IP (WLED 16.0.1)
+    universeStart: 0,
+    protocol: "ddp",         // DDP: no universe boundaries, supports 1280px cleanly
     schmerzPixelCount: 1280, // 5 × 256
   },
   gledopto2: {
