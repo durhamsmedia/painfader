@@ -137,6 +137,6 @@ export class GpioReader {
  * Throws if gpioget fails.
  */
 function readLine(chipPath: string, line: number): boolean {
-  const out = execSync(`gpioget -c ${chipPath} ${line}`, { timeout: 200 }).toString().trim();
+  const out = execSync(`gpioget --bias=pull-down -c ${chipPath} ${line}`, { timeout: 200 }).toString().trim();
   return out.includes("=active");
 }
