@@ -87,15 +87,13 @@ export const DEFAULT_HARDWARE_CONFIG: HardwareConfig = {
     haube2PixelCount: 256,
   },
   schmerzController: {
-    host: "2.0.0.158",       // 4D EXMU — Schmerzband, DDP, WLED 16.0.1
-    universeStart: 0,
-    protocol: "ddp",
+    host: "2.0.0.158",       // 4D EXMU — Schmerzband, Art-Net, WLED 16.0.1
+    universeStart: 0,        // universes 0–7
     schmerzPixelCount: 1280,
   },
   gledopto2: {
-    host: "2.0.0.157",       // 2D EXMU "led bänder" — NSAR + Opiat — WLED 16.0.1
-    universeStart: 0,
-    protocol: "ddp",
+    host: "2.0.0.157",       // 2D EXMU "led bänder" — NSAR + Opiat, Art-Net, WLED 16.0.1
+    universeStart: 0,        // NSAR: 0–1, Opiat: 2
     nsarPixelCount: 240,
     opiatPixelCount: 125,
   },
