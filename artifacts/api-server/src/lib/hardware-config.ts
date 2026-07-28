@@ -116,15 +116,13 @@ export const DEFAULT_HARDWARE_CONFIG: HardwareConfig = {
     haube2PixelCount: 256,   // Matrix 2 (GPIO12) — Haube Schmerz side
   },
   schmerzController: {
-    host: "2.0.0.158",       // 4D EXMU "led haube NSAR" — Schmerzband, DDP, static IP (WLED 16.0.1)
-    universeStart: 0,        // unused for DDP (byte-offset based)
-    protocol: "ddp",
+    host: "2.0.0.158",       // 4D EXMU — Schmerzband, Art-Net, static IP (WLED 16.0.1)
+    universeStart: 0,        // universes 0–7 (1280 px = 8 universes)
     schmerzPixelCount: 1280, // 5 × 256
   },
   gledopto2: {
-    host: "2.0.0.157",     // 2D EXMU "led bänder" — NSAR + Opiat strips, static IP (WLED 16.0.1)
-    universeStart: 0,      // unused for DDP (byte-offset based)
-    protocol: "ddp",       // Elite 2D firmware only supports DDP, not Art-Net
+    host: "2.0.0.157",     // 2D EXMU "led bänder" — NSAR + Opiat, Art-Net, static IP (WLED 16.0.1)
+    universeStart: 0,      // NSAR: universes 0–1, Opiat: universe 2
     nsarPixelCount: 240,   // GPIO16 — confirmed 240 LEDs
     opiatPixelCount: 125,  // IO2    — confirmed 125 LEDs
   },
