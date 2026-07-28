@@ -1,0 +1,40 @@
+root@paintable:/opt/painfader# cd /opt/painfader && \
+python3 -c "
+f = 'artifacts/api-server/src/lib/hardware-config.ts'
+c = open(f).read()
+# Fix corrupted type declarations
+c = c.replace('motorUpPosition: 3000number', 'motorUpPosition: number')
+c = c.replace('motorDownPosition: 3000number', 'motorDownPosition: number')
+c = c.replace('motorMaxSpeed: 200number', 'motorMaxSpeed: number')
+# Haube broadcast → unicast
+c = c.replace('host: \"2.0.0.255\"', 'host: \"2.0.0.156\"')
+# Add DDP to gledopto1 if missing
+if 'protocol: \"ddp\"' not in c.split('gledopto1')[1].split('}')[0]:
+    c = c.replace('    host: \"2.0.0.156\"', '    host: \"2.0.0.156\"\n    protocol: \"ddp\",', 1)
+open(f,'w').write(c)
+print([l.strip() for l in c.splitlines() if 'host:.*2\.0\.0' in l or 'protocol' in l])
+" && \
+pnpm --filter @workspace/api-server run build && systemctl restart painfader
+<string>:14: SyntaxWarning: invalid escape sequence '\.'
+['* Per-device protocol override. When set, overrides the global pixelProtocol', '* for this device only. Useful when devices support different protocols', 'protocol?: "artnet" | "e131" | "ddp";', '/** Pixel streaming protocol: "artnet", "e131" or "ddp" */', 'protocol: "ddp",,       // Gledopto Elite 2D — unicast, IO2', 'protocol: "ddp",       // Elite 2D firmware only supports DDP, not Art-Net']
+$ node ./build.mjs
+✘ [ERROR] Expected "}" but found "protocol"
+
+    src/lib/hardware-config.ts:105:4:
+      105 │     protocol: "ddp",,       // Gledopto Elite 2D — unicast, IO2
+          │     ~~~~~~~~
+          ╵     }
+
+1 error
+Error: Build failed with 1 error:
+src/lib/hardware-config.ts:105:4: ERROR: Expected "}" but found "protocol"
+    at failureErrorWithLog (/opt/painfader/node_modules/.pnpm/esbuild@0.27.3/node_modules/esbuild/lib/main.js:1467:15)
+    at /opt/painfader/node_modules/.pnpm/esbuild@0.27.3/node_modules/esbuild/lib/main.js:926:25
+    at /opt/painfader/node_modules/.pnpm/esbuild@0.27.3/node_modules/esbuild/lib/main.js:1345:9
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5) {
+  errors: [Getter/Setter],
+  warnings: [Getter/Setter]
+}
+/opt/painfader/artifacts/api-server:
+[ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL] @workspace/api-server@0.0.0 build: `node ./build.mjs`
+Exit status 1
