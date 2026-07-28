@@ -1,18 +1,19 @@
 /**
- * GPIO reed-contact reader for the Painfader lever.
+ * GPIO reed-contact reader for the Painfader lever + start button.
  *
  * Uses gpioget (libgpiod v2) via child_process — works on Giada AF208-N97
- * where the IT87 GPIO chip is /dev/gpiochip1 and onoff (sysfs) does not
- * expose these lines reliably.
+ * where the DI connector maps to gpiochip0 (Intel INTC1057).
  *
- * Wiring (DI connector, 12-24 V opto-isolated inputs):
- *   DI1  it87_gp10  line 0  → N / NSAR  (position −1)
- *   DI2  it87_gp11  line 1  → SCHMERZ 0 (spring center)
- *   DI3  it87_gp12  line 2  → O / OPIAT (position +1)
+ * Wiring (DI connector, 3.3 V from DI connector):
+ *   DI0  gpiochip0 line 5  → N / NSAR   (lever position −1)
+ *   DI1  gpiochip0 line 6  → SCHMERZ 0  (lever spring center)
+ *   DI2  gpiochip0 line 7  → O / OPIAT  (lever position +1)
+ *   DI3  gpiochip0 line 8  → START button (parallel to Waveshare serial)
  *
  * Logic:
- *   - Priority: OPIAT > NSAR > SCHMERZ (center is the spring-return default)
- *   - Debounce: position must be stable for gpioDebounceMs before firing
+ *   - Lever priority: OPIAT > NSAR > SCHMERZ (center is the spring-return default)
+ *   - Lever debounce: position must be stable for gpioDebounceMs before firing
+ *   - Button: rising-edge detection (inactive → active), debounced via buttonDebounceMs
  *   - Falls back to simulation mode when gpioget is unavailable or chip missing
  */
 
@@ -22,18 +23,22 @@ import { logger } from "./logger";
 export type FaderPosition = -1 | 0 | 1;
 
 export interface GpioConfig {
-  chip: number;          // gpiochip index, e.g. 1 for /dev/gpiochip1
-  pinNsar: number;       // line number for NSAR  (position −1)
-  pinSchmerz: number;    // line number for SCHMERZ (center / 0)
-  pinOpiat: number;      // line number for OPIAT  (position +1)
+  chip: number;           // gpiochip index, e.g. 0 for /dev/gpiochip0
+  pinNsar: number;        // line number for NSAR   (position −1)
+  pinSchmerz: number;     // line number for SCHMERZ (center / 0)
+  pinOpiat: number;       // line number for OPIAT   (position +1)
+  /** Optional: DI3 line used as a parallel start button trigger */
+  pinButton?: number;
   pollIntervalMs: number;
   debounceMs: number;
+  /** Debounce window for the start button in ms (default = debounceMs) */
+  buttonDebounceMs?: number;
 }
 
 export interface GpioStatus {
   simulated: boolean;
   position: FaderPosition;
-  raw: { nsar: boolean; schmerz: boolean; opiat: boolean };
+  raw: { nsar: boolean; schmerz: boolean; opiat: boolean; button: boolean };
 }
 
 export class GpioReader {
@@ -41,16 +46,25 @@ export class GpioReader {
   private chipPath: string;
   private cfg: GpioConfig;
   private position: FaderPosition = 0;
-  private rawState = { nsar: false, schmerz: false, opiat: false };
+  private rawState = { nsar: false, schmerz: false, opiat: false, button: false };
   private pollTimer: NodeJS.Timeout | null = null;
   private debounceTimer: NodeJS.Timeout | null = null;
   private pendingPos: FaderPosition | null = null;
+  private prevButtonActive = false;
+  private buttonArmed = true;
+  private buttonDebounceTimer: NodeJS.Timeout | null = null;
   private readonly onPositionChange: (pos: FaderPosition) => void;
+  private readonly onStartButton?: () => void;
 
-  constructor(config: GpioConfig, onPositionChange: (pos: FaderPosition) => void) {
+  constructor(
+    config: GpioConfig,
+    onPositionChange: (pos: FaderPosition) => void,
+    onStartButton?: () => void,
+  ) {
     this.cfg = config;
     this.chipPath = `/dev/gpiochip${config.chip}`;
     this.onPositionChange = onPositionChange;
+    this.onStartButton = onStartButton;
     this.init();
   }
 
@@ -60,7 +74,15 @@ export class GpioReader {
       readLine(this.chipPath, this.cfg.pinNsar);
       this.simulated = false;
       logger.info(
-        { chip: this.chipPath, pins: { nsar: this.cfg.pinNsar, schmerz: this.cfg.pinSchmerz, opiat: this.cfg.pinOpiat } },
+        {
+          chip: this.chipPath,
+          pins: {
+            nsar:    this.cfg.pinNsar,
+            schmerz: this.cfg.pinSchmerz,
+            opiat:   this.cfg.pinOpiat,
+            button:  this.cfg.pinButton ?? "(none)",
+          },
+        },
         "GPIO reader initialised (hardware mode via gpioget)",
       );
       this.pollTimer = setInterval(() => this.poll(), this.cfg.pollIntervalMs);
@@ -75,8 +97,8 @@ export class GpioReader {
   getStatus(): GpioStatus {
     return {
       simulated: this.simulated,
-      position: this.position,
-      raw: { ...this.rawState },
+      position:  this.position,
+      raw:       { ...this.rawState },
     };
   }
 
@@ -89,8 +111,9 @@ export class GpioReader {
   }
 
   destroy() {
-    if (this.pollTimer)    { clearInterval(this.pollTimer);  this.pollTimer    = null; }
-    if (this.debounceTimer) { clearTimeout(this.debounceTimer); this.debounceTimer = null; }
+    if (this.pollTimer)         { clearInterval(this.pollTimer);        this.pollTimer         = null; }
+    if (this.debounceTimer)     { clearTimeout(this.debounceTimer);     this.debounceTimer     = null; }
+    if (this.buttonDebounceTimer) { clearTimeout(this.buttonDebounceTimer); this.buttonDebounceTimer = null; }
   }
 
   // ── Poll ───────────────────────────────────────────────────────────────────
@@ -101,9 +124,29 @@ export class GpioReader {
       const schmerz = readLine(this.chipPath, this.cfg.pinSchmerz);
       const opiat   = readLine(this.chipPath, this.cfg.pinOpiat);
 
-      this.rawState = { nsar, schmerz, opiat };
+      // ── Start button (DI3) — rising-edge detection ──────────────────────
+      let button = false;
+      if (this.cfg.pinButton !== undefined) {
+        button = readLine(this.chipPath, this.cfg.pinButton);
+        if (button && !this.prevButtonActive && this.buttonArmed && this.onStartButton) {
+          // Rising edge detected
+          this.buttonArmed = false;
+          logger.info("GPIO: start button rising edge — press detected");
+          this.onStartButton();
 
-      // Priority: opiat → nsar → schmerz (spring center = default)
+          const debMs = this.cfg.buttonDebounceMs ?? this.cfg.debounceMs;
+          if (this.buttonDebounceTimer) clearTimeout(this.buttonDebounceTimer);
+          this.buttonDebounceTimer = setTimeout(() => {
+            this.buttonArmed = true;
+            this.buttonDebounceTimer = null;
+          }, debMs);
+        }
+        this.prevButtonActive = button;
+      }
+
+      this.rawState = { nsar, schmerz, opiat, button };
+
+      // ── Lever position — priority: opiat → nsar → schmerz (spring center) ─
       const newPos: FaderPosition = opiat ? 1 : nsar ? -1 : 0;
 
       if (newPos !== this.position) {

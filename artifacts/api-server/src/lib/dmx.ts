@@ -6,7 +6,7 @@
  *   • OpenDMX USB             → Fan (CH 1 on DMX universe)
  *   • Stepper motor serial    → Opiat sign (USB-TTL GRBL/Tic)
  *   • GPIO reed contacts      → Lever position input
- *   • Screen (HDMI)           → videoFile name polled by media player
+ *   • Screen (HDMI)           → mpv video player (VideoController, IPC socket)
  *
  * Zone naming (replaces old ledMatrix / ledStrip1-3):
  *   haube   = Hood (2 × 16×16 matrix)   on Gledopto #1 output 1
@@ -29,6 +29,7 @@ import { OpenDmxController } from "./open-dmx";
 import { StepperMotorController, MotorPosition } from "./stepper-motor";
 import { GpioReader, FaderPosition, GpioStatus } from "./gpio-reader";
 import { SerialButtonReader, DEFAULT_SERIAL_BUTTON_CONFIG } from "./serial-button";
+import { VideoController, VideoStatus, DEFAULT_VIDEO_CONFIG } from "./video-controller";
 import {
   HardwareConfig,
   DEFAULT_HARDWARE_CONFIG,
@@ -106,6 +107,7 @@ export interface DmxState {
   opiat: ZoneState;
   motor: MotorState;
   screen: ScreenState;
+  video: VideoStatus;
   painFader: PainFaderState;
   gpio: GpioStatus;
   startButton: { simulated: boolean; port: string };
@@ -207,6 +209,7 @@ class DmxController {
   private motorState: MotorState = { position: "down", speed: 3000, enabled: false, simulated: true };
   private screen: ScreenState = { videoFile: "idle.mp4", enabled: true, loop: true };
   private faderPos: FaderPosition = 0;
+  private video!: VideoController;
 
   // ── Presets ──
   private presets: FaderPreset[];
@@ -249,23 +252,36 @@ class DmxController {
 
     this.gpio = new GpioReader(
       {
-        chip:          cfg.gpioChip,
-        pinNsar:       cfg.gpioPinNsar,
-        pinSchmerz:    cfg.gpioPinSchmerz,
-        pinOpiat:      cfg.gpioPinOpiat,
-        pollIntervalMs: cfg.gpioPollIntervalMs,
-        debounceMs:    cfg.gpioDebounceMs,
+        chip:             cfg.gpioChip,
+        pinNsar:          cfg.gpioPinNsar,
+        pinSchmerz:       cfg.gpioPinSchmerz,
+        pinOpiat:         cfg.gpioPinOpiat,
+        pinButton:        cfg.gpioPinButton,     // DI3 — parallel start button
+        pollIntervalMs:   cfg.gpioPollIntervalMs,
+        debounceMs:       cfg.gpioDebounceMs,
+        buttonDebounceMs: cfg.gpioButtonDebounceMs,
       },
       (pos) => this.hardwareFaderInput(pos),
+      ()    => this.startButtonPress(),           // DI3 rising-edge → start
     );
 
     this.button = new SerialButtonReader(
       DEFAULT_SERIAL_BUTTON_CONFIG,
-      () => this.startButtonPress(),
+      () => this.startButtonPress(),              // Waveshare serial — still parallel
     );
+
+    // Video controller — HDMI output via mpv
+    this.video = new VideoController({
+      enabled:   cfg.videoEnabled,
+      videoDir:  cfg.videoDir,
+      ipcSocket: DEFAULT_VIDEO_CONFIG.ipcSocket,
+      display:   cfg.videoDisplay,
+      files:     { ...cfg.videoFiles },
+    });
 
     // Apply idle preset at startup
     this.applyPreset(this.idlePreset);
+    this.video.setState("idle");
   }
 
   // ── Preset application ────────────────────────────────────────────────────
@@ -323,6 +339,7 @@ class DmxController {
       this.idleTimerTriggered = true;
       this.mode = "idle";
       this.applyPreset(this.idlePreset);
+      this.video.setState("idle");
       this.idleTimerHandle = null;
     }, this.idleTimerSeconds * 1000);
   }
@@ -351,6 +368,7 @@ class DmxController {
         simulated: motorStatus.simulated,
       },
       screen: { ...this.screen },
+      video: this.video.getStatus(),
       painFader: { position: this.faderPos, channel: 22 },
       gpio: this.gpio.getStatus(),
       startButton: this.button.getStatus(),
@@ -377,14 +395,15 @@ class DmxController {
 
   // ── Start button ──────────────────────────────────────────────────────────
 
-  /** Called when the physical start button is pressed (serial or injected). */
+  /** Called when the physical start button is pressed (serial or GPIO DI3 or injected). */
   private startButtonPress() {
     if (this.mode === "idle") {
-      // Wake from idle → apply the current fader position preset
+      // Wake from idle → play intro video, apply current fader preset
       this.mode = "experience";
       this.stopIdleTimer();
       const preset = this.presets[POS_TO_IDX[this.faderPos]] ?? this.presets[1];
       this.applyPreset(preset);
+      this.video.setState("start"); // intro → auto-transitions to prompt_nsar when done
       logger.info({ faderPos: this.faderPos }, "Start button: idle → experience");
     } else {
       // Already in experience — just restart the idle timer
@@ -410,6 +429,13 @@ class DmxController {
     if (preset) {
       this.mode = "experience";
       this.applyPreset(preset);
+    }
+
+    // Video state follows lever position (only during experience)
+    if (this.mode === "experience") {
+      if      (pos === -1) this.video.setState("nsar");
+      else if (pos ===  1) this.video.setState("opiat");
+      else                 this.video.setState("schmerz"); // back to center
     }
 
     // Position 0 (Schmerz/center) also starts the idle timer
@@ -602,6 +628,7 @@ class DmxController {
     this.motor.destroy();
     this.gpio.destroy();
     this.button.destroy();
+    this.video.destroy();
   }
 }
 

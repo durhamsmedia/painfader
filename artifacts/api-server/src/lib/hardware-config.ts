@@ -93,19 +93,40 @@ export interface HardwareConfig {
    */
   motorMaxSpeed: number;
 
-  // ── GPIO reed contacts (Giada AF208-N97, /dev/gpiochip1 = gpio_it87) ──────
-  /** GPIO chip index (1 = /dev/gpiochip1 = gpio_it87 on Giada AF208-N97) */
+  // ── GPIO reed contacts + start button (Giada AF208-N97, /dev/gpiochip0) ────
+  /** GPIO chip index (0 = /dev/gpiochip0 = INTC1057 on Giada AF208-N97) */
   gpioChip: number;
-  /** Line number for GPI1 — N / NSAR (position −1) */
+  /** Line number for DI0 — N / NSAR (lever position −1) */
   gpioPinNsar: number;
-  /** Line number for GPI2 — SCHMERZ / center (position 0) */
+  /** Line number for DI1 — SCHMERZ / center (lever position 0) */
   gpioPinSchmerz: number;
-  /** Line number for GPI3 — O / OPIAT (position +1) */
+  /** Line number for DI2 — O / OPIAT (lever position +1) */
   gpioPinOpiat: number;
+  /** Line number for DI3 — start button (parallel to Waveshare serial, rising-edge trigger) */
+  gpioPinButton: number;
   /** Poll interval in ms */
   gpioPollIntervalMs: number;
-  /** Debounce window in ms */
+  /** Lever debounce window in ms */
   gpioDebounceMs: number;
+  /** Button debounce window in ms */
+  gpioButtonDebounceMs: number;
+
+  // ── HDMI video output (mpv) ───────────────────────────────────────────────
+  /** Enable mpv-based video playback on HDMI output */
+  videoEnabled: boolean;
+  /** Absolute path to directory containing video files */
+  videoDir: string;
+  /** mpv output backend: "drm" (no display server) or "gpu" (X11/Wayland) */
+  videoDisplay: "drm" | "gpu";
+  /** Video filenames (relative to videoDir) per state */
+  videoFiles: {
+    idle:       string;
+    start:      string;
+    promptNsar: string;
+    nsar:       string;
+    opiat:      string;
+    schmerz:    string;
+  };
 }
 
 export const DEFAULT_HARDWARE_CONFIG: HardwareConfig = {
@@ -143,10 +164,24 @@ export const DEFAULT_HARDWARE_CONFIG: HardwareConfig = {
   motorDownPosition: 3000, // mks: ms to run CCW for DOWN — calibrate!
   motorMaxSpeed: 200,      // mks: RPM (0-3000)
 
-  gpioChip: 0,             // gpiochip0 = INTC1057 (Intel platform GPIO — confirmed DI connector)
-  gpioPinNsar: 5,          // DI0 — confirmed chip0 line 5 (lever position N / NSAR)
-  gpioPinSchmerz: 6,       // DI1 — likely chip0 line 6 (lever center / Schmerz) — verify!
-  gpioPinOpiat: 7,         // DI2 — likely chip0 line 7 (lever position O / Opiat) — verify!
+  gpioChip: 0,               // gpiochip0 = INTC1057 (Intel platform GPIO — confirmed DI connector)
+  gpioPinNsar: 5,            // DI0 — chip0 line 5 (lever position N / NSAR)
+  gpioPinSchmerz: 6,         // DI1 — chip0 line 6 (lever center / Schmerz)
+  gpioPinOpiat: 7,           // DI2 — chip0 line 7 (lever position O / Opiat)
+  gpioPinButton: 8,          // DI3 — chip0 line 8 (start button, parallel to Waveshare serial)
   gpioPollIntervalMs: 50,
   gpioDebounceMs: 30,
+  gpioButtonDebounceMs: 300, // generous debounce for mechanical button
+
+  videoEnabled: true,
+  videoDir: "/home/painfader/videos",
+  videoDisplay: "drm",       // direct framebuffer on Giada (no display server needed)
+  videoFiles: {
+    idle:       "idle.mp4",
+    start:      "start.mp4",
+    promptNsar: "prompt-nsar.mp4",
+    nsar:       "nsar.mp4",
+    opiat:      "opiat.mp4",
+    schmerz:    "schmerz.mp4",
+  },
 };
