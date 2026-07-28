@@ -4,6 +4,24 @@ Jede Version hier ist per **einem Befehl** auf dem Giada wiederherstellbar.
 
 ---
 
+## ✅ Alle LEDs Art-Net + Motor MKS + Ventilator — `44f1164` (2026-07-28)
+
+**Status:** Haube Art-Net ✅ · Schmerz Art-Net ✅ · NSAR Art-Net ✅ · Opiat Art-Net ✅ · Ventilator ✅ · Motor MKS verbunden ✅
+
+**Controller (alle Art-Net, WLED 16.0.1):**
+- Haube (2×256px) → 2.0.0.156, Universe 0–3
+- Schmerz (5×256px) → 2.0.0.158, Universe 0–7
+- NSAR (240px) + Opiat (125px) → 2.0.0.157, Universe 0–2
+
+**Motor:** MKS Servo57CPCBA auf `/dev/ttyACM0`, 38400 baud — Encoder „Magnet Loss" noch zu lösen (Hardware).
+
+**Restore:**
+```bash
+python3 /opt/painfader/scripts/restore-giada-motor.py
+```
+
+---
+
 ## ✅ MKS Motor + alle LEDs + Ventilator — `ca09264` (2026-07-27)
 
 **Status:** Haube Art-Net ✅ · Schmerz DDP ✅ · NSAR 240 LEDs ✅ · Opiat 125 LEDs ✅ · Ventilator DMX CH1 ✅ · **Motor MKS UART ✅**
