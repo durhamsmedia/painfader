@@ -694,8 +694,9 @@ export default function Dashboard() {
                     </CardHeader>
                     <CardContent className="pt-4 space-y-2">
                       {[
-                        { label: 'Gledopto #1', value: dmxState.hardwareConfig.gledopto1.host, ok: true },
-                        { label: 'Gledopto #2', value: dmxState.hardwareConfig.gledopto2.host, ok: true },
+                        { label: 'Haube (4D EXMU)', value: dmxState.hardwareConfig.gledopto1.host, ok: true },
+                        { label: 'Schmerz (2D matrix)', value: dmxState.hardwareConfig.schmerzController.host, ok: true },
+                        { label: 'NSAR+Opiat (2D bänder)', value: dmxState.hardwareConfig.gledopto2.host, ok: true },
                         { label: 'OpenDMX USB', value: dmxState.hardwareConfig.openDmxPort, ok: !dmxState.motor.simulated },
                         { label: 'Motor serial', value: `${dmxState.hardwareConfig.motorPort} (${dmxState.hardwareConfig.motorDriverType})`, ok: !dmxState.motor.simulated },
                         { label: 'GPIO', value: gpio.simulated ? 'simulation' : `/dev/gpiochip${dmxState.hardwareConfig.gpioChip}`, ok: !gpio.simulated },
