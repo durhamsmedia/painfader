@@ -93,8 +93,8 @@ export interface HardwareConfig {
    */
   motorMaxSpeed: number;
 
-  // ── GPIO reed contacts (Giada AF208-N97, /dev/gpiochip0) ─────────────────
-  /** GPIO chip index (0 = /dev/gpiochip0) */
+  // ── GPIO reed contacts (Giada AF208-N97, /dev/gpiochip1 = gpio_it87) ──────
+  /** GPIO chip index (1 = /dev/gpiochip1 = gpio_it87 on Giada AF208-N97) */
   gpioChip: number;
   /** Line number for GPI1 — N / NSAR (position −1) */
   gpioPinNsar: number;
@@ -143,10 +143,10 @@ export const DEFAULT_HARDWARE_CONFIG: HardwareConfig = {
   motorDownPosition: 3000, // mks: ms to run CCW for DOWN — calibrate!
   motorMaxSpeed: 200,      // mks: RPM (0-3000)
 
-  gpioChip: 0,
-  gpioPinNsar: 0,          // GPIO line numbers — check with `gpioinfo` on target hardware
-  gpioPinSchmerz: 1,
-  gpioPinOpiat: 2,
+  gpioChip: 1,             // gpiochip1 = gpio_it87 (Giada AF208-N97 DI connector)
+  gpioPinNsar: 0,          // it87_gp10 — DI1 (lever position N / NSAR)
+  gpioPinSchmerz: 1,       // it87_gp11 — DI2 (lever center / Schmerz)
+  gpioPinOpiat: 2,         // it87_gp12 — DI3 (lever position O / Opiat)
   gpioPollIntervalMs: 50,
   gpioDebounceMs: 30,
 };

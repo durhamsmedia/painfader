@@ -1,0 +1,94 @@
+root@paintable:/opt/painfader# gpioget --version 2>&1 | head -1
+
+# libgpiod v2 Syntax:
+gpioinfo --chip /dev/gpiochip1 2>/dev/null || \
+gpioinfo -c /dev/gpiochip1 2>/dev/null
+
+# Pins lesen v2:
+for i in $(seq 0 15); do
+  val=$(gpioget -c /dev/gpiochip1 $i 2>&1)
+  echo "IT87 line $i: $val"
+done
+gpioget (libgpiod) v2.2.1
+gpiochip1 - 64 lines:
+	line   0:	"it87_gp10"     	input
+	line   1:	"it87_gp11"     	input
+	line   2:	"it87_gp12"     	input
+	line   3:	"it87_gp13"     	input
+	line   4:	"it87_gp14"     	input
+	line   5:	"it87_gp15"     	input
+	line   6:	"it87_gp16"     	input
+	line   7:	"it87_gp17"     	input
+	line   8:	"it87_gp20"     	input
+	line   9:	"it87_gp21"     	input
+	line  10:	"it87_gp22"     	input
+	line  11:	"it87_gp23"     	input
+	line  12:	"it87_gp24"     	input
+	line  13:	"it87_gp25"     	input
+	line  14:	"it87_gp26"     	input
+	line  15:	"it87_gp27"     	input
+	line  16:	"it87_gp30"     	input
+	line  17:	"it87_gp31"     	input
+	line  18:	"it87_gp32"     	input
+	line  19:	"it87_gp33"     	input
+	line  20:	"it87_gp34"     	input
+	line  21:	"it87_gp35"     	input
+	line  22:	"it87_gp36"     	input
+	line  23:	"it87_gp37"     	input
+	line  24:	"it87_gp40"     	input
+	line  25:	"it87_gp41"     	input
+	line  26:	"it87_gp42"     	input
+	line  27:	"it87_gp43"     	input
+	line  28:	"it87_gp44"     	input
+	line  29:	"it87_gp45"     	input
+	line  30:	"it87_gp46"     	input
+	line  31:	"it87_gp47"     	input
+	line  32:	"it87_gp50"     	input
+	line  33:	"it87_gp51"     	input
+	line  34:	"it87_gp52"     	input
+	line  35:	"it87_gp53"     	input
+	line  36:	"it87_gp54"     	input
+	line  37:	"it87_gp55"     	input
+	line  38:	"it87_gp56"     	input
+	line  39:	"it87_gp57"     	input
+	line  40:	"it87_gp60"     	input
+	line  41:	"it87_gp61"     	input
+	line  42:	"it87_gp62"     	input
+	line  43:	"it87_gp63"     	input
+	line  44:	"it87_gp64"     	input
+	line  45:	"it87_gp65"     	input
+	line  46:	"it87_gp66"     	input
+	line  47:	"it87_gp67"     	input
+	line  48:	"it87_gp70"     	input
+	line  49:	"it87_gp71"     	input
+	line  50:	"it87_gp72"     	input
+	line  51:	"it87_gp73"     	input
+	line  52:	"it87_gp74"     	input
+	line  53:	"it87_gp75"     	input
+	line  54:	"it87_gp76"     	input
+	line  55:	"it87_gp77"     	input
+	line  56:	"it87_gp80"     	input
+	line  57:	"it87_gp81"     	input
+	line  58:	"it87_gp82"     	input
+	line  59:	"it87_gp83"     	input
+	line  60:	"it87_gp84"     	input
+	line  61:	"it87_gp85"     	input
+	line  62:	"it87_gp86"     	input
+	line  63:	"it87_gp87"     	input
+IT87 line 0: "0"=inactive
+IT87 line 1: "1"=active
+IT87 line 2: "2"=active
+IT87 line 3: "3"=inactive
+IT87 line 4: "4"=inactive
+IT87 line 5: "5"=inactive
+IT87 line 6: "6"=active
+IT87 line 7: "7"=active
+IT87 line 8: "8"=active
+IT87 line 9: "9"=active
+IT87 line 10: "10"=active
+IT87 line 11: "11"=active
+IT87 line 12: "12"=active
+IT87 line 13: "13"=active
+IT87 line 14: "14"=active
+IT87 line 15: "15"=active
+root@paintable:/opt/painfader# 

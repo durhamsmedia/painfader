@@ -1,32 +1,31 @@
 /**
  * GPIO reed-contact reader for the Painfader lever.
  *
- * On the Giada AF208-N97 running Debian, the 6 exposed GPIs are accessible
- * via /dev/gpiochip0 using the Linux GPIO character device API.
+ * Uses gpioget (libgpiod v2) via child_process — works on Giada AF208-N97
+ * where the IT87 GPIO chip is /dev/gpiochip1 and onoff (sysfs) does not
+ * expose these lines reliably.
  *
- * Wiring (one GPI per lever position, active-HIGH through reed contact):
- *   GPI1 (pin configured as gpioPinNsar)    → N / NSAR  (position −1)
- *   GPI2 (pin configured as gpioPinSchmerz) → SCHMERZ 0 (spring center)
- *   GPI3 (pin configured as gpioPinOpiat)   → O / OPIAT (position +1)
+ * Wiring (DI connector, 12-24 V opto-isolated inputs):
+ *   DI1  it87_gp10  line 0  → N / NSAR  (position −1)
+ *   DI2  it87_gp11  line 1  → SCHMERZ 0 (spring center)
+ *   DI3  it87_gp12  line 2  → O / OPIAT (position +1)
  *
  * Logic:
  *   - Priority: OPIAT > NSAR > SCHMERZ (center is the spring-return default)
  *   - Debounce: position must be stable for gpioDebounceMs before firing
- *   - Falls back to simulation mode (no callbacks) when GPIO is unavailable
- *
- * The `onoff` package uses Linux sysfs (/sys/class/gpio) which is available
- * on all current Debian kernels. Install: pnpm add onoff
- * For kernels > 5.10 with CONFIG_GPIO_SYSFS=n, use the gpiod package instead.
+ *   - Falls back to simulation mode when gpioget is unavailable or chip missing
  */
 
+import { execSync } from "child_process";
 import { logger } from "./logger";
 
 export type FaderPosition = -1 | 0 | 1;
 
 export interface GpioConfig {
-  pinNsar: number;
-  pinSchmerz: number;
-  pinOpiat: number;
+  chip: number;          // gpiochip index, e.g. 1 for /dev/gpiochip1
+  pinNsar: number;       // line number for NSAR  (position −1)
+  pinSchmerz: number;    // line number for SCHMERZ (center / 0)
+  pinOpiat: number;      // line number for OPIAT  (position +1)
   pollIntervalMs: number;
   debounceMs: number;
 }
@@ -39,36 +38,31 @@ export interface GpioStatus {
 
 export class GpioReader {
   private simulated = true;
-  private pins: { nsar: GpioPin | null; schmerz: GpioPin | null; opiat: GpioPin | null } = {
-    nsar: null, schmerz: null, opiat: null,
-  };
+  private chipPath: string;
   private cfg: GpioConfig;
   private position: FaderPosition = 0;
   private rawState = { nsar: false, schmerz: false, opiat: false };
   private pollTimer: NodeJS.Timeout | null = null;
   private debounceTimer: NodeJS.Timeout | null = null;
+  private pendingPos: FaderPosition | null = null;
   private readonly onPositionChange: (pos: FaderPosition) => void;
 
   constructor(config: GpioConfig, onPositionChange: (pos: FaderPosition) => void) {
     this.cfg = config;
+    this.chipPath = `/dev/gpiochip${config.chip}`;
     this.onPositionChange = onPositionChange;
     this.init();
   }
 
-  private async init() {
+  private init() {
+    // Probe: try to read one line — if it works, we're in hardware mode
     try {
-      const { Gpio } = await import("onoff");
-
-      this.pins.nsar    = new Gpio(this.cfg.pinNsar,    "in");
-      this.pins.schmerz = new Gpio(this.cfg.pinSchmerz, "in");
-      this.pins.opiat   = new Gpio(this.cfg.pinOpiat,   "in");
-
+      readLine(this.chipPath, this.cfg.pinNsar);
       this.simulated = false;
       logger.info(
-        { pins: this.cfg },
-        "GPIO reader initialised (hardware mode)",
+        { chip: this.chipPath, pins: { nsar: this.cfg.pinNsar, schmerz: this.cfg.pinSchmerz, opiat: this.cfg.pinOpiat } },
+        "GPIO reader initialised (hardware mode via gpioget)",
       );
-
       this.pollTimer = setInterval(() => this.poll(), this.cfg.pollIntervalMs);
     } catch (err) {
       logger.warn({ err }, "GPIO unavailable — running in simulation mode (UI / keyboard shortcuts still work)");
@@ -86,10 +80,7 @@ export class GpioReader {
     };
   }
 
-  /**
-   * Inject a position directly (used by the software fader in the UI and
-   * by the /api/dmx/hardware-fader HTTP endpoint — both still work in simulation).
-   */
+  /** Inject a position directly (used by the UI software fader and HTTP endpoint). */
   injectPosition(pos: FaderPosition) {
     if (pos !== this.position) {
       this.position = pos;
@@ -98,22 +89,17 @@ export class GpioReader {
   }
 
   destroy() {
-    if (this.pollTimer) { clearInterval(this.pollTimer); this.pollTimer = null; }
+    if (this.pollTimer)    { clearInterval(this.pollTimer);  this.pollTimer    = null; }
     if (this.debounceTimer) { clearTimeout(this.debounceTimer); this.debounceTimer = null; }
-    try {
-      this.pins.nsar?.unexport();
-      this.pins.schmerz?.unexport();
-      this.pins.opiat?.unexport();
-    } catch (_) { /* ignore */ }
   }
 
   // ── Poll ───────────────────────────────────────────────────────────────────
 
   private poll() {
     try {
-      const nsar    = (this.pins.nsar?.readSync()    ?? 0) === 1;
-      const schmerz = (this.pins.schmerz?.readSync() ?? 0) === 1;
-      const opiat   = (this.pins.opiat?.readSync()   ?? 0) === 1;
+      const nsar    = readLine(this.chipPath, this.cfg.pinNsar);
+      const schmerz = readLine(this.chipPath, this.cfg.pinSchmerz);
+      const opiat   = readLine(this.chipPath, this.cfg.pinOpiat);
 
       this.rawState = { nsar, schmerz, opiat };
 
@@ -127,8 +113,6 @@ export class GpioReader {
       logger.warn({ err }, "GPIO poll error");
     }
   }
-
-  private pendingPos: FaderPosition | null = null;
 
   private scheduleDebounce(pos: FaderPosition) {
     this.pendingPos = pos;
@@ -144,5 +128,15 @@ export class GpioReader {
   }
 }
 
-// ── Minimal Gpio type stub (avoids import errors when onoff isn't installed) ──
-type GpioPin = { readSync(): number; unexport(): void };
+// ── Helpers ────────────────────────────────────────────────────────────────
+
+/**
+ * Read a single GPIO line via `gpioget -c <chip> <line>`.
+ * Output format (libgpiod v2): `"<line>"=active` or `"<line>"=inactive`
+ * Returns true for active (HIGH), false for inactive (LOW).
+ * Throws if gpioget fails.
+ */
+function readLine(chipPath: string, line: number): boolean {
+  const out = execSync(`gpioget -c ${chipPath} ${line}`, { timeout: 200 }).toString().trim();
+  return out.includes("=active");
+}

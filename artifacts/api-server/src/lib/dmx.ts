@@ -249,6 +249,7 @@ class DmxController {
 
     this.gpio = new GpioReader(
       {
+        chip:          cfg.gpioChip,
         pinNsar:       cfg.gpioPinNsar,
         pinSchmerz:    cfg.gpioPinSchmerz,
         pinOpiat:      cfg.gpioPinOpiat,
