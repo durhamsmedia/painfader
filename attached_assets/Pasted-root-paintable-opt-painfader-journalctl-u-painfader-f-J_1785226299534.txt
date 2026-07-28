@@ -1,0 +1,12 @@
+root@paintable:/opt/painfader# journalctl -u painfader -f
+Jul 28 10:10:07 paintable node[9429]: {"level":30,"time":1785226207405,"pid":9429,"hostname":"paintable","protocol":"artnet","g1":"2.0.0.156","sc":"2.0.0.158","g2":"2.0.0.157","msg":"Pixel socket ready"}
+Jul 28 10:10:07 paintable node[9429]: {"level":30,"time":1785226207406,"pid":9429,"hostname":"paintable","port":8080,"msg":"Server listening"}
+Jul 28 10:10:07 paintable node[9429]: {"level":40,"time":1785226207409,"pid":9429,"hostname":"paintable","port":"/dev/ttyACM0","err":{"type":"Error","message":"Error: No such file or directory, cannot open /dev/ttyACM0","stack":"Error: Error: No such file or directory, cannot open /dev/ttyACM0"},"msg":"Stepper motor unavailable — simulation mode"}
+Jul 28 10:10:07 paintable node[9429]: {"level":30,"time":1785226207454,"pid":9429,"hostname":"paintable","position":1,"msg":"GPIO: lever position change"}
+Jul 28 10:10:07 paintable node[9429]: {"level":30,"time":1785226207455,"pid":9429,"hostname":"paintable","position":"down","speed":3000,"msg":"Stepper motor (sim): move command"}
+Jul 28 10:10:07 paintable node[9429]: {"level":30,"time":1785226207455,"pid":9429,"hostname":"paintable","position":1,"msg":"Fader position applied"}
+Jul 28 10:10:07 paintable node[9429]: {"level":30,"time":1785226207552,"pid":9429,"hostname":"paintable","path":"/dev/ttyUSB0","label":"Enttec OpenDMX USB (FT232R A50285BI)","msg":"USB auto-detect: found Enttec OpenDMX USB (FT232R A50285BI)"}
+Jul 28 10:10:07 paintable node[9429]: {"level":30,"time":1785226207554,"pid":9429,"hostname":"paintable","path":"/dev/ttyUSB1","label":"Waveshare USB-TTL (FT232R B0049WIS)","msg":"USB auto-detect: found Waveshare USB-TTL (FT232R B0049WIS)"}
+Jul 28 10:10:07 paintable node[9429]: {"level":30,"time":1785226207555,"pid":9429,"hostname":"paintable","portPath":"/dev/ttyUSB0","msg":"OpenDMX USB port opened"}
+Jul 28 10:10:07 paintable node[9429]: {"level":30,"time":1785226207555,"pid":9429,"hostname":"paintable","port":"/dev/ttyUSB1","msg":"Serial button: ready"}
+
