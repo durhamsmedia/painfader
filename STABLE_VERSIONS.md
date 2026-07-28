@@ -4,6 +4,22 @@ Jede Version hier ist per **einem Befehl** auf dem Giada wiederherstellbar.
 
 ---
 
+## ✅ Alle LEDs DDP + Motor MKS + Ventilator — `8db5f0d` (2026-07-28)
+
+**Status:** Haube DDP ✅ · Schmerz DDP ✅ · NSAR DDP ✅ · Opiat DDP ✅ · Ventilator ✅ · Motor MKS verbunden ✅
+
+**Controller (alle DDP, WLED 16.0.1, statische IPs):**
+- Haube (2×256px) → 2.0.0.156, DDP
+- Schmerz (5×256px) → 2.0.0.158, DDP
+- NSAR (240px) + Opiat (125px) → 2.0.0.157, DDP
+
+**Restore:**
+```bash
+python3 /opt/painfader/scripts/restore-giada-motor.py
+```
+
+---
+
 ## ✅ Alle LEDs Art-Net + Motor MKS + Ventilator — `44f1164` (2026-07-28)
 
 **Status:** Haube Art-Net ✅ · Schmerz Art-Net ✅ · NSAR Art-Net ✅ · Opiat Art-Net ✅ · Ventilator ✅ · Motor MKS verbunden ✅
