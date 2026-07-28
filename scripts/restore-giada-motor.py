@@ -81,19 +81,19 @@ export interface HardwareConfig {
 
 export const DEFAULT_HARDWARE_CONFIG: HardwareConfig = {
   gledopto1: {
-    host: "2.0.0.255",
+    host: "2.0.0.158",       // 4D EXMU "led haube NSAR" — WLED 16.0.1
     universeStart: 0,
     haube1PixelCount: 256,
     haube2PixelCount: 256,
   },
   schmerzController: {
-    host: "2.0.0.158",
+    host: "2.0.0.156",       // 2D EXMU "led matrix lang" — WLED 16.0.1
     universeStart: 0,
     protocol: "ddp",
     schmerzPixelCount: 1280,
   },
   gledopto2: {
-    host: "2.0.0.157",
+    host: "2.0.0.157",       // 2D EXMU "led bänder" — NSAR + Opiat — WLED 16.0.1
     universeStart: 0,
     protocol: "ddp",
     nsarPixelCount: 240,
@@ -109,8 +109,8 @@ export const DEFAULT_HARDWARE_CONFIG: HardwareConfig = {
 
   motorPort: "/dev/ttyACM0",   // UTS-T01 USB-TTL (CH341 1a86:55d3)
   motorDriverType: "mks",
-  motorUpPosition: 3000,       // ms to run CW  for UP   — calibrate!
-  motorDownPosition: 3000,     // ms to run CCW for DOWN — calibrate!
+  motorUpPosition: 3000,       // ms CW  for UP   — calibrate!
+  motorDownPosition: 3000,     // ms CCW for DOWN — calibrate!
   motorMaxSpeed: 200,          // RPM (0-3000)
 
   gpioChip: 0,

@@ -110,19 +110,19 @@ export interface HardwareConfig {
 
 export const DEFAULT_HARDWARE_CONFIG: HardwareConfig = {
   gledopto1: {
-    host: "2.0.0.255",       // Subnet broadcast — WLED only receives broadcasts on this network
+    host: "2.0.0.158",       // 4D EXMU "led haube NSAR" — static IP (WLED 16.0.1)
     universeStart: 0,
     haube1PixelCount: 256,   // Matrix 1 (GPIO16) — Haube NSAR side
     haube2PixelCount: 256,   // Matrix 2 (GPIO12) — Haube Schmerz side
   },
   schmerzController: {
-    host: "2.0.0.158",       // Gledopto Elite 2D — unicast, IO2
+    host: "2.0.0.156",       // 2D EXMU "led matrix lang" — static IP (WLED 16.0.1)
     universeStart: 0,        // unused for DDP (byte-offset based)
-    protocol: "ddp",         // Elite 2D firmware only supports DDP, not Art-Net
+    protocol: "ddp",
     schmerzPixelCount: 1280, // 5 × 256
   },
   gledopto2: {
-    host: "2.0.0.157",     // Gledopto Elite 2D #2 — unicast, DDP only
+    host: "2.0.0.157",     // 2D EXMU "led bänder" — NSAR + Opiat strips, static IP (WLED 16.0.1)
     universeStart: 0,      // unused for DDP (byte-offset based)
     protocol: "ddp",       // Elite 2D firmware only supports DDP, not Art-Net
     nsarPixelCount: 240,   // GPIO16 — confirmed 240 LEDs
