@@ -143,10 +143,10 @@ export const DEFAULT_HARDWARE_CONFIG: HardwareConfig = {
   motorDownPosition: 3000, // mks: ms to run CCW for DOWN — calibrate!
   motorMaxSpeed: 200,      // mks: RPM (0-3000)
 
-  gpioChip: 1,             // gpiochip1 = gpio_it87 (Giada AF208-N97 DI connector)
-  gpioPinNsar: 0,          // it87_gp10 — DI1 (lever position N / NSAR)
-  gpioPinSchmerz: 1,       // it87_gp11 — DI2 (lever center / Schmerz)
-  gpioPinOpiat: 2,         // it87_gp12 — DI3 (lever position O / Opiat)
+  gpioChip: 0,             // gpiochip0 = INTC1057 (Intel platform GPIO — confirmed DI connector)
+  gpioPinNsar: 5,          // DI0 — confirmed chip0 line 5 (lever position N / NSAR)
+  gpioPinSchmerz: 6,       // DI1 — likely chip0 line 6 (lever center / Schmerz) — verify!
+  gpioPinOpiat: 7,         // DI2 — likely chip0 line 7 (lever position O / Opiat) — verify!
   gpioPollIntervalMs: 50,
   gpioDebounceMs: 30,
 };
