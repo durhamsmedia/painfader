@@ -1,0 +1,86 @@
+root@paintable:/opt/painfader# # Welcher chip ist IT87 / welche chips haben wie viele Leitungen?
+for chip in /sys/class/gpio/gpiochip*/; do
+  echo "--- $(basename $chip) ---"
+  cat "$chip/label" 2>/dev/null
+  echo "ngpio: $(cat $chip/ngpio 2>/dev/null)"
+done
+
+# gpiod-Tool falls vorhanden
+gpiodetect 2>/dev/null && gpioinfo 2>/dev/null | head -60
+--- gpiochip512 ---
+INTC1057:00
+ngpio: 360
+--- gpiochip872 ---
+gpio_it87
+ngpio: 64
+--- gpiochip936 ---
+ftdi-cbus
+ngpio: 4
+--- gpiochip940 ---
+ftdi-cbus
+ngpio: 4
+gpiochip0 [INTC1057:00] (360 lines)
+gpiochip1 [gpio_it87] (64 lines)
+gpiochip2 [ftdi-cbus] (4 lines)
+gpiochip3 [ftdi-cbus] (4 lines)
+gpiochip0 - 360 lines:
+	line   0:	unnamed         	input
+	line   1:	unnamed         	input
+	line   2:	unnamed         	input
+	line   3:	unnamed         	output
+	line   4:	unnamed         	output
+	line   5:	unnamed         	input
+	line   6:	unnamed         	input
+	line   7:	unnamed         	input
+	line   8:	unnamed         	input
+	line   9:	unnamed         	input
+	line  10:	unnamed         	input
+	line  11:	unnamed         	input
+	line  12:	unnamed         	input
+	line  13:	unnamed         	input
+	line  14:	unnamed         	input
+	line  15:	unnamed         	input
+	line  16:	unnamed         	output
+	line  17:	unnamed         	input
+	line  18:	unnamed         	output
+	line  19:	unnamed         	input
+	line  20:	unnamed         	input
+	line  21:	unnamed         	input
+	line  22:	unnamed         	input
+	line  23:	unnamed         	output
+	line  24:	unnamed         	input
+	line  25:	unnamed         	input
+	line  26:	unnamed         	input
+	line  27:	unnamed         	input
+	line  28:	unnamed         	input
+	line  29:	unnamed         	input
+	line  30:	unnamed         	input
+	line  31:	unnamed         	input
+	line  32:	unnamed         	input
+	line  33:	unnamed         	input
+	line  34:	unnamed         	input
+	line  35:	unnamed         	input
+	line  36:	unnamed         	input
+	line  37:	unnamed         	input
+	line  38:	unnamed         	input
+	line  39:	unnamed         	input
+	line  40:	unnamed         	input
+	line  41:	unnamed         	input
+	line  42:	unnamed         	input
+	line  43:	unnamed         	input
+	line  44:	unnamed         	input
+	line  45:	unnamed         	input
+	line  46:	unnamed         	input
+	line  47:	unnamed         	input
+	line  48:	unnamed         	input
+	line  49:	unnamed         	input
+	line  50:	unnamed         	input
+	line  51:	unnamed         	input
+	line  52:	unnamed         	input
+	line  53:	unnamed         	input
+	line  54:	unnamed         	input
+	line  55:	unnamed         	input
+	line  56:	unnamed         	input
+	line  57:	unnamed         	input
+	line  58:	unnamed         	input
+root@paintable:/opt/painfader# 
