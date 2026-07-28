@@ -81,13 +81,13 @@ export interface HardwareConfig {
 
 export const DEFAULT_HARDWARE_CONFIG: HardwareConfig = {
   gledopto1: {
-    host: "2.0.0.158",       // 4D EXMU "led haube NSAR" — WLED 16.0.1
+    host: "2.0.0.156",       // 2D EXMU "led matrix lang" — Haube, WLED 16.0.1
     universeStart: 0,
     haube1PixelCount: 256,
     haube2PixelCount: 256,
   },
   schmerzController: {
-    host: "2.0.0.156",       // 2D EXMU "led matrix lang" — WLED 16.0.1
+    host: "2.0.0.158",       // 4D EXMU — Schmerzband, DDP, WLED 16.0.1
     universeStart: 0,
     protocol: "ddp",
     schmerzPixelCount: 1280,
