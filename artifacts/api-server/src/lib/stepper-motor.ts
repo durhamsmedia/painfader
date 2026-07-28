@@ -190,7 +190,8 @@ export class StepperMotorController {
    */
   private async runMks(direction: "cw" | "ccw", rpm: number, accel = 2) {
     const speed = Math.max(0, Math.min(3000, Math.round(rpm)));
-    const speedH = (direction === "cw" ? 0x80 : 0x00) | ((speed >> 8) & 0x7F);
+    // Direction bit: 0x80 = CW, 0x00 = CCW (swap these two if motor runs backwards)
+    const speedH = (direction === "ccw" ? 0x80 : 0x00) | ((speed >> 8) & 0x7F);
     const speedL = speed & 0xFF;
     await this.writeMks(0xF6, speedH, speedL, accel);
   }
